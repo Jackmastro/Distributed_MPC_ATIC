@@ -1,6 +1,12 @@
 clc;
 clear; 
-close all; 
+close all;
+
+%%
+sim_name = 'Simulation';
+% open_system(sim_name)
+controller_name = 'Controller';
+while_name = 'While';
 
 %% Set Network Objects
 params = struct('lambda_m_O_pred', repmat(0.1,[11,1]), ...
@@ -36,9 +42,12 @@ T_amb = 273;
 % Controller hyperparameters 
 Ts = 1;
 K = 10;
-Q = 1; 
+Q = 1;
 
-A = Household(true, false, T_set, Ts, K, Q, params, model, nmpcBlockPathName, busName);
+nmpcBlockPathName = strcat(sim_name, '/', controller_name, '/', while_name, '/A', '/NMPC_A');
+nmpcBusName = 'nlmpcAparams';
+storageBusName = 'storageA';
+A = Household(true, false, T_set, T_amb, Ts, K, Q, params, nmpcBlockPathName, nmpcBusName, storageBusName);
 
 %% Settings validation
 % Define a random initial state and input

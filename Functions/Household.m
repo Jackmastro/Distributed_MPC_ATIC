@@ -56,9 +56,9 @@ classdef Household
         alfa_T_R_succ
 
         % Simulink names 
-        model
         nmpcBlockPathName
-        busName
+        nmpcBusName
+        storageBusName
 
         % Parameters struct and NMPC object for block in Simulink
         params
@@ -101,7 +101,7 @@ classdef Household
     
     methods
 
-        function obj = Household(is_first_house, is_bypass_house, T_set, T_amb, Ts, K, Q, params, model, nmpcBlockPathName, busName)
+        function obj = Household(is_first_house, is_bypass_house, T_set, T_amb, Ts, K, Q, params, nmpcBlockPathName, nmpcBusName, storageBusName)
             
             % Set the first_house and bypass_house properties
             obj.is_first_house = is_first_house;
@@ -160,16 +160,16 @@ classdef Household
             obj.params.T_R_succ_succ = params.T_R_succ_succ;
             obj.params.T_R_I_pred = params.T_R_I_pred;
 
+            % Simulink names
+            obj.nmpcBlockPathName = nmpcBlockPathName;
+            obj.nmpcBusName = nmpcBusName;
+            obj.storageBusName = storageBusName;
+
             % Create NMPC object
             obj.nlobj = obj.createNMPC();
 
             % Create Bus object
             obj.Bus = obj.createBus();
-            
-            % Simulink names 
-            obj.model = model;
-            obj.nmpcBlockPathName = nmpcBlockPathName;
-            obj.busName = busName;
         end
         
         function nlobj = createNMPC(obj)
@@ -187,7 +187,7 @@ classdef Household
 
             % NMPC parameter Bus
             nlobj.Model.NumberOfParameters = 1;
-            createParameterBus(nlobj, [obj.model '/' obj.nmpcBlockPathName], obj.busName, obj.params);
+            createParameterBus(nlobj, obj.nmpcBlockPathName, obj.nmpcBusName, {obj.params});
 
             % Cost
             nlobj.Optimization.CustomCostFcn = @(x, u, e, data, params) CostFunction(x, u, e, data, obj);
