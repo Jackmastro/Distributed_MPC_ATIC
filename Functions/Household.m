@@ -133,11 +133,11 @@ classdef Household
             obj.nmpcBusName = nmpcBusName;
             obj.storageBusName = storageBusName;
 
+            % Create Bus object
+            % obj.Bus = obj.createBus();
+
             % Create NMPC object
             obj.nlobj = obj.createNMPC();
-
-            % Create Bus object
-            obj.Bus = obj.createBus();
         end
         
         function nlobj = createNMPC(obj)

@@ -18,7 +18,7 @@ Ts = 1;
 K = 10;
 Q = 1;
 
-nmpcBlockPathName = strcat(sim_name, '/', controller_name, '/', while_name, '/A', '/NMPC_A');
+nmpcBlockPathName = strcat(sim_name, '/', controller_name, '/', while_name, '/A', '/A_NMPC');
 nmpcBusName = 'nlmpcAparams';
 storageBusName = 'storageA';
 A = Household(true, false, T_set, T_amb, Ts, K, Q, nmpcBlockPathName, nmpcBusName, storageBusName);
@@ -26,8 +26,10 @@ A = Household(true, false, T_set, T_amb, Ts, K, Q, nmpcBlockPathName, nmpcBusNam
 %% Settings validation
 % Define a random initial state and input
 x0 = [1; 0; 0; 0; 0; 0]; 
-mv0 = [0; 0; 0; 0; 0; 0; 0]; 
+mv0 = [0; 0; 0; 0; 0; 0; 0];
+
+PROVA = A.params;
 
 % Validation
-paramList = {A};
+paramList = {A.params};
 validateFcns(A.nlobj, x0, mv0, [], paramList);
