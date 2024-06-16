@@ -46,7 +46,7 @@ function dxdt = HouseholdTemperatureDynamic(x, u, household)
     % System of equations 
     dT_F  = (m_F * cp_w * T_F_pred_I     - m_F * cp_w * T_F     - h_F * A_F * (T_F - household.T_amb))                                           / (rho_w * cp_w * V_F);
     dT_S1 = (m_U * cp_w * T_F            - m_U * cp_w * T_S1    - h_S1 * A_S1 * (T_S1 - household.T_amb))                                        / (rho_w * cp_w * V_S1);
-    dT_S2 = (m_U * cp_w * T_S1           - m_U * cp_w * T_S2                                     - h_S2 * A_S2 * (T_S2 - T_b))                   / (rho_w * cp_w * V_S2);
+    dT_S2 = (m_U * cp_w * T_S1           - m_U * cp_w * T_S2                                                - h_S2 * A_S2 * (T_S2 - T_b))        / (rho_w * cp_w * V_S2);
     dT_b  = (                                                   - h_b * A_b * (T_b - household.T_amb)       + h_S2 * A_S2 * (T_S2 - T_b))        / C_b;
     dT_S3 = (m_U * cp_w * T_S2           - m_U * cp_w * T_S3    - h_S3 * A_S3 * (T_S3 - household.T_amb))                                        / (rho_w * cp_w * V_S3);
     dT_R  = (m_U * cp_w * T_S3           - m_R * cp_w * T_R     - h_R * A_R * (T_R - household.T_amb)       + m_R_succ_I * cp_w * T_R_succ_I)    / (rho_w * cp_w * V_R);

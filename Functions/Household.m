@@ -33,11 +33,6 @@ classdef Household
         T_set
         T_amb
 
-        % Controller Hyperparameters
-        K
-        Ts
-        Q
-
         % Modeling 
         is_first_house
         is_bypass_house
@@ -45,6 +40,14 @@ classdef Household
         ny
         nu_mv
         nu_md
+
+        % Controller Hyperparameters
+        K
+        Ts
+        Q
+
+        % NMPC object for block in Simulink
+        nlobj
 
         % Step sizes - Lagrange multipliers 
         alfa_m_O_pred
@@ -55,54 +58,11 @@ classdef Household
         alfa_T_F_succ
         alfa_T_R_pred
         alfa_T_R_succ
-
-        % Simulink names 
-        nmpcBlockPathName
-        nmpcBusName
-        storageBusName
-
-        % Parameters struct and NMPC object for block in Simulink
-        params
-        nlobj
-        Bus
-    end
-
-    methods (Static)
-        function bus = createBus()
-
-            % Define bus elements for params
-            elems(1) = Simulink.BusElement;
-            elems(1).Name = 'mv';
-            elems(1).Description = 'T_F_pred_I = u(1); T_R_succ_I = u(2); m_F  = u(3); m_U  = u(4); m_O  = u(5); m_R_succ_I = u(6); m_R  = u(7);';
-
-            elems(2) = Simulink.BusElement;
-            elems(2).Name = 'x_seq';
-            elems(2).Description = 'T_F = x(1); T_S1 = x(2); T_S2 = x(3); T_b = x(4); T_S3 = x(5); T_R = x(6);';
-
-            elems(3) = Simulink.BusElement;
-            elems(3).Name = 'mv_seq';
-            elems(3).Description = 'T_F_pred_I = u(1); T_R_succ_I = u(2); m_F  = u(3); m_U  = u(4); m_O  = u(5); m_R_succ_I = u(6); m_R  = u(7);';
-
-            elems(4) = Simulink.BusElement;
-            elems(4).Name = 'ref';
-
-            elems(5) = Simulink.BusElement;
-            elems(5).Name = 'last_mv';
-
-            elems(6) = Simulink.BusElement;
-            elems(6).Name = 'alfa';
-        
-            elems(7) = Simulink.BusElement;
-            elems(7).Name = 'params';
-
-            bus = Simulink.Bus;
-            bus.Elements = elems;
-        end
     end
     
     methods
 
-        function obj = Household(is_first_house, is_bypass_house, T_set, T_amb, Ts, K, Q, nmpcBlockPathName, nmpcBusName, storageBusName)
+        function obj = Household(is_first_house, is_bypass_house, T_set, T_amb, Ts, K, Q)
             
             % Set the first_house and bypass_house properties
             obj.is_first_house = is_first_house;
@@ -117,7 +77,16 @@ classdef Household
 
             obj.ny = 1;
             obj.nu_mv = 7;
-            obj.nu_md = 24;
+
+            if is_bypass_house
+                obj.nu_md = 12;
+            elseif is_first_house
+                obj.nu_md = 12;
+            else
+                obj.nu_md = 24;
+            end
+
+            
            
             % Set temperature values
             obj.T_amb = T_amb;
@@ -127,14 +96,6 @@ classdef Household
             obj.K = K;
             obj.Ts = Ts;
             obj.Q = Q;
-
-            % Simulink names
-            obj.nmpcBlockPathName = nmpcBlockPathName;
-            obj.nmpcBusName = nmpcBusName;
-            obj.storageBusName = storageBusName;
-
-            % Create Bus object
-            % obj.Bus = obj.createBus();
 
             % Create NMPC object
             obj.nlobj = obj.createNMPC();
@@ -151,11 +112,7 @@ classdef Household
             % Prediction model
             nlobj.Model.StateFcn = @(x, u, params) HouseholdTemperatureDynamic(x, u, obj);
             nlobj.Model.OutputFcn = @(x, u, params) HouseholdOutput(x, u, obj);
-            
-
-            % NMPC parameter Bus
-            nlobj.Model.NumberOfParameters = 1;
-            createParameterBus(nlobj, obj.nmpcBlockPathName, obj.nmpcBusName, {obj.params});
+            nlobj.Model.NumberOfParameters = 1;       
 
             % Cost
             nlobj.Optimization.CustomCostFcn = @(x, u, e, data, params) CostFunction(x, u, e, data, obj);
