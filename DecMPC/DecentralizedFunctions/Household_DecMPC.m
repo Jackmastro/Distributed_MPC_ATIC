@@ -1,21 +1,31 @@
-classdef Household
+classdef Household_DecMPC
     
     % Private household properties 
     properties (Constant)
+        
         rho_w = 1;
         cp_w  = 1;
         V_S1  = 1;
         h_S1  = 1;
         A_S1  = 1;
+        L_S1  = 1;
+        D_S1  = 1;
         V_S2  = 1;
         h_S2  = 1;
         A_S2  = 1;
+        L_S2  = 1;
+        D_S2  = 1;
         h_b   = 1;
         A_b   = 1;
         C_b   = 1;
         V_S3  = 1;
         h_S3  = 1;
         A_S3  = 1;
+        L_S3  = 1; 
+        D_S3  = 1;
+        f_Darcy = 0.025;
+        maxPressureDrop = 5000;
+        
     end
     
     % Public household properties 
@@ -41,7 +51,7 @@ classdef Household
 
     
     methods
-        function obj = Household(T_set, T_amb, Ts, K, Q)
+        function obj = Household_DecMPC(T_set, T_amb, Ts, K, Q)
  
             % Set modeling dimensions properties 
             obj.nx = 4;
@@ -64,21 +74,22 @@ classdef Household
         
         function nlobj = createNMPC(obj)
             % Create NMPC object
-            nlobj = nlmpc(obj.nx, obj.ny, 'MV', obj.nu_mv, 'MD', obj.nu_mv+obj.nu_md );
+            nlobj = nlmpc(obj.nx, obj.ny, 'MV', [1:obj.nu_mv], 'MD', [(1+obj.nu_mv):(1+obj.nu_md)]);
 
             % NMPC parameters
             nlobj.PredictionHorizon = obj.K; 
             nlobj.Ts = obj.Ts;
 
             % Prediction model
-            nlobj.Model.StateFcn = @(x, u, params) HouseholdTemperatureDynamic(x, u, obj);
-            nlobj.Model.OutputFcn = @(x, u, params) HouseholdOutput(x, u, obj);
+            nlobj.Model.StateFcn = @(x, u, params) HouseholdTemperatureDynamic_DecMPC(x, u, obj);
+            nlobj.Model.OutputFcn = @(x, u, params) HouseholdOutput_DecMPC(x, u, obj);
+            nlobj.Model.NumberOfParameters = 1;
             
             % Cost
-            nlobj.Optimization.CustomCostFcn = @(x, u, e, data, params) CostFunction(x, u, e, data, obj);
+            nlobj.Optimization.CustomCostFcn = @(x, u, e, data, params) CostFunction_DecMPC(x, u, e, data, obj);
 
             % Constraints
-            nlobj.Optimization.CustomEqConFcn = @(x, u, data, params) EqConFunction(x, u, data, obj);
+            nlobj.Optimization.CustomIneqConFcn = @(x, u, data, e, params) IneqConFunction_DecMPC(x, u, e, data, obj);
 
             % State & Manipulated Variable constraints
             for i = 1:obj.nx
@@ -89,5 +100,6 @@ classdef Household
                 nlobj.ManipulatedVariables(i).Min = 0;
             end
         end
+
     end
 end

@@ -48,16 +48,26 @@ classdef Household
 
         % NMPC object for block in Simulink
         nlobj
+        
+        % Damping Weights - Lagrange Multipliers Cost Function
+        delta_m_O_pred = 1;
+        delta_m_O_succ = 1;
+        delta_m_R_pred = 1;
+        delta_m_R_succ = 1;
+        delta_T_F_pred = 1;
+        delta_T_F_succ = 1;
+        delta_T_R_pred = 1;
+        delta_T_R_succ = 1;
 
-        % Step sizes - Lagrange multipliers 
-        alfa_m_O_pred
-        alfa_m_O_succ
-        alfa_m_R_pred
-        alfa_m_R_alfa
-        alfa_T_F_pred
-        alfa_T_F_succ
-        alfa_T_R_pred
-        alfa_T_R_succ
+        % Step sizes - Lagrange Multipliers Update 
+        alfa_m_O_pred = 1; 
+        alfa_m_O_succ = 1;
+        alfa_m_R_pred = 1;
+        alfa_m_R_alfa = 1;
+        alfa_T_F_pred = 1;
+        alfa_T_F_succ = 1;
+        alfa_T_R_pred = 1;
+        alfa_T_R_succ = 1;
     end
     
     methods
@@ -79,15 +89,13 @@ classdef Household
             obj.nu_mv = 7;
 
             if is_bypass_house
-                obj.nu_md = 12;
+                obj.nu_md = 8;
             elseif is_first_house
-                obj.nu_md = 12;
+                obj.nu_md = 8;
             else
-                obj.nu_md = 24;
+                obj.nu_md = 16;
             end
 
-            
-           
             % Set temperature values
             obj.T_amb = T_amb;
             obj.T_set = T_set;

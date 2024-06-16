@@ -1,4 +1,4 @@
-function dxdt = HouseholdTemperatureDynamic(x, u, household)
+function dxdt = HouseholdTemperatureDynamic_DecMPC(x, u, household)
     
     % Constants
     rho_w   = household.rho_w;
