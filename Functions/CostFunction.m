@@ -9,7 +9,7 @@ function cost = CostFunction(x, u, ~, ~, household)
     T_R  = x(:,6);
     
     % Inputs
-    %  Manipulated Variabels 
+    %  Manipulated Variables 
     T_F_pred_I = u(:,1);
     T_R_succ_I = u(:,2);
     m_F  = u(:,3);
@@ -18,7 +18,7 @@ function cost = CostFunction(x, u, ~, ~, household)
     m_R_succ_I = u(:,6);
     m_R  = u(:,7);
     
-    % Measured Variabels
+    % Measured Disturbances
     lambda_m_O_pred = u(:,8);
     lambda_m_O_succ = u(:,9);
     lambda_m_R_pred = u(:,10);
@@ -28,7 +28,6 @@ function cost = CostFunction(x, u, ~, ~, household)
     lambda_T_R_pred = u(:,14);
     lambda_T_R_succ = u(:,15);
     
-    % Measured Distrubances
     delta_m_O_pred = u(:,16);
     delta_m_O_succ = u(:,17);
     delta_m_R_pred = u(:,18);
