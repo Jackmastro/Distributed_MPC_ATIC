@@ -1,4 +1,4 @@
-function cost = CostFunction(x, ~, ~, ~, household) 
+function cost = CostFunction_DecMPC(x, ~, ~, ~, household) 
     
     % States
     T_b  = x(:,4);
