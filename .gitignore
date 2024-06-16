@@ -3,3 +3,6 @@ slprj/
 
 # Ignore all .asv files
 *.asv
+
+# Ignore .DS_Store files
+.DS_Store
