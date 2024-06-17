@@ -40,4 +40,4 @@ end
 % Define and load the simulation model
 simulation_name = 'Simulation';
 load_system(simulation_name);
-% open_system(simulation_name);
+open_system(simulation_name);
