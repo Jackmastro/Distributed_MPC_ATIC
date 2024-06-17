@@ -1,11 +1,9 @@
-function DeltaP_U = HouseholdPressureDrop_DecMPC(u, household)
-
-    m_U = u(1);
+function m_U_max = HouseholdPressureDrop_DecMPC(household)
       
-    DeltaP_S1= 8 * household.f_Darcy * household.L_S1 * m_U^2 / (household.rho_w * pi^2 * household.D_S1^5);
-    DeltaP_S2= 8 * household.f_Darcy * household.L_S2 * m_U^2 / (household.rho_w * pi^2 * household.D_S2^5); 
-    DeltaP_S3= 8 * household.f_Darcy * household.L_S3 * m_U^2 / (household.rho_w * pi^2 * household.D_S3^5); 
+    m_S1_max = sqrt(household.DeltaP_S1_max * household.rho_w * pi^2 * household.D_S1^5) / (8 * household.f_Darcy * household.L_S1);
+    m_S2_max = sqrt(household.DeltaP_S2_max * household.rho_w * pi^2 * household.D_S2^5) / (8 * household.f_Darcy * household.L_S2); 
+    m_S3_max = sqrt(household.DeltaP_S2_max * household.rho_w * pi^2 * household.D_S3^5) / (8 * household.f_Darcy * household.L_S3); 
    
-    DeltaP_U = DeltaP_S1+DeltaP_S2+DeltaP_S3;
+    m_U_max = m_S1_max+m_S2_max+m_S3_max;
 
 end
