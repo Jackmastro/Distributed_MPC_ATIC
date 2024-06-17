@@ -17,26 +17,31 @@ A = Household_DecMPC(T_set, T_amb, Ts, K, Q);
 B = Household_DecMPC(T_set, T_amb, Ts, K, Q);
 C = Household_DecMPC(T_set, T_amb, Ts, K, Q);
 
-%% Settings validation
-ValidationFunction_DecMPC(A, test=false)
-ValidationFunction_DecMPC(B, test=false)
-ValidationFunction_DecMPC(C, test=false)
 
-%% Simulink Simulation
-% TO DO: Initial conditions 
+% % Display the params array
+% disp('Constant properties values:');
+% disp(params);
 
-% Open
-model = 'Simulator';
-open_system(model);
+% %% Settings validation
+% ValidationFunction_DecMPC(A, false)
+% ValidationFunction_DecMPC(B, false)
+% ValidationFunction_DecMPC(C, false)
 
-% Set the parameters for the Step block
-% set_param();
-
-% Set simulation parameters
-set_param(model, 'StartTime', '86400', 'StopTime', '', 'Solver', 'ode45');
-
-% Run the simulation
-simOut = sim(model);
-
-% Close (without saving changes)
-close_system(model, 0);
+% %% Simulink Simulation
+% % TO DO: Initial conditions 
+% 
+% % Open
+% model = 'Simulator';
+% open_system(model);
+% 
+% % Set the parameters for the Step block
+% % set_param();
+% 
+% % Set simulation parameters
+% set_param(model, 'StartTime', '86400', 'StopTime', '', 'Solver', 'ode45');
+% 
+% % Run the simulation
+% simOut = sim(model);
+% 
+% % Close (without saving changes)
+% close_system(model, 0);
