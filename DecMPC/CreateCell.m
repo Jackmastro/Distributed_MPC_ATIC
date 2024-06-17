@@ -1,17 +1,46 @@
-mc = metaclass(A);
+% Get the meta-class for Household_DecMPC
+mc = metaclass(Household_DecMPC);
 
-% Initialize an array to hold the values of the constant properties
-params = [];
+% Initialize arrays to hold the names and values of the properties
+constantProps = [];
+constantValues = [];
+publicProps = [];
+publicValues = [];
 
-% Loop through each property and check if it is constant
+% Loop through each property and check its attributes
 for i = 1:length(mc.Properties)
     prop = mc.Properties{i};
-    disp(prop)
-    if strcmp(prop.GetAccess, 'public') && prop.Constant
-        % Access the constant property value using the class name
+    
+    % Check for constant properties
+    if prop.Constant
         value = Household_DecMPC.(prop.Name);
-        % Append the value to the params array
-        params = [params, value];
+        constantProps = [constantProps, {prop.Name}];
+        constantValues = [constantValues, value];
+    end
+    
+    % Check for public properties
+    if ~prop.Constant && strcmp(prop.SetAccess, 'public')
+        value = householdMPC.(prop.Name);
+        publicProps = [publicProps, {prop.Name}];
+        publicValues = [publicValues, value];
     end
 end
-params = {params(1:length(params))}
+
+% Display constant properties and their values
+disp('Constant properties and values:');
+disp(constantProps);
+disp(constantValues);
+
+% Display public properties and their values
+disp('Public properties and values:');
+disp(publicProps);
+disp(publicValues);
+
+% Combine constant and public properties into one array
+allProps = [constantProps, publicProps];
+allValues = [constantValues, publicValues];
+
+% Display all properties and their values
+disp('All properties and values:');
+disp(allProps);
+disp(allValues);
