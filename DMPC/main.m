@@ -1,6 +1,24 @@
 clc;
-clear; 
+clear;
 close all;
+
+% Get the full path of the currently running script
+if isdeployed
+    % If the code is deployed, use the built-in method
+    scriptFullPath = mfilename('fullpath');
+else
+    % If running in the MATLAB environment, use the editor API
+    scriptFullPath = matlab.desktop.editor.getActiveFilename;
+end
+
+% Extract the directory part of the path
+[scriptDir, ~, ~] = fileparts(scriptFullPath);
+
+% Change the current directory to the script's directory
+cd(scriptDir);
+
+% Display the current directory to confirm the change
+disp(['Current directory changed to: ', scriptDir]);
 
 %% Set Network Objects
 % Set temperatures
@@ -27,7 +45,7 @@ params = {A};
 validateFcns(A.nlobj, x0, u0(1:7)', u0(8:15)', params);
 
 %% Load and open Simulink
-clear 
+
 % Define the folder containing .mat files
 bus_folder_name = 'LoadBus';
 
@@ -43,4 +61,4 @@ end
 % Define and load the simulation model
 simulation_name = 'Simulation';
 % load_system(simulation_name);
-open_system(simulation_name);
+% open_system(simulation_name);
