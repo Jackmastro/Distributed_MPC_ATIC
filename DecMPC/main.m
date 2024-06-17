@@ -17,6 +17,34 @@ A = Household_DecMPC(T_set, T_amb, Ts, K, Q);
 B = Household_DecMPC(T_set, T_amb, Ts, K, Q);
 C = Household_DecMPC(T_set, T_amb, Ts, K, Q);
 
+mc = metaclass(A);
+
+%% Initialize an array to hold the values of params of A
+paramsA = [];
+
+
+% Loop through each property and check if it is constant
+for i = 1:length(mc.Properties)
+    prop = mc.Properties{i};
+    disp(prop)
+    if strcmp(prop.GetAccess, 'public') && prop.Constant
+        % Access the constant property value using the class name
+        value = A.(prop.Name);
+        % Append the value to the params array
+        paramsA = [paramsA, value];
+    end
+    if not(strcmp(prop.Name, 'nlobj'))
+      prop = mc.Properties{i};
+      value = A.(prop.Name);
+      % Append the value to the paramsA array
+      paramsA = [paramsA, value]; 
+    end
+end
+paramsA = {paramsA(1:length(paramsA))};
+
+nameControllerA = ['Simulator_DecMPC_v0/NMPC_A'];
+createParameterBus(A.nlobj,nameControllerA,'parasMPC_A',paramsA);
+
 
 % % Display the params array
 % disp('Constant properties values:');
