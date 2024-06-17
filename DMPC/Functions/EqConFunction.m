@@ -1,4 +1,6 @@
-function ceq = EqConFunction(x, u, ~, household)
+function ceq = EqConFunction(x, u, ~, params)
+
+    is_bypass_house = params(27);
     
     % States
     T_B  = x(7);
@@ -11,7 +13,7 @@ function ceq = EqConFunction(x, u, ~, household)
     m_R_succ_I = u(6);
     m_R  = u(7);
 
-    if household.is_bypass_house
+    if is_bypass_house
         ceq = [m_F - (m_U + m_O) ; m_R - (m_U + m_R_succ_I); m_R_succ_I - m_O; T_F_pred_I - T_B]; 
     else
         ceq = [m_F - (m_U + m_O) ; m_R - (m_U + m_R_succ_I)]; 

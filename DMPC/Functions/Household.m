@@ -2,7 +2,7 @@ classdef Household
     
     % Private household properties 
     properties (Constant)
-        rho_w = 1;
+        rho_w = 1; % 1
         cp_w  = 1;
         V_F   = 1;
         h_F   = 1;
@@ -11,7 +11,7 @@ classdef Household
         h_S1  = 1;
         A_S1  = 1;
         V_S2  = 1;
-        h_S2  = 1;
+        h_S2  = 1; % 10
         A_S2  = 1;
         h_b   = 1;
         A_b   = 1;
@@ -21,21 +21,21 @@ classdef Household
         A_S3  = 1;
         V_R   = 1;
         h_R   = 1;
-        A_R   = 1;
+        A_R   = 1; % 20
         V_B   = 1;
         h_B   = 1;
-        A_B   = 1;
+        A_B   = 1; % 23
     end
     
     % Public household properties 
     properties 
         % Building set and ambient temperature
-        T_set
+        T_set % 24
         T_amb
 
         % Modeling 
         is_first_house
-        is_bypass_house
+        is_bypass_house % 27
         nx
         ny
         nu_mv
@@ -44,10 +44,7 @@ classdef Household
         % Controller Hyperparameters
         K
         Ts
-        Q
-
-        % NMPC object for block in Simulink
-        nlobj
+        Q % 34
         
         % Damping Weights - Lagrange Multipliers Cost Function
         delta_m_O_pred = 1;
@@ -68,11 +65,16 @@ classdef Household
         alfa_T_F_succ = 1;
         alfa_T_R_pred = 1;
         alfa_T_R_succ = 1;
+
+        % NMPC object and adress for Simulink
+        nlobj
+        adressBusParams
+        validation
     end
     
     methods
 
-        function obj = Household(is_first_house, is_bypass_house, T_set, T_amb, Ts, K, Q) %%%%%%%%%%%%%%%%%% TODO aggiungere nmpcBusAddress
+        function obj = Household(is_first_house, is_bypass_house, T_set, T_amb, Ts, K, Q, adressBusParams, validation) 
             
             % Set the first_house and bypass_house properties
             obj.is_first_house = is_first_house;
@@ -107,15 +109,17 @@ classdef Household
 
             % Create NMPC object
             obj.nlobj = obj.createNMPC();
+            obj.adressBusParams = adressBusParams;
+            obj.validation = validation; 
+
         end
 
-        function params = getParametersList(obj) %%%%%%%%%%%%%%%%%%%% TODO togliere anche address
+        function params = getParametersCell(obj)
             propList = properties(obj);
             constPropList = properties('Household');
-
-            % Exclude nlobj property and calculate the total number of parameters
-            numParams = numel(propList) + numel(constPropList) - 1; % excluding nlobj
-            params = zeros(numParams, 1); % Initialize params array
+            
+            numParams = numel(propList) + numel(constPropList) - 2;
+            params = zeros(numParams, 1); 
             
             idx = 1;
             for i = 1:length(constPropList)
@@ -124,14 +128,17 @@ classdef Household
             end
 
             for i = 1:length(propList)
-                if ~strcmp(propList{i}, 'nlobj')
+                if ~strcmp(propList{i}, 'nlobj') | ~strcmp(propList{i}, obj.adressBusParams) % Exclude nlobj and address properties
                     params(idx) = obj.(propList{i});
                     idx = idx + 1;
                 end
             end
+
+            params = {params};
         end
         
         function nlobj = createNMPC(obj)
+
             % Create NMPC object
             nlobj = nlmpc(obj.nx, obj.ny, 'MV', [1:obj.nu_mv], 'MD', [(obj.nu_mv+1):(obj.nu_mv+obj.nu_md)]);
 
@@ -139,27 +146,22 @@ classdef Household
             nlobj.PredictionHorizon = obj.K; 
             nlobj.Ts = obj.Ts;
 
-            %% Model parameters
-
-            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TODO
-parasTracking = {[truckDimensions.M1,truckDimensions.L1,truckDimensions.L2]'};
-trackingObj.Model.NumberOfParameters = numel(parasTracking);
-
-            parameters = getParametersList(obj);
-
-            % Prediction model
-            nlobj.Model.StateFcn = "HouseholdTemperatureDynamic";
-            nlobj.Model.OutputFcn = @(x, u, params) HouseholdOutput(x, u, params); %%%%%%%%%%%%%%%%%% TODO cambiare nomi funzioni
-            nlobj.Model.NumberOfParameters = 1;
+            params = getParametersCell();
 
             % CreateParametersBus
-            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TODO
+            createParameterBus(nlobj, obj.adressBusParams, 'nameBusParams',params)
+
+            % Prediction model
+            nlobj.Model.NumberOfParameters = numel(params);
+            nlobj.Model.StateFcn = "HouseholdTemperatureDynamic";
+            nlobj.Model.OutputFcn = "HouseholdOutput";
 
             % Cost
-            nlobj.Optimization.CustomCostFcn = @(x, u, e, data, params) CostFunction(x, u, e, data, params);
+            nlobj.Optimization.CustomCostFcn = "CostFunction";
 
             % Constraints
-            nlobj.Optimization.CustomEqConFcn = @(x, u, data, params) EqConFunction(x, u, data, params);
+            nlobj.Optimization.CustomEqConFcn = "EqConFunction";
+
 
             % State & Manipulated Variable constraints
             for i = 1:obj.nx
@@ -170,13 +172,21 @@ trackingObj.Model.NumberOfParameters = numel(parasTracking);
                 nlobj.ManipulatedVariables(i).Min = 0;
             end
 
-            %%%%%%%%%%%%%% TODO spostare validation qui
-            %% Validate
-trackingOptions = nlmpcmoveopt;
-trackingOptions.Parameters = parasTracking;
-xTest = [-16 0 0 0]';
-uTest = [0.22 -3]';
-validateFcns(trackingObj,xTest,uTest,{},parasTracking)
+            % Validation 
+            if obj.validation 
+%                 % TO CHECK
+%                 trackingOptions = nlmpcmoveopt;
+%                 trackingOptions.Parameters = params;
+
+                % Define a random initial state and input
+                x0 = ones(obj.nx, 1);  % Example initial states
+                u0 = ones(obj.nu_mv + obj.nu_md, 1); 
+                
+                params = {obj};
+              
+                % Validate functions
+                validateFcns(A.nlobj, x0, u0(1:7)', u0(8:15)', params);
+            end
         end
     end
 end
