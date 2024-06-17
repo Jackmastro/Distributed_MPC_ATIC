@@ -23,3 +23,21 @@ params = {A};
 
 % Validate functions
 validateFcns(A.nlobj, x0, u0(1:7)', u0(8:15)', params);
+
+%% Load and open Simulink
+% Define the folder containing .mat files
+bus_folder_name = 'LoadBus';
+
+% Get a list of all .mat files in the folder
+mat_files = dir(fullfile(bus_folder_name, '*.mat'));
+
+% Load each .mat file
+for k = 1:length(mat_files)
+    mat_file = fullfile(bus_folder_name, mat_files(k).name);
+    load(mat_file);
+end
+
+% Define and load the simulation model
+simulation_name = 'Simulation';
+load_system(simulation_name);
+% open_system(simulation_name);
