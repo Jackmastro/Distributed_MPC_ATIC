@@ -23,25 +23,25 @@ mc = metaclass(A);
 paramsA = [];
 
 
-% Loop through each property and check if it is constant
-for i = 1:length(mc.Properties)
-    prop = mc.Properties{i};
-    disp(prop)
-    if strcmp(prop.GetAccess, 'public') && prop.Constant
-        % Access the constant property value using the class name
-        value = A.(prop.Name);
-        % Append the value to the params array
-        paramsA = [paramsA, value];
-    end
-    if not(strcmp(prop.Name, 'nlobj'))
-      prop = mc.Properties{i};
-      value = A.(prop.Name);
-      % Append the value to the paramsA array
-      paramsA = [paramsA, value]; 
-    end
-end
-paramsA = {paramsA(1:length(paramsA))};
+% % Loop through each property and check if it is constant
+% for i = 1:length(mc.Properties)
+%     prop = mc.Properties{i};
+%     disp(prop)
+%     if strcmp(prop.GetAccess, 'public') && prop.Constant
+%         % Access the constant property value using the class name
+%         value = A.(prop.Name);
+%         % Append the value to the params array
+%         paramsA = [paramsA; value];
+%     elseif not(strcmp(prop.Name, 'nlobj'))
+%       prop = mc.Properties{i};
+%       value = A.(prop.Name);
+%       % Append the value to the paramsA array
+%       paramsA = [paramsA; value]; 
+%     end
+% end
+% paramsA = {paramsA(1:length(paramsA))}
 
+paramsA = {(1:33)}
 nameControllerA = ['Simulator_DecMPC_v0/NMPC_A'];
 createParameterBus(A.nlobj,nameControllerA,'parasMPC_A',paramsA);
 

@@ -85,7 +85,7 @@ classdef Household_DecMPC
             % Prediction model
             nlobj.Model.StateFcn = @(x, u, params) HouseholdTemperatureDynamic_DecMPC(x, u, params);
             nlobj.Model.OutputFcn = @(x, u, params) HouseholdOutput_DecMPC(x, u, params);
-            nlobj.Model.NumberOfParameters = 33;
+            nlobj.Model.NumberOfParameters = 1;
             
             % Cost
             nlobj.Optimization.CustomCostFcn = @(x, u, e, data, params) CostFunction_DecMPC(x, u, e, data, params);
