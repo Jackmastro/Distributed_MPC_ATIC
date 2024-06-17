@@ -180,9 +180,7 @@ classdef Household
 
                 % Define a random initial state and input
                 x0 = ones(obj.nx, 1);  % Example initial states
-                u0 = ones(obj.nu_mv + obj.nu_md, 1); 
-                
-                params = {obj};
+                u0 = ones(obj.nu_mv + obj.nu_md, 1);
               
                 % Validate functions
                 validateFcns(A.nlobj, x0, u0(1:7)', u0(8:15)', params);
