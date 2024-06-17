@@ -1,20 +1,20 @@
-function dxdt = HouseholdTemperatureDynamic_DecMPC(x, u, household)
+function dxdt = HouseholdTemperatureDynamic_DecMPC(x, u, params)
     
     % Constants
-    rho_w   = household.rho_w;
-    cp_w    = household.cp_w;
-    V_S1    = household.V_S1;
-    h_S1    = household.h_S1;
-    A_S1    = household.A_S1;
-    V_S2    = household.V_S2;
-    h_S2    = household.h_S2;
-    A_S2    = household.A_S2;
-    V_S3    = household.V_S3;
-    h_S3    = household.h_S3;
-    A_S3    = household.A_S3;
-    C_b     = household.C_b;
-    h_b     = household.h_b;
-    A_b     = household.A_b;
+    rho_w   = params(1);
+    cp_w    = params(2);
+    V_S1    = params(3);
+    h_S1    = params(4);
+    A_S1    = params(5);
+    V_S2    = params(8);
+    h_S2    = params(9);
+    A_S2    = params(10);
+    h_b     = params(13);
+    A_b     = params(14);
+    C_b     = params(15);
+    V_S3    = params(16);
+    h_S3    = params(17);
+    A_S3    = params(18);
 
     % States
     T_S1 = x(1);
