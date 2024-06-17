@@ -1,8 +1,8 @@
-function cost = CostFunction_DecMPC(x, ~, ~, ~, household) 
+function cost = CostFunction_DecMPC(x, ~, ~, ~, params) 
     
     % States
     T_b  = x(:,4);
 
-    cost = household.Q .* norm(T_b - household.T_set).^2;
+    cost = params(29) .* norm(T_b - params(25)).^2;
    
 end

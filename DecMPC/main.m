@@ -23,7 +23,7 @@ C = Household_DecMPC(T_set, T_amb, Ts, K, Q);
 % disp(params);
 
 % %% Settings validation
-% ValidationFunction_DecMPC(A, false)
+ValidationFunction_DecMPC(A, true)
 % ValidationFunction_DecMPC(B, false)
 % ValidationFunction_DecMPC(C, false)
 

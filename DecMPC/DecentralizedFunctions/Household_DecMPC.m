@@ -83,15 +83,15 @@ classdef Household_DecMPC
             nlobj.Ts = obj.Ts;
 
             % Prediction model
-            nlobj.Model.StateFcn = @(x, u, params) HouseholdTemperatureDynamic_DecMPC(x, u, obj);
-            nlobj.Model.OutputFcn = @(x, u, params) HouseholdOutput_DecMPC(x, u, obj);
-            nlobj.Model.NumberOfParameters = 1;
+            nlobj.Model.StateFcn = @(x, u, params) HouseholdTemperatureDynamic_DecMPC(x, u, params);
+            nlobj.Model.OutputFcn = @(x, u, params) HouseholdOutput_DecMPC(x, u, params);
+            nlobj.Model.NumberOfParameters = 33;
             
             % Cost
-            nlobj.Optimization.CustomCostFcn = @(x, u, e, data, params) CostFunction_DecMPC(x, u, e, data, obj);
+            nlobj.Optimization.CustomCostFcn = @(x, u, e, data, params) CostFunction_DecMPC(x, u, e, data, params);
 
             % Constraints
-            nlobj.Optimization.CustomIneqConFcn = @(x, u, data, e, params) IneqConFunction_DecMPC(x, u, e, data, obj);
+            nlobj.Optimization.CustomIneqConFcn = @(x, u, data, e, params) IneqConFunction_DecMPC(x, u, e, data, params);
 
             % State & Manipulated Variable constraints
             for i = 1:obj.nx

@@ -15,6 +15,7 @@ function dxdt = HouseholdTemperatureDynamic_DecMPC(x, u, params)
     V_S3    = params(16);
     h_S3    = params(17);
     A_S3    = params(18);
+    T_amb   = params(26);
 
     % States
     T_S1 = x(1);
@@ -27,10 +28,10 @@ function dxdt = HouseholdTemperatureDynamic_DecMPC(x, u, params)
     T_F = u(2);
 
     % System of equations 
-    dT_S1 = (m_U * cp_w * T_F            - m_U * cp_w * T_S1    - h_S1 * A_S1 * (T_S1 - household.T_amb))                                        / (rho_w * cp_w * V_S1);
+    dT_S1 = (m_U * cp_w * T_F            - m_U * cp_w * T_S1    - h_S1 * A_S1 * (T_S1 - T_amb))                                        / (rho_w * cp_w * V_S1);
     dT_S2 = (m_U * cp_w * T_S1           - m_U * cp_w * T_S2                                                - h_S2 * A_S2 * (T_S2 - T_b))        / (rho_w * cp_w * V_S2);
-    dT_b  = (                                                   - h_b * A_b * (T_b - household.T_amb)       + h_S2 * A_S2 * (T_S2 - T_b))        / C_b;
-    dT_S3 = (m_U * cp_w * T_S2           - m_U * cp_w * T_S3    - h_S3 * A_S3 * (T_S3 - household.T_amb))                                        / (rho_w * cp_w * V_S3);
+    dT_b  = (                                                   - h_b * A_b * (T_b - T_amb)       + h_S2 * A_S2 * (T_S2 - T_b))        / C_b;
+    dT_S3 = (m_U * cp_w * T_S2           - m_U * cp_w * T_S3    - h_S3 * A_S3 * (T_S3 - T_amb))                                        / (rho_w * cp_w * V_S3);
 
     dxdt = [dT_S1; dT_S2; dT_b; dT_S3];
 
