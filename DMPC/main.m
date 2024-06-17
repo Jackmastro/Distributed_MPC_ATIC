@@ -13,6 +13,8 @@ K = 10;
 Q = 1;
 
 A = Household(true, false, T_set, T_amb, Ts, K, Q);
+B = Household(false, false, T_set, T_amb, Ts, K, Q);
+C = Household(false, true, T_set, T_amb, Ts, K, Q);
 
 %% Settings validation
 % Define a random initial state and input
@@ -25,6 +27,7 @@ params = {A};
 validateFcns(A.nlobj, x0, u0(1:7)', u0(8:15)', params);
 
 %% Load and open Simulink
+clear 
 % Define the folder containing .mat files
 bus_folder_name = 'LoadBus';
 
@@ -39,5 +42,5 @@ end
 
 % Define and load the simulation model
 simulation_name = 'Simulation';
-load_system(simulation_name);
+% load_system(simulation_name);
 open_system(simulation_name);
