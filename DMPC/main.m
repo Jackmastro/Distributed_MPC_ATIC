@@ -30,7 +30,7 @@ Ts = 1;
 K = 10;
 Q = 1;
 
-A = Household(true, false, T_set, T_amb, Ts, K, Q);
+A = Household(true, false, T_set, T_amb, Ts, K, Q); %%%%%%%%%%% TODO aggiungere address
 B = Household(false, false, T_set, T_amb, Ts, K, Q);
 C = Household(false, true, T_set, T_amb, Ts, K, Q);
 

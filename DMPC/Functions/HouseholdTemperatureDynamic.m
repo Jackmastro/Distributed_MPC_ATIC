@@ -1,7 +1,7 @@
-function dxdt = HouseholdTemperatureDynamic(x, u, household)
+function dxdt = HouseholdTemperatureDynamic(x, u, params)
     
     % Constants
-    rho_w   = household.rho_w;
+    rho_w   = household.rho_w;%%%%%%%%%%%%%%%%%%TODO cambiare da oggetto a lista parametri
     cp_w    = household.cp_w;
     V_F     = household.V_F;
     h_F     = household.h_F;
