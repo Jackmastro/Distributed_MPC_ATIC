@@ -24,7 +24,9 @@ classdef Household_DecMPC
         L_S3  = 1; 
         D_S3  = 1;
         f_Darcy = 0.025;
-        maxPressureDrop = 5000;
+        DeltaP_S1_max = 4;
+        DeltaP_S2_max = 4;
+        DeltaP_S3_max = 4;
         
     end
     
