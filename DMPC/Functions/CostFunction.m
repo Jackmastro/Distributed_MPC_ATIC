@@ -65,7 +65,7 @@ function cost = CostFunction(x, u, ~, ~, household)
              + 0.5 * household.delta_T_R_succ *  (norm(T_R_succ_I - T_R_succ_succ)).^2;   
     
     else
-        
+        % Middle House
         % Measured Disturbances
         m_O_pred_pred   = u(:,8);
         m_O_I_succ      = u(:,9);
