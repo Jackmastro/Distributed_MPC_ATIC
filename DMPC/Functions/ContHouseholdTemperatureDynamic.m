@@ -1,4 +1,4 @@
-function dxdt = HouseholdTemperatureDynamic(x, u, params)
+function dxdt = ContHouseholdTemperatureDynamic(x, u, params)
     
     % Constants
     rho_w   = params(1);

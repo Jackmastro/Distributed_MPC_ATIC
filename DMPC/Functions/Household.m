@@ -147,7 +147,8 @@ classdef Household
 
             % Prediction model
             nlobj.Model.NumberOfParameters = numel(params);
-            nlobj.Model.StateFcn = "HouseholdTemperatureDynamic";
+            nlobj.Model.StateFcn = "HouseholdTemperatureDynamicStateFcn";
+            nlobj.Model.IsContinuousTime = false;
             nlobj.Model.OutputFcn = "HouseholdOutput";
 
             % Cost
