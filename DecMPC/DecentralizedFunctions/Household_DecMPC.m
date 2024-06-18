@@ -51,6 +51,7 @@ classdef Household_DecMPC
         nlobj
         adressBusParams
         validation
+        params
     end
 
     
@@ -73,34 +74,26 @@ classdef Household_DecMPC
             obj.Q = Q;
 
             % Create NMPC object
-            obj.nlobj = obj.createNMPC();
             obj.adressBusParams = adressBusParams;
             obj.validation = validation;
+            obj.nlobj = obj.createNMPC(); 
 
         end
         
-        function params = getParametersCell(obj)
-            propList = properties(obj);
-            constPropList = properties('Household_DecMPC');
-            
-            numParams = numel(propList) + numel(constPropList) - 2;
-            params = zeros(numParams, 1); 
-            
-            idx = 1;
-            for i = 1:length(constPropList)
-                params(idx) = Household.(constPropList{i});
-                idx = idx + 1;
-            end
-
-            for i = 1:length(propList)
-                if ~strcmp(propList{i}, 'nlobj') | ~strcmp(propList{i}, obj.adressBusParams) % Exclude nlobj and address properties
-                    params(idx) = obj.(propList{i});
-                    idx = idx + 1;
-                end
-            end
-
-            params = {params};
-        end
+        % function params = getParametersCell(obj)
+        %     constPropList = properties('Household_DecMPC');
+        % 
+        %     numParams = numel(constPropList) - 4; %numel(propList) + 
+        %     params = zeros(numParams, 1);
+        % 
+        %     for i = 1:numParams
+        %           if ~strcmp(constPropList{i}, 'nlobj') && ~strcmp(constPropList{i}, obj.adressBusParams) && ~strcmp(constPropList{i}, obj.validation) && ~strcmp(constPropList{i}, obj.params)% Exclude nlobj and address properties
+        %                 params(i) = obj.(constPropList{i});
+        %           end
+        %     end
+        %     % disp("params")
+        %     % params
+        % end
 
         function nlobj = createNMPC(obj)
             % Create NMPC object
@@ -109,14 +102,80 @@ classdef Household_DecMPC
             % NMPC parameters
             nlobj.PredictionHorizon = obj.K; 
             nlobj.Ts = obj.Ts;
+            params = [1,2,3]'
+            paramsCell = {params};
 
-            params = getParametersCell();
-
-            % CreateParametersBus
-            createParameterBus(nlobj, obj.adressBusParams, 'nameBusParams',params)
-
+            % obj.params = [obj.rho_w;
+            %               obj.cp_w;
+            %               obj.V_S1 ;
+            %               obj.h_S1 ;
+            %               obj.A_S1 ;
+            %               obj.L_S1 ;
+            %               obj.D_S1 ;
+            %               obj.V_S2 ;
+            %               obj.h_S2 ;
+            %               obj.A_S2 ;
+            %               obj.L_S2 ;
+            %               obj.D_S2 ;
+            %               obj.h_b  ;
+            %               obj.A_b  ;
+            %               obj.C_b  ;
+            %               obj.V_S3 ;
+            %               obj.h_S3 ;
+            %               obj.A_S3 ;
+            %               obj.L_S3 ;
+            %               obj.D_S3 ;
+            %               obj.f_Darcy;
+            %               obj.DeltaP_S1_max;
+            %               obj.DeltaP_S2_max;
+            %               obj.DeltaP_S3_max;
+            %               obj.T_set;
+            %               obj.T_amb;
+            %               obj.K;
+            %               obj.Ts;
+            %               obj.Q;
+            %               obj.nx;
+            %               obj.ny;
+            %               obj.nu_mv;
+            %               obj.nu_md ];
+            %
+            % params = {[obj.rho_w;
+            %               obj.cp_w;
+            %               obj.V_S1 ;
+            %               obj.h_S1 ;
+            %               obj.A_S1 ;
+            %               obj.L_S1 ;
+            %               obj.D_S1 ;
+            %               obj.V_S2 ;
+            %               obj.h_S2 ;
+            %               obj.A_S2 ;
+            %               obj.L_S2 ;
+            %               obj.D_S2 ;
+            %               obj.h_b  ;
+            %               obj.A_b  ;
+            %               obj.C_b  ;
+            %               obj.V_S3 ;
+            %               obj.h_S3 ;
+            %               obj.A_S3 ;
+            %               obj.L_S3 ;
+            %               obj.D_S3 ;
+            %               obj.f_Darcy;
+            %               obj.DeltaP_S1_max;
+            %               obj.DeltaP_S2_max;
+            %               obj.DeltaP_S3_max;
+            %               obj.T_set;
+            %               obj.T_amb;
+            %               obj.K;
+            %               obj.Ts;
+            %               obj.Q;
+            %               obj.nx;
+            %               obj.ny;
+            %               obj.nu_mv;
+            %               obj.nu_md]}
+      
+            obj.params = params;
             % Prediction model
-            nlobj.Model.NumberOfParameters = numel(params);
+            nlobj.Model.NumberOfParameters = numel(paramsCell);
             nlobj.Model.StateFcn = "HouseholdTemperatureDynamic_DecMPC";
             nlobj.Model.OutputFcn = "HouseholdOutput_DecMPC";
 
@@ -135,14 +194,20 @@ classdef Household_DecMPC
                 nlobj.ManipulatedVariables(i).Min = 0;
             end
 
-            if obj.validation
-                % Define a random initial state and input
-                x0 = [1; 1; 1; 1];
-                u0 = [2,1];
-                
-                % Validate functions
-                validateFcns(nlobj, x0, u0(1), u0(2), params);
-            end 
+            % CreateParametersBus
+            %load("DecMPC/BusA.mat");
+            %createParameterBus(nlobj, obj.adressBusParams, 'BusParamsA',{[1,2,3]})
+
+            % if obj.validation
+            %     Define a random initial state and input
+            %     x0 = [1; 1; 1; 1];
+            %     u0 = [2,1];
+            % 
+            %     Validate functions
+            %     validateFcns(nlobj, x0, u0(1), u0(2), {params});
+            % end 
+
+
 
         end
 
