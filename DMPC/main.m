@@ -30,9 +30,15 @@ Ts = 1;
 K = 10;
 Q = 1;
 
-A = Household(true, false, T_set, T_amb, Ts, K, Q, ADRESS, true); %%%%%%%%%%% TODO aggiungere address
-B = Household(false, false, T_set, T_amb, Ts, K, Q, ADRESS, true);
-C = Household(false, true, T_set, T_amb, Ts, K, Q, ADRESS, true);
+houses_address_path = 'Simulation/Controller/While';
+nmpc_path_A = strcat(houses_address_path, '/A/A_NMPC');
+A = Household(true, false, T_set, T_amb, Ts, K, Q, nmpc_path_A, true);
+
+nmpc_path_B = strcat(houses_address_path, '/B/B_NMPC');
+B = Household(false, false, T_set, T_amb, Ts, K, Q, nmpc_path_B, true);
+
+nmpc_path_C = strcat(houses_address_path, '/C/C_NMPC');
+C = Household(false, true, T_set, T_amb, Ts, K, Q, nmpc_path_C, true);
 
 %% Load and open Simulink
 

@@ -116,22 +116,16 @@ classdef Household
 
         function params = getParametersCell(obj)
             propList = properties(obj);
-            constPropList = properties('Household');
             
-            numParams = numel(propList) + numel(constPropList) - 2;
+            numParams = numel(propList) - 2; % excluding nlobj and adressBusParams
             params = zeros(numParams, 1); 
-            
-            idx = 1;
-            for i = 1:length(constPropList)
-                params(idx) = Household.(constPropList{i});
-                idx = idx + 1;
-            end
 
-            for i = 1:length(propList)
-                if ~strcmp(propList{i}, 'nlobj') | ~strcmp(propList{i}, obj.adressBusParams) % Exclude nlobj and address properties
-                    params(idx) = obj.(propList{i});
-                    idx = idx + 1;
+            for i = 1:numParams
+                if strcmp(propList{i}, 'nlobj') || strcmp(propList{i}, 'adressBusParams') % Exclude nlobj and adress properties
+                    continue
                 end
+
+                params(i) = obj.(propList{i});
             end
 
             params = {params};
@@ -146,10 +140,10 @@ classdef Household
             nlobj.PredictionHorizon = obj.K; 
             nlobj.Ts = obj.Ts;
 
-            params = getParametersCell();
+            params = obj.getParametersCell();
 
             % CreateParametersBus
-            createParameterBus(nlobj, obj.adressBusParams, 'nameBusParams',params)
+            createParameterBus(nlobj, obj.adressBusParams, 'nameBusParams', params)
 
             % Prediction model
             nlobj.Model.NumberOfParameters = numel(params);
@@ -185,7 +179,7 @@ classdef Household
                 params = {obj};
               
                 % Validate functions
-                validateFcns(A.nlobj, x0, u0(1:7)', u0(8:15)', params);
+                validateFcns(obj.nlobj, x0, u0(1:7)', u0(8:15)', params);
             end
         end
     end
