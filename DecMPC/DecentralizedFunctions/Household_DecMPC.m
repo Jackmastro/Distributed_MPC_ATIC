@@ -72,6 +72,42 @@ classdef Household_DecMPC
             obj.K = K;
             obj.Ts = Ts;
             obj.Q = Q;
+            
+            % Add here all the parameters (public and private) used by mpc
+            obj.params = [obj.rho_w;
+                          obj.cp_w;
+                          obj.V_S1 ;
+                          obj.h_S1 ;
+                          obj.A_S1 ;
+                          obj.L_S1 ;
+                          obj.D_S1 ;
+                          obj.V_S2 ;
+                          obj.h_S2 ;
+                          obj.A_S2 ;
+                          obj.L_S2 ;
+                          obj.D_S2 ;
+                          obj.h_b  ;
+                          obj.A_b  ;
+                          obj.C_b  ;
+                          obj.V_S3 ;
+                          obj.h_S3 ;
+                          obj.A_S3 ;
+                          obj.L_S3 ;
+                          obj.D_S3 ;
+                          obj.f_Darcy;
+                          obj.DeltaP_S1_max;
+                          obj.DeltaP_S2_max;
+                          obj.DeltaP_S3_max;
+                          obj.T_set;
+                          obj.T_amb;
+                          obj.K;
+                          obj.Ts;
+                          obj.Q;
+                          obj.nx;
+                          obj.ny;
+                          obj.nu_mv;
+                          obj.nu_md ];
+
 
             % Create NMPC object
             obj.adressBusParams = adressBusParams;
@@ -79,21 +115,6 @@ classdef Household_DecMPC
             obj.nlobj = obj.createNMPC(); 
 
         end
-        
-        % function params = getParametersCell(obj)
-        %     constPropList = properties('Household_DecMPC');
-        % 
-        %     numParams = numel(constPropList) - 4; %numel(propList) + 
-        %     params = zeros(numParams, 1);
-        % 
-        %     for i = 1:numParams
-        %           if ~strcmp(constPropList{i}, 'nlobj') && ~strcmp(constPropList{i}, obj.adressBusParams) && ~strcmp(constPropList{i}, obj.validation) && ~strcmp(constPropList{i}, obj.params)% Exclude nlobj and address properties
-        %                 params(i) = obj.(constPropList{i});
-        %           end
-        %     end
-        %     % disp("params")
-        %     % params
-        % end
 
         function nlobj = createNMPC(obj)
             % Create NMPC object
@@ -102,80 +123,9 @@ classdef Household_DecMPC
             % NMPC parameters
             nlobj.PredictionHorizon = obj.K; 
             nlobj.Ts = obj.Ts;
-            params = [1,2,3]'
-            paramsCell = {params};
 
-            % obj.params = [obj.rho_w;
-            %               obj.cp_w;
-            %               obj.V_S1 ;
-            %               obj.h_S1 ;
-            %               obj.A_S1 ;
-            %               obj.L_S1 ;
-            %               obj.D_S1 ;
-            %               obj.V_S2 ;
-            %               obj.h_S2 ;
-            %               obj.A_S2 ;
-            %               obj.L_S2 ;
-            %               obj.D_S2 ;
-            %               obj.h_b  ;
-            %               obj.A_b  ;
-            %               obj.C_b  ;
-            %               obj.V_S3 ;
-            %               obj.h_S3 ;
-            %               obj.A_S3 ;
-            %               obj.L_S3 ;
-            %               obj.D_S3 ;
-            %               obj.f_Darcy;
-            %               obj.DeltaP_S1_max;
-            %               obj.DeltaP_S2_max;
-            %               obj.DeltaP_S3_max;
-            %               obj.T_set;
-            %               obj.T_amb;
-            %               obj.K;
-            %               obj.Ts;
-            %               obj.Q;
-            %               obj.nx;
-            %               obj.ny;
-            %               obj.nu_mv;
-            %               obj.nu_md ];
-            %
-            % params = {[obj.rho_w;
-            %               obj.cp_w;
-            %               obj.V_S1 ;
-            %               obj.h_S1 ;
-            %               obj.A_S1 ;
-            %               obj.L_S1 ;
-            %               obj.D_S1 ;
-            %               obj.V_S2 ;
-            %               obj.h_S2 ;
-            %               obj.A_S2 ;
-            %               obj.L_S2 ;
-            %               obj.D_S2 ;
-            %               obj.h_b  ;
-            %               obj.A_b  ;
-            %               obj.C_b  ;
-            %               obj.V_S3 ;
-            %               obj.h_S3 ;
-            %               obj.A_S3 ;
-            %               obj.L_S3 ;
-            %               obj.D_S3 ;
-            %               obj.f_Darcy;
-            %               obj.DeltaP_S1_max;
-            %               obj.DeltaP_S2_max;
-            %               obj.DeltaP_S3_max;
-            %               obj.T_set;
-            %               obj.T_amb;
-            %               obj.K;
-            %               obj.Ts;
-            %               obj.Q;
-            %               obj.nx;
-            %               obj.ny;
-            %               obj.nu_mv;
-            %               obj.nu_md]}
-      
-            obj.params = params;
             % Prediction model
-            nlobj.Model.NumberOfParameters = numel(paramsCell);
+            nlobj.Model.NumberOfParameters = numel({obj.params});
             nlobj.Model.StateFcn = "HouseholdTemperatureDynamic_DecMPC";
             nlobj.Model.OutputFcn = "HouseholdOutput_DecMPC";
 
@@ -194,18 +144,7 @@ classdef Household_DecMPC
                 nlobj.ManipulatedVariables(i).Min = 0;
             end
 
-            % CreateParametersBus
-            %load("DecMPC/BusA.mat");
-            %createParameterBus(nlobj, obj.adressBusParams, 'BusParamsA',{[1,2,3]})
 
-            % if obj.validation
-            %     Define a random initial state and input
-            %     x0 = [1; 1; 1; 1];
-            %     u0 = [2,1];
-            % 
-            %     Validate functions
-            %     validateFcns(nlobj, x0, u0(1), u0(2), {params});
-            % end 
 
 
 
