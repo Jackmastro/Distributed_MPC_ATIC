@@ -2,6 +2,25 @@ clc;
 clear;
 close all;
 
+%% Names
+%Define the name coherently with Simulink
+NAME_SIMULATION = 'Simulation';
+
+% Controllers
+ADDRESS_CONTROLLERS = strcat(NAME_SIMULATION, '/Controller/While');
+
+NAME_NMPC_A = 'NMPC_A';
+NAME_BUS_NMPC_A = 'BusParamsA';
+ADDRESS_NMPC_A = strcat(ADDRESS_CONTROLLERS, '/A/', NAME_NMPC_A);
+
+NAME_NMPC_B = 'NMPC_B';
+NAME_BUS_NMPC_B = 'BusParamsB';
+ADDRESS_NMPC_B = strcat(ADDRESS_CONTROLLERS, '/B/', NAME_NMPC_B);
+
+NAME_NMPC_C = 'NMPC_C';
+NAME_BUS_NMPC_C = 'BusParamsC';
+ADDRESS_NMPC_C = strcat(ADDRESS_CONTROLLERS, '/C/', NAME_NMPC_C);
+
 %% Set Network Objects
 % Set temperatures
 T_set = 350;
@@ -12,15 +31,14 @@ Ts = 1;
 K = 10;
 Q = 1;
 
-houses_address_path = 'Simulation/Controller/While';
-nmpc_path_A = strcat(houses_address_path, '/A/A_NMPC');
-A = Household(true, false, T_set, T_amb, Ts, K, Q, nmpc_path_A, true);
+A = Household(true, false, T_set, T_amb, Ts, K, Q, ADDRESS_NMPC_A, true);
+createParameterBus(A.nlobj, A.adressBusParams, NAME_BUS_NMPC_A, {A.params});
 
-nmpc_path_B = strcat(houses_address_path, '/B/B_NMPC');
-B = Household(false, false, T_set, T_amb, Ts, K, Q, nmpc_path_B, true);
+B = Household(false, false, T_set, T_amb, Ts, K, Q, ADDRESS_NMPC_B, true);
+% createParameterBus(A.nlobj, A.adressBusParams, NAME_BUS_NMPC_A, {A.params});
 
-nmpc_path_C = strcat(houses_address_path, '/C/C_NMPC');
-C = Household(false, true, T_set, T_amb, Ts, K, Q, nmpc_path_C, true);
+C = Household(false, true, T_set, T_amb, Ts, K, Q, ADDRESS_NMPC_C, true);
+% createParameterBus(A.nlobj, A.adressBusParams, NAME_BUS_NMPC_A, {A.params});
 
 %% Load and open Simulink
 % Get the full path of the currently running script

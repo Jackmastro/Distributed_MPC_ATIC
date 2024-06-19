@@ -80,7 +80,7 @@ classdef Household
             obj.is_first_house = is_first_house;
             obj.is_bypass_house = is_bypass_house;
 
-            % Set modeling dimensions properties 
+            % Set modeling dimensions
             if is_bypass_house
                 obj.nx = 7;
             else
@@ -111,29 +111,13 @@ classdef Household
             assignBuses(obj);
 
             % Create NMPC object
-            obj.nlobj = obj.createNMPC();
             obj.adressBusParams = adressBusParams;
-            obj.validation = validation; 
-
+            obj.validation = validation;
+            obj.nlobj = obj.createNMPC();
         end
 
-        function params = getParametersCell(obj)
-            propList = properties(obj);
-            
-            numParams = numel(propList) - 2; % excluding nlobj and adressBusParams
-            params = zeros(numParams, 1); 
+%%%%%%%%% Helper functions
 
-            for i = 1:numParams
-                if strcmp(propList{i}, 'nlobj') || strcmp(propList{i}, 'adressBusParams') % Exclude nlobj and adress properties
-                    continue
-                end
-
-                params(i) = obj.(propList{i});
-            end
-
-            params = {params};
-        end
-        
         function nlobj = createNMPC(obj)
 
             % Create NMPC object
@@ -144,9 +128,6 @@ classdef Household
             nlobj.Ts = obj.Ts;
 
             params = obj.getParametersCell();
-
-            % CreateParametersBus
-            % createParameterBus(nlobj, obj.adressBusParams, 'nameBusParams', params)
 
             % Prediction model
             nlobj.Model.NumberOfParameters = numel(params);
@@ -170,19 +151,39 @@ classdef Household
                 nlobj.ManipulatedVariables(i).Min = 0;
             end
 
-            % Validation 
-            if obj.validation 
-%                 % TO CHECK
-%                 trackingOptions = nlmpcmoveopt;
-%                 trackingOptions.Parameters = params;
-
-                % Define a random initial state and input
-                x0 = ones(obj.nx, 1);  % Example initial states
-                u0 = ones(obj.nu_mv + obj.nu_md, 1);
-              
-                % Validate functions
-                validateFcns(obj.nlobj, x0, u0(1:7)', u0(8:15)', params);
+            if obj.validation
+                obj.validateNMPC(obj)
             end
+        end
+
+        function params = getParametersCell(obj)
+            propList = properties(obj);
+            
+            numParams = numel(propList) - 2; % excluding nlobj and adressBusParams
+            params = zeros(numParams, 1); 
+
+            for i = 1:numParams
+                if strcmp(propList{i}, 'nlobj') || strcmp(propList{i}, 'adressBusParams') % Exclude nlobj and adress properties
+                    continue
+                end
+
+                params(i) = obj.(propList{i});
+            end
+
+            params = {params};
+        end
+
+        function validateNMPC(obj)
+            % % TO CHECK
+            % trackingOptions = nlmpcmoveopt;
+            % trackingOptions.Parameters = params;
+
+            % Define a random initial state and input
+            x0 = ones(obj.nx, 1);  % Example initial states
+            u0 = ones(obj.nu_mv + obj.nu_md, 1);
+
+            % Validate functions
+            validateFcns(obj.nlobj, x0, u0(1:7)', u0(8:15)', obj.params);
         end
 
         function assignBuses(obj)
@@ -248,9 +249,9 @@ classdef Household
         
                 % Create the bus object
                 bus_names = { ...
-                    'Bus_mv_A', ...
+                    'Bus_mv_A',      ...
                     'Bus_mv_seq_A',  ...
-                    'Bus_x_seq_A',  ...
+                    'Bus_x_seq_A',   ...
                     'Bus_md_seq_A'
                 };
                 NMPC_A_output = Simulink.Bus;
@@ -309,9 +310,9 @@ classdef Household
         
                 % Create the bus object
                 bus_names = { ...
-                    'Bus_mv_C', ...
+                    'Bus_mv_C',      ...
                     'Bus_mv_seq_C',  ...
-                    'Bus_x_seq_C',  ...
+                    'Bus_x_seq_C',   ...
                     'Bus_md_seq_C'
                 };
                 NMPC_C_output = Simulink.Bus;
@@ -377,9 +378,9 @@ classdef Household
         
                 % Create the bus object
                 bus_names = { ...
-                    'Bus_mv_B', ...
+                    'Bus_mv_B',      ...
                     'Bus_mv_seq_B',  ...
-                    'Bus_x_seq_B',  ...
+                    'Bus_x_seq_B',   ...
                     'Bus_md_seq_B'
                 };
                 NMPC_B_output = Simulink.Bus;
