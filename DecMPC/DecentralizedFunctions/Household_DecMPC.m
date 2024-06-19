@@ -1,45 +1,52 @@
 classdef Household_DecMPC
     
     % Private household properties 
-    properties (Constant)
-        
-        rho_w = 1; % 1
-        cp_w  = 1;
-        V_S1  = 1;
-        h_S1  = 1;
-        A_S1  = 1;
-        L_S1  = 1;
-        D_S1  = 1;
-        V_S2  = 1;
-        h_S2  = 1;
-        A_S2  = 1; % 10 
-        L_S2  = 1;
-        D_S2  = 1;
-        h_b   = 1;
-        A_b   = 1;
-        C_b   = 1;
-        V_S3  = 1;
-        h_S3  = 1;
-        A_S3  = 1;
-        L_S3  = 1; 
-        D_S3  = 1; % 20
-        f_Darcy = 0.025;
-        DeltaP_S1_max = 4;
-        DeltaP_S2_max = 4;
-        DeltaP_S3_max = 4; % 24
-        
-    end
-    
-    % Public household properties 
-    properties 
+    properties
+        rho_w 
+        cp_w  
+        L_F 
+        D_F 
+        L_R 
+        D_R 
+        L_BYP
+        D_BYP  
+        L_S1 
+        D_S1 
+        L_S2 
+        D_S2 
+        L_S3 
+        D_S3 
+        h_S1 
+        h_S2 
+        h_S3 
+        h_b 
+        h_F 
+        h_R 
+        A_b 
+        C_b 
+        V_S1
+        A_S1 
+        V_S2 
+        A_S2 
+        V_S3 
+        A_S3 
+        V_R 
+        A_R 
+        V_F 
+        A_F 
+        f_Darcy 
+        DeltaP_S1_max 
+        DeltaP_S2_max 
+        DeltaP_S3_max  
+
         % Building set and ambient temperature
-        T_set % 25
-        T_amb % 26
+        T_set 
+        T_amb 
 
         % Controller Hyperparameters
         K
         Ts
-        Q % 29
+        Q 
 
         % Modeling 
         nx
@@ -63,7 +70,54 @@ classdef Household_DecMPC
             obj.ny = 1;
             obj.nu_mv = 1;
             obj.nu_md = 1;
-           
+
+            % Set default parameters
+            obj.rho_w = 971;
+            obj.cp_w  = 4179;
+              
+            obj.L_F = 40;
+            obj.D_F = 0.4;
+            obj.L_R = 40
+            obj.D_R = 0.4
+            obj.L_BYP = 3
+            obj.D_BYP = 0.1
+              
+            obj.L_S1 = 5;
+            obj.D_S1 = 0.1;
+            obj.L_S2 = 50;
+            obj.D_S2 = 0.02;
+            obj.L_S3 = 5;
+            obj.D_S3 = 0.1;
+      
+            obj.h_S1  = 10.5;
+            obj.h_S2  = 10.5;
+            obj.h_S3  = 10.5;
+            obj.h_b = 10.5;
+              
+            obj.h_F = 10.5;
+            obj.h_R = 10.5;
+      
+      
+            obj.A_b = 500;
+            obj.C_b = 3*1000000;
+	      
+            obj.V_S1  = pi/4*obj.D_S1^2*obj.L_S1;
+            obj.A_S1  = pi*obj.D_S1*obj.L_S1;
+            obj.V_S2  = pi/4*obj.D_S2^2*obj.L_S2;
+            obj.A_S2  = pi*obj.D_S2*obj.L_S2;
+            obj.V_S3  = pi/4*obj.D_S3^2*obj.L_S3;
+            obj.A_S3  = pi*obj.D_S3*obj.L_S3;
+      
+            obj.V_R  = pi/4*obj.D_R^2*obj.L_R;
+            obj.A_R  = pi*obj.D_R*obj.L_R;
+            obj.V_F  = pi/4*obj.D_F^2*obj.L_F;
+            obj.A_F  = pi*obj.D_F*obj.L_F;
+      
+            obj.f_Darcy = 0.025;
+            obj.DeltaP_S1_max = 4*100000;
+            obj.DeltaP_S2_max = 4*100000;
+            obj.DeltaP_S3_max = 4*100000;
+                 
             % Set temperature values
             obj.T_amb = T_amb;
             obj.T_set = T_set;
@@ -143,12 +197,6 @@ classdef Household_DecMPC
             for i = 1:obj.nu_mv
                 nlobj.ManipulatedVariables(i).Min = 0;
             end
-
-
-
-
-
         end
-
     end
 end
