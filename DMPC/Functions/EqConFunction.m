@@ -1,6 +1,6 @@
 function ceq = EqConFunction(x, u, ~, params)
 
-    is_bypass_house = params(27);
+    is_bypass_house = params(49);
     
     % States
     T_B  = x(7);

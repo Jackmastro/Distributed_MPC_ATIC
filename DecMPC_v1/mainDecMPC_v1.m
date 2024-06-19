@@ -53,7 +53,6 @@ A = Household_DecMPC(T_set, T_amb, Ts, K, Q, [NAME_SIMULATOR '/' ADRESS_NMPC_A ]
 createParameterBus(A.nlobj, A.adressBusParams, NAME_BUS_NMPC_A, {A.params});
 InitializeParamInSimulator(NAME_SIMULATOR, ADRESS_HOUSE_A, A); %N.B. set the parameters after having modified the params of A but before launching simulink
 
-
 B = Household_DecMPC(T_set, T_amb, Ts, K, Q, [NAME_SIMULATOR '/' ADRESS_NMPC_B ], true);
 createParameterBus(B.nlobj, B.adressBusParams, NAME_BUS_NMPC_B, {B.params});
 InitializeParamInSimulator(NAME_SIMULATOR, ADRESS_HOUSE_B, B)

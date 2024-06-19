@@ -6,28 +6,29 @@ function dxdt = ContHouseholdTemperatureDynamic(x, u, params)
     V_F     = params(3);
     h_F     = params(4);
     A_F     = params(5);
-    V_S1    = params(6);
-    h_S1    = params(7);
-    A_S1    = params(8);
-    V_S2    = params(9);
-    h_S2    = params(10);
-    A_S2    = params(11);
-    h_b     = params(12);
-    A_b     = params(13);
-    C_b     = params(14);
-    V_S3    = params(15);
-    h_S3    = params(16);
-    A_S3    = params(17);
-    V_R     = params(18);
-    h_R     = params(19);
-    A_R     = params(20);
-    V_B     = params(21);
-    h_B     = params(22);
-    A_B     = params(23);
+    V_S1    = params(8);
+    h_S1    = params(9);
+    A_S1    = params(10);
+    V_S2    = params(13);
+    h_S2    = params(14);
+    A_S2    = params(15);
+    h_b     = params(18);
+    A_b     = params(19);
+    C_b     = params(20);
+    V_S3    = params(21);
+    h_S3    = params(22);
+    A_S3    = params(23);
+    V_R     = params(26);
+    h_R     = params(27);
+    A_R     = params(28);
+    V_BYP     = params(31);
+    h_BYP     = params(32);
+    A_BYP     = params(33);
 
-    T_amb = params(25);
 
-    is_bypass_house = params(27);
+    T_amb = params(41);
+
+    is_bypass_house = params(49);
 
     % States
     T_F  = x(1);
@@ -56,9 +57,9 @@ function dxdt = ContHouseholdTemperatureDynamic(x, u, params)
     
     % Bypass
     if is_bypass_house
-        T_B  = x(7);
-        dT_B = (m_O * cp_w * T_F - h_B * A_B * (T_B - T_amb) - m_O * cp_w * T_R) / (rho_w * cp_w * V_B);
-        dxdt = [dT_F; dT_S1; dT_S2; dT_b; dT_S3; dT_R; dT_B];
+        T_BYP  = x(7);
+        dT_BYP = (m_O * cp_w * T_F - h_BYP * A_BYP * (T_BYP - T_amb) - m_O * cp_w * T_R) / (rho_w * cp_w * V_BYP);
+        dxdt = [dT_F; dT_S1; dT_S2; dT_b; dT_S3; dT_R; dT_BYP];
     else
         dxdt = [dT_F; dT_S1; dT_S2; dT_b; dT_S3; dT_R];
     end

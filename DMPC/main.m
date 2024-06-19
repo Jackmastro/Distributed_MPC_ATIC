@@ -26,19 +26,42 @@ ADDRESS_NMPC_C = strcat(ADDRESS_CONTROLLERS, '/C/', NAME_NMPC_C);
 T_set = 350;
 T_amb = 273;
 
+% Params of the simulation
+Sim_Horizon = '8640';
+
 % Controller hyperparameters 
-Ts = 1;
-K = 10;
+Ts = 15*60;
+K = 4;
 Q = 1;
+validation = false;
 
-A = Household(true, false, T_set, T_amb, Ts, K, Q, ADDRESS_NMPC_A, true);
+
+A = Household(true, false, T_set, T_amb, Ts, K, Q, ADDRESS_NMPC_A);
 createParameterBus(A.nlobj, A.adressBusParams, NAME_BUS_NMPC_A, {A.params});
+%InitializeParamInSimulator(NAME_SIMULATOR, ADRESS_HOUSE_A, A); %N.B. set the parameters after having modified the params of A but before launching simulink
+if validation
+      x0 = ones(A.nx, 1);  % Example initial states
+      u0 = ones(A.nu_mv + A.nu_md, 1);
+      validateFcns(A.nlobj, x0, u0(1:7)', u0(8:15)', {A.params});
+end
 
-B = Household(false, false, T_set, T_amb, Ts, K, Q, ADDRESS_NMPC_B, true);
-% createParameterBus(A.nlobj, A.adressBusParams, NAME_BUS_NMPC_A, {A.params});
+B = Household(false, false, T_set, T_amb, Ts, K, Q, ADDRESS_NMPC_B);
+createParameterBus(B.nlobj, B.adressBusParams, NAME_BUS_NMPC_B, {B.params});
+%InitializeParamInSimulator(NAME_SIMULATOR, ADRESS_HOUSE_B, B)
+if validation
+      x0 = ones(B.nx, 1);  % Example initial states
+      u0 = ones(B.nu_mv + B.nu_md, 1);
+      validateFcns(B.nlobj, x0, u0(1:7)', u0(8:23)', {B.params});
+end
 
-C = Household(false, true, T_set, T_amb, Ts, K, Q, ADDRESS_NMPC_C, true);
-% createParameterBus(A.nlobj, A.adressBusParams, NAME_BUS_NMPC_A, {A.params});
+C = Household(false, true, T_set, T_amb, Ts, K, Q, ADDRESS_NMPC_C);
+createParameterBus(C.nlobj, C.adressBusParams, NAME_BUS_NMPC_C, {C.params});
+%InitializeParamInSimulator(NAME_SIMULATOR, ADRESS_HOUSE_C, C)
+if validation
+      x0 = ones(C.nx, 1);  % Example initial states
+      u0 = ones(C.nu_mv + C.nu_md, 1);
+      validateFcns(C.nlobj, x0, u0(1:7)', u0(8:15)', {C.params});
+end
 
 %% Load and open Simulink
 % Get the full path of the currently running script

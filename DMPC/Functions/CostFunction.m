@@ -1,21 +1,21 @@
 function cost = CostFunction(x, u, ~, ~, params) 
 
     % NMPC Parameters 
-    Q = params(34);
+    Q = params(44);
 
-    T_set = params(24);
+    T_set = params(40);
 
-    is_first_house = params(26); 
-    is_bypass_house = params(27);
+    is_first_house = params(50); 
+    is_bypass_house = params(49);
 
-    delta_m_O_pred = params(35);
-    delta_m_O_succ = params(36);
-    delta_m_R_pred = params(37);
-    delta_m_R_succ = params(38);
-    delta_T_F_pred = params(39);
-    delta_T_F_succ = params(40);
-    delta_T_R_pred = params(41);
-    delta_T_R_succ = params(41);
+    delta_m_O_pred = params(51);
+    delta_m_O_succ = params(52);
+    delta_m_R_pred = params(53);
+    delta_m_R_succ = params(54);
+    delta_T_F_pred = params(55);
+    delta_T_F_succ = params(56);
+    delta_T_R_pred = params(57);
+    delta_T_R_succ = params(58);
 
     % States
     T_F  = x(:,1);

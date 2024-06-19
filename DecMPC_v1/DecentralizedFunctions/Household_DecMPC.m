@@ -1,6 +1,6 @@
 classdef Household_DecMPC
     
-    % Private household properties 
+    % Public household properties 
     properties
         rho_w 
         cp_w  

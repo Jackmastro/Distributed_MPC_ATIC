@@ -1,34 +1,53 @@
 classdef Household
     
-    % Private household properties 
-    properties (Constant)
-        rho_w = 1; % 1
-        cp_w  = 1;
-        V_F   = 1;
-        h_F   = 1;
-        A_F   = 1;
-        V_S1  = 1;
-        h_S1  = 1;
-        A_S1  = 1;
-        V_S2  = 1;
-        h_S2  = 1; % 10
-        A_S2  = 1;
-        h_b   = 1;
-        A_b   = 1;
-        C_b   = 1;
-        V_S3  = 1;
-        h_S3  = 1;
-        A_S3  = 1;
-        V_R   = 1;
-        h_R   = 1;
-        A_R   = 1; % 20
-        V_B   = 1;
-        h_B   = 1;
-        A_B   = 1; % 23
-    end
-    
     % Public household properties 
-    properties 
+    properties
+        rho_w 
+        cp_w  
+        L_F 
+        D_F 
+        L_R 
+        D_R 
+        L_BYP
+        D_BYP  
+        L_S1 
+        D_S1 
+        L_S2 
+        D_S2 
+        L_S3 
+        D_S3 
+        h_S1 
+        h_S2 
+        h_S3 
+        h_b 
+        h_F 
+        h_R
+        h_BYP
+        A_b 
+        C_b 
+        V_S1
+        A_S1 
+        V_S2 
+        A_S2 
+        V_S3 
+        A_S3
+        V_BYP
+        V_R 
+        A_R 
+        V_F 
+        A_F 
+        A_BYP
+        f_Darcy 
+        DeltaP_S1_max 
+        DeltaP_S2_max 
+        DeltaP_S3_max  
+        T_F_0
+        T_S1_0
+        T_S2_0
+        T_S3_0
+        T_b_0
+        T_R_0
+    
         % Building set and ambient temperature
         T_set % 24
         T_amb
@@ -69,12 +88,12 @@ classdef Household
         % NMPC object and adress for Simulink
         nlobj
         adressBusParams
-        validation
+        params
     end
     
     methods
 
-        function obj = Household(is_first_house, is_bypass_house, T_set, T_amb, Ts, K, Q, adressBusParams, validation) 
+        function obj = Household(is_first_house, is_bypass_house, T_set, T_amb, Ts, K, Q, adressBusParams) 
             
             % Set the first_house and bypass_house properties
             obj.is_first_house = is_first_house;
@@ -98,6 +117,61 @@ classdef Household
                 obj.nu_md = 16;
             end
 
+            % Set default parameters
+            obj.rho_w = 971;
+            obj.cp_w  = 4179;
+              
+            obj.L_F = 40;
+            obj.D_F = 0.4;
+            obj.L_R = 40;
+            obj.D_R = 0.4;
+            obj.L_BYP = 3;
+            obj.D_BYP = 0.1;
+              
+            obj.L_S1 = 5;
+            obj.D_S1 = 0.1;
+            obj.L_S2 = 50;
+            obj.D_S2 = 0.05;
+            obj.L_S3 = 5;
+            obj.D_S3 = 0.1;
+      
+            obj.h_S1  = 1.5;
+            obj.h_S2  = 1.5;
+            obj.h_S3  = 1.5;
+            obj.h_b = 1.5;
+            obj.h_F = 1.5;
+            obj.h_R = 1.5;
+            obj.h_BYP = 1.5;
+      
+      
+            obj.A_b = 500;
+            obj.C_b = 3*1000000;
+	      
+            obj.V_S1  = pi/4*obj.D_S1^2*obj.L_S1;
+            obj.A_S1  = pi*obj.D_S1*obj.L_S1;
+            obj.V_S2  = pi/4*obj.D_S2^2*obj.L_S2;
+            obj.A_S2  = pi*obj.D_S2*obj.L_S2;
+            obj.V_S3  = pi/4*obj.D_S3^2*obj.L_S3;
+            obj.A_S3  = pi*obj.D_S3*obj.L_S3;
+            obj.V_R  = pi/4*obj.D_R^2*obj.L_R;
+            obj.A_R  = pi*obj.D_R*obj.L_R;
+            obj.V_F  = pi/4*obj.D_F^2*obj.L_F;
+            obj.A_F  = pi*obj.D_F*obj.L_F;
+            obj.V_BYP  = pi/4*obj.D_BYP^2*obj.L_BYP;
+            obj.A_BYP  = pi*obj.D_BYP*obj.L_BYP;
+      
+            obj.f_Darcy = 0.025;
+            obj.DeltaP_S1_max = 10*100000;
+            obj.DeltaP_S2_max = 10*100000;
+            obj.DeltaP_S3_max = 10*100000;
+
+            obj.T_F_0 = 283;
+            obj.T_S1_0 = 283;
+            obj.T_S2_0 = 283;
+            obj.T_S3_0 = 283;
+            obj.T_b_0 = 286;
+            obj.T_R_0 = 283;
+                 
             % Set temperature values
             obj.T_amb = T_amb;
             obj.T_set = T_set;
@@ -107,12 +181,72 @@ classdef Household
             obj.Ts = Ts;
             obj.Q = Q;
 
+            % Add here all the parameters (public and private) used by mpc
+            obj.params = [obj.rho_w; %1
+                          obj.cp_w;
+                          obj.V_F ;
+                          obj.h_F ;
+                          obj.A_F ; %5
+                          obj.L_F ;
+                          obj.D_F ;                          
+                          obj.V_S1 ;
+                          obj.h_S1 ;
+                          obj.A_S1 ; %10
+                          obj.L_S1 ;
+                          obj.D_S1 ;
+                          obj.V_S2 ;
+                          obj.h_S2 ;
+                          obj.A_S2 ; %15
+                          obj.L_S2 ;
+                          obj.D_S2 ;
+                          obj.h_b  ;
+                          obj.A_b  ;
+                          obj.C_b  ; %20
+                          obj.V_S3 ;
+                          obj.h_S3 ;
+                          obj.A_S3 ;
+                          obj.L_S3 ;
+                          obj.D_S3 ; %25
+                          obj.V_R ;
+                          obj.h_R ;
+                          obj.A_R ;
+                          obj.L_R ;
+                          obj.D_R ; %30
+                          obj.V_BYP ;
+                          obj.h_BYP ;
+                          obj.A_BYP ;
+                          obj.L_BYP ;
+                          obj.D_BYP ; %35                          
+                          obj.f_Darcy;
+                          obj.DeltaP_S1_max;
+                          obj.DeltaP_S2_max;
+                          obj.DeltaP_S3_max;
+                          obj.T_set; %40
+                          obj.T_amb;
+                          obj.K;
+                          obj.Ts;
+                          obj.Q;
+                          obj.nx; %45
+                          obj.ny;
+                          obj.nu_mv;
+                          obj.nu_md;
+                          obj.is_bypass_house;
+                          obj.is_first_house; %50
+                          obj.delta_m_O_pred;
+                          obj.delta_m_O_succ;
+                          obj.delta_m_R_pred;
+                          obj.delta_m_R_succ;
+                          obj.delta_T_F_pred; %55
+                          obj.delta_T_F_succ;
+                          obj.delta_T_R_pred;
+                          obj.delta_T_R_succ;]; %58
+
+
             % Assign Buses for storage
             assignBuses(obj);
 
             % Create NMPC object
             obj.adressBusParams = adressBusParams;
-            obj.validation = validation;
             obj.nlobj = obj.createNMPC();
         end
 
@@ -131,7 +265,7 @@ classdef Household
 
             % Prediction model
             nlobj.Model.NumberOfParameters = numel(params);
-            nlobj.Model.StateFcn = "HouseholdTemperatureDynamicStateFcn";
+            nlobj.Model.StateFcn = "ContHouseholdTemperatureDynamic";
             nlobj.Model.IsContinuousTime = false;
             nlobj.Model.OutputFcn = "HouseholdOutput";
 
@@ -150,10 +284,6 @@ classdef Household
             for i = 1:obj.nu_mv
                 nlobj.ManipulatedVariables(i).Min = 0;
             end
-
-            if obj.validation
-                obj.validateNMPC(obj)
-            end
         end
 
         function params = getParametersCell(obj)
@@ -171,19 +301,6 @@ classdef Household
             end
 
             params = {params};
-        end
-
-        function validateNMPC(obj)
-            % % TO CHECK
-            % trackingOptions = nlmpcmoveopt;
-            % trackingOptions.Parameters = params;
-
-            % Define a random initial state and input
-            x0 = ones(obj.nx, 1);  % Example initial states
-            u0 = ones(obj.nu_mv + obj.nu_md, 1);
-
-            % Validate functions
-            validateFcns(obj.nlobj, x0, u0(1:7)', u0(8:15)', obj.params);
         end
 
         function assignBuses(obj)
