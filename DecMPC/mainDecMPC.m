@@ -1,4 +1,4 @@
-clc;
+ clc;
 clear; 
 %close all;
 
@@ -41,11 +41,11 @@ InitializeParamInSimulator(NAME_SIMULATOR, ADRESS_HOUSE_A, A); %N.B. set the par
 
 
 B = Household_DecMPC(T_set, T_amb, Ts, K, Q, [NAME_SIMULATOR '/' ADRESS_NMPC_B ], true);
-createParameterBus(A.nlobj, A.adressBusParams, NAME_BUS_NMPC_B, {A.params});
+createParameterBus(B.nlobj, B.adressBusParams, NAME_BUS_NMPC_B, {B.params});
 InitializeParamInSimulator(NAME_SIMULATOR, ADRESS_HOUSE_B, B)
 
 C = Household_DecMPC(T_set, T_amb, Ts, K, Q, [NAME_SIMULATOR '/' ADRESS_NMPC_C ], true);
-createParameterBus(A.nlobj, A.adressBusParams, NAME_BUS_NMPC_C, {A.params});
+createParameterBus(C.nlobj, C.adressBusParams, NAME_BUS_NMPC_C, {C.params});
 InitializeParamInSimulator(NAME_SIMULATOR, ADRESS_HOUSE_C, C)
 
 
