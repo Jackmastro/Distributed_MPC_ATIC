@@ -60,7 +60,7 @@ classdef Household
         alfa_m_O_pred = 1; 
         alfa_m_O_succ = 1;
         alfa_m_R_pred = 1;
-        alfa_m_R_alfa = 1;
+        alfa_m_R_succ = 1;
         alfa_T_F_pred = 1;
         alfa_T_F_succ = 1;
         alfa_T_R_pred = 1;
