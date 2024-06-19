@@ -47,6 +47,7 @@ classdef Household
         T_S3_0
         T_b_0
         T_R_0
+        T_BYP_0
     
         % Building set and ambient temperature
         T_set % 24
@@ -171,6 +172,7 @@ classdef Household
             obj.T_S3_0 = 283;
             obj.T_b_0 = 286;
             obj.T_R_0 = 283;
+            obj.T_BYP_0 = 283;
                  
             % Set temperature values
             obj.T_amb = T_amb;

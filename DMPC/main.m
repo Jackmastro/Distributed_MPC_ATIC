@@ -12,14 +12,17 @@ ADDRESS_CONTROLLERS = strcat(NAME_SIMULATION, '/Controller/While');
 NAME_NMPC_A = 'NMPC_A';
 NAME_BUS_NMPC_A = 'BusParamsA';
 ADDRESS_NMPC_A = strcat(ADDRESS_CONTROLLERS, '/A/', NAME_NMPC_A);
+ADRESS_HOUSE_A = strcat(NAME_SIMULATION, '/Plant/HouseA');
 
 NAME_NMPC_B = 'NMPC_B';
 NAME_BUS_NMPC_B = 'BusParamsB';
 ADDRESS_NMPC_B = strcat(ADDRESS_CONTROLLERS, '/B/', NAME_NMPC_B);
+ADRESS_HOUSE_B = strcat(NAME_SIMULATION, '/Plant/HouseB');
 
 NAME_NMPC_C = 'NMPC_C';
 NAME_BUS_NMPC_C = 'BusParamsC';
 ADDRESS_NMPC_C = strcat(ADDRESS_CONTROLLERS, '/C/', NAME_NMPC_C);
+ADRESS_HOUSE_C = strcat(NAME_SIMULATION, '/Plant/HouseC');
 
 %% Set Network Objects
 % Set temperatures
@@ -38,7 +41,7 @@ validation = false;
 
 A = Household(true, false, T_set, T_amb, Ts, K, Q, ADDRESS_NMPC_A);
 createParameterBus(A.nlobj, A.adressBusParams, NAME_BUS_NMPC_A, {A.params});
-%InitializeParamInSimulator(NAME_SIMULATOR, ADRESS_HOUSE_A, A); %N.B. set the parameters after having modified the params of A but before launching simulink
+InitializeParamInSimulator(ADRESS_HOUSE_A, A); %N.B. set the parameters after having modified the params of A but before launching simulink
 if validation
       x0 = ones(A.nx, 1);  % Example initial states
       u0 = ones(A.nu_mv + A.nu_md, 1);
@@ -47,7 +50,7 @@ end
 
 B = Household(false, false, T_set, T_amb, Ts, K, Q, ADDRESS_NMPC_B);
 createParameterBus(B.nlobj, B.adressBusParams, NAME_BUS_NMPC_B, {B.params});
-%InitializeParamInSimulator(NAME_SIMULATOR, ADRESS_HOUSE_B, B)
+InitializeParamInSimulator(ADRESS_HOUSE_B, B)
 if validation
       x0 = ones(B.nx, 1);  % Example initial states
       u0 = ones(B.nu_mv + B.nu_md, 1);
@@ -56,7 +59,7 @@ end
 
 C = Household(false, true, T_set, T_amb, Ts, K, Q, ADDRESS_NMPC_C);
 createParameterBus(C.nlobj, C.adressBusParams, NAME_BUS_NMPC_C, {C.params});
-%InitializeParamInSimulator(NAME_SIMULATOR, ADRESS_HOUSE_C, C)
+InitializeParamInSimulator(ADRESS_HOUSE_C, C)
 if validation
       x0 = ones(C.nx, 1);  % Example initial states
       u0 = ones(C.nu_mv + C.nu_md, 1);

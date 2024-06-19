@@ -1,5 +1,4 @@
 function y = HouseholdOutput(x, ~, ~)
-
-    y = x(4); 
-
+    T_b = x(4);
+    y = T_b ; 
 end

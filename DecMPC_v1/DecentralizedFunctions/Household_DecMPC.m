@@ -22,6 +22,7 @@ classdef Household_DecMPC
         h_b 
         h_F 
         h_R 
+        h_BYP
         A_b 
         C_b 
         V_S1
@@ -44,6 +45,7 @@ classdef Household_DecMPC
         T_S3_0
         T_b_0
         T_R_0
+        T_BYP_0
 
         % Building set and ambient temperature
         T_set 
@@ -96,15 +98,15 @@ classdef Household_DecMPC
             obj.D_S3 = 0.1;
       
             obj.h_S1  = 1.5;
-            obj.h_S2  = 1.5;
+            obj.h_S2  = 30;
             obj.h_S3  = 1.5;
             obj.h_b = 1.5;
               
             obj.h_F = 1.5;
             obj.h_R = 1.5;
+            obj.h_BYP = 1.5;
       
-      
-            obj.A_b = 500;
+            obj.A_b = 100;
             obj.C_b = 3*1000000;
 	      
             obj.V_S1  = pi/4*obj.D_S1^2*obj.L_S1;
@@ -130,6 +132,7 @@ classdef Household_DecMPC
             obj.T_S3_0 = 283;
             obj.T_b_0 = 286;
             obj.T_R_0 = 283;
+            obj.T_BYP_0 = 283;
                  
             % Set temperature values
             obj.T_amb = T_amb;
@@ -165,12 +168,12 @@ classdef Household_DecMPC
                           obj.DeltaP_S1_max;
                           obj.DeltaP_S2_max;
                           obj.DeltaP_S3_max;
-                          obj.T_set;
+                          obj.T_set; %25
                           obj.T_amb;
                           obj.K;
                           obj.Ts;
                           obj.Q;
-                          obj.nx;
+                          obj.nx; %30
                           obj.ny;
                           obj.nu_mv;
                           obj.nu_md ];
