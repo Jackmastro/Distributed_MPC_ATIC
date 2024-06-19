@@ -5,7 +5,7 @@ clear;
 %% Set Network Objects
 
 %Define the name coherently with Simulink
-NAME_SIMULATOR = 'Simulator_DecMPC_v0';
+NAME_SIMULATOR = 'Simulator_DecMPC_v1';
 
 ADRESS_HOUSE_A = 'HouseA';
 ADRESS_NMPC_A = 'NMPC_A';
@@ -24,8 +24,22 @@ NAME_BUS_NMPC_C = 'BusParamsC';
 T_set = 300;
 T_amb = 273;
 
+
+%Tuning values of HEAT_PRODUCED
+T_NOMINAL_FEED = 350;
+T_FEED_MAX = 370;
+T_FEED_MIN = 310;
+
+T_SP_RETURN = 320;      
+m_dot_NOMINAL_FEED = 10;
+m_dot_NOMINAL_BYP = 0.1 * m_dot_NOMINAL_FEED;
+m_dot_FEED_MAX = 20;
+
+K_temp = 10;
+K_m_dot = 10; 
+
 % Params of the simulation
-Sim_Horizon = '50000';
+Sim_Horizon = '8640';
 
 % Controller hyperparameters 
 Ts = 15*60;

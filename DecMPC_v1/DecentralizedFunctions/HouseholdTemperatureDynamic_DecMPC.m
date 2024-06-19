@@ -26,6 +26,7 @@ function dxdt = HouseholdTemperatureDynamic_DecMPC(x, u, params)
     % Inputs
     m_U  = u(1);
     T_F = u(2);
+    % m_F  = u(3);
 
 
     % System of equations 

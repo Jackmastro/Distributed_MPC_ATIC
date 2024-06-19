@@ -38,6 +38,12 @@ classdef Household_DecMPC
         DeltaP_S1_max 
         DeltaP_S2_max 
         DeltaP_S3_max  
+        T_F_0
+        T_S1_0
+        T_S2_0
+        T_S3_0
+        T_b_0
+        T_R_0
 
         % Building set and ambient temperature
         T_set 
@@ -69,7 +75,7 @@ classdef Household_DecMPC
             obj.nx = 4;
             obj.ny = 1;
             obj.nu_mv = 1;
-            obj.nu_md = 1;
+            obj.nu_md = 2;
 
             % Set default parameters
             obj.rho_w = 971;
@@ -77,25 +83,25 @@ classdef Household_DecMPC
               
             obj.L_F = 40;
             obj.D_F = 0.4;
-            obj.L_R = 40
-            obj.D_R = 0.4
-            obj.L_BYP = 3
-            obj.D_BYP = 0.1
+            obj.L_R = 40;
+            obj.D_R = 0.4;
+            obj.L_BYP = 3;
+            obj.D_BYP = 0.1;
               
             obj.L_S1 = 5;
             obj.D_S1 = 0.1;
             obj.L_S2 = 50;
-            obj.D_S2 = 0.02;
+            obj.D_S2 = 0.05;
             obj.L_S3 = 5;
             obj.D_S3 = 0.1;
       
-            obj.h_S1  = 10.5;
-            obj.h_S2  = 10.5;
-            obj.h_S3  = 10.5;
-            obj.h_b = 10.5;
+            obj.h_S1  = 1.5;
+            obj.h_S2  = 1.5;
+            obj.h_S3  = 1.5;
+            obj.h_b = 1.5;
               
-            obj.h_F = 10.5;
-            obj.h_R = 10.5;
+            obj.h_F = 1.5;
+            obj.h_R = 1.5;
       
       
             obj.A_b = 500;
@@ -114,9 +120,16 @@ classdef Household_DecMPC
             obj.A_F  = pi*obj.D_F*obj.L_F;
       
             obj.f_Darcy = 0.025;
-            obj.DeltaP_S1_max = 4*100000;
-            obj.DeltaP_S2_max = 4*100000;
-            obj.DeltaP_S3_max = 4*100000;
+            obj.DeltaP_S1_max = 10*100000;
+            obj.DeltaP_S2_max = 10*100000;
+            obj.DeltaP_S3_max = 10*100000;
+
+            obj.T_F_0 = 283;
+            obj.T_S1_0 = 283;
+            obj.T_S2_0 = 283;
+            obj.T_S3_0 = 283;
+            obj.T_b_0 = 286;
+            obj.T_R_0 = 283;
                  
             % Set temperature values
             obj.T_amb = T_amb;
@@ -128,26 +141,26 @@ classdef Household_DecMPC
             obj.Q = Q;
             
             % Add here all the parameters (public and private) used by mpc
-            obj.params = [obj.rho_w;
+            obj.params = [obj.rho_w; %1
                           obj.cp_w;
                           obj.V_S1 ;
                           obj.h_S1 ;
-                          obj.A_S1 ;
+                          obj.A_S1 ; %5
                           obj.L_S1 ;
                           obj.D_S1 ;
                           obj.V_S2 ;
                           obj.h_S2 ;
-                          obj.A_S2 ;
+                          obj.A_S2 ; %10
                           obj.L_S2 ;
                           obj.D_S2 ;
                           obj.h_b  ;
                           obj.A_b  ;
-                          obj.C_b  ;
+                          obj.C_b  ;%15
                           obj.V_S3 ;
                           obj.h_S3 ;
                           obj.A_S3 ;
                           obj.L_S3 ;
-                          obj.D_S3 ;
+                          obj.D_S3 ;%20
                           obj.f_Darcy;
                           obj.DeltaP_S1_max;
                           obj.DeltaP_S2_max;
