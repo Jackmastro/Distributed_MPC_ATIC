@@ -38,7 +38,6 @@ K = 4;
 Q = 1;
 validation = false;
 
-
 A = Household(true, false, T_set, T_amb, Ts, K, Q, ADDRESS_NMPC_A);
 createParameterBus(A.nlobj, A.adressBusParams, NAME_BUS_NMPC_A, {A.params});
 InitializeParamInSimulator(ADRESS_HOUSE_A, A); %N.B. set the parameters after having modified the params of A but before launching simulink
@@ -68,26 +67,30 @@ end
 
 %% Load and open Simulink
 % Get the full path of the currently running script
-% if isdeployed
-%     % If the code is deployed, use the built-in method
-%     scriptFullPath = mfilename('fullpath');
-% else
-%     % If running in the MATLAB environment, use the editor API
-%     scriptFullPath = matlab.desktop.editor.getActiveFilename;
-% end
-% 
-% % Extract the directory part of the path
-% [scriptDir, ~, ~] = fileparts(scriptFullPath);
-% 
-% % Change the current directory to the script's directory
-% cd(scriptDir);
-% 
-% % Display the current directory to confirm the change
-% disp(['Current directory changed to: ', scriptDir]);
+if isdeployed
+    % If the code is deployed, use the built-in method
+    scriptFullPath = mfilename('fullpath');
+else
+    % If running in the MATLAB environment, use the editor API
+    scriptFullPath = matlab.desktop.editor.getActiveFilename;
+end
 
-% % Define the folder containing .mat files
-% bus_folder_name = 'LoadBus';
-% 
+% Extract the directory part of the path
+[scriptDir, ~, ~] = fileparts(scriptFullPath);
+
+% Change the current directory to the script's directory
+cd(scriptDir);
+
+% Display the current directory to confirm the change
+disp(['Current directory changed to: ', scriptDir]);
+
+% Define the folder containing .mat files
+bus_folder_name = 'LoadBus';
+
+% Load bus for the initial conditions
+mat_file = fullfile(bus_folder_name, 'Bus_IC.mat');
+load(mat_file);
+
 % % Get a list of all .mat files in the folder
 % mat_files = dir(fullfile(bus_folder_name, '*.mat'));
 % 
@@ -96,8 +99,7 @@ end
 %     mat_file = fullfile(bus_folder_name, mat_files(k).name);
 %     load(mat_file);
 % end
-% 
-% % Define and load the simulation model
-% simulation_name = 'Simulation';
-% % load_system(simulation_name);
-% % open_system(simulation_name);
+
+%% Load the simulation model
+% load_system(NAME_SIMULATION);
+% open_system(NAME_SIMULATION);
