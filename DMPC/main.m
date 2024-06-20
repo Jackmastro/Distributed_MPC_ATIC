@@ -33,7 +33,7 @@ T_amb = 273;
 Sim_Horizon = '8640';
 
 % Controller hyperparameters 
-Ts = 15*60;
+Ts = 1;
 K = 4;
 Q = 1;
 validation = false;

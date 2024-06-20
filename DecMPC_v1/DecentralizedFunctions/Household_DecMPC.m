@@ -49,7 +49,7 @@ classdef Household_DecMPC
 
         % Building set and ambient temperature
         T_set 
-        T_amb 
+        T_amb
 
         % Controller Hyperparameters
         K
@@ -201,6 +201,11 @@ classdef Household_DecMPC
 
             % Cost
             nlobj.Optimization.CustomCostFcn = "CostFunction_DecMPC";
+            nlobj.Optimization.ReplaceStandardCost = false;
+            % nlobj.Weights.ManipulatedVariables = 
+            % nlobj.Weights.ManipulatedVariablesRate = 
+            % nlobj.Weights.ECR = ;
+            nlobj.Weights.OutputVariables = obj.Q;
 
             % Constraints
             nlobj.Optimization.CustomIneqConFcn = "IneqConFunction_DecMPC";

@@ -19,11 +19,21 @@ ADRESS_HOUSE_C = strcat(NAME_SIMULATION, '/HouseC');
 ADRESS_NMPC_C = 'NMPC_C';
 NAME_BUS_NMPC_C = 'BusParamsC';
 
+% Controller hyperparameters 
+Ts = 15*60;
+K = 4;
+Q = 100;
+SimHorizon = 86400;
+t = [0:Ts:SimHorizon];
 
 % Set temperatures
 T_set = 300;
 T_amb = 273;
+T_amb_average = 273;
+T_amb_day_excursion_pp = 10; %peak to peak temperature excursion
 
+global T_amb_signal;
+T_amb_signal = T_amb_day_excursion_pp*sin(2*pi/86400*t)+T_amb_average
 
 %Tuning values of HEAT_PRODUCED
 T_NOMINAL_FEED = 350;
@@ -37,14 +47,6 @@ m_dot_FEED_MAX = 20;
 
 K_temp = 0; % TODO: TUNING PER K>0
 K_m_dot = 0; 
-
-% Params of the simulation
-Sim_Horizon = '86400';
-
-% Controller hyperparameters 
-Ts = 60*60;
-K = 4;
-Q = 100;
 
 
 % Instiantating household objects
@@ -76,7 +78,7 @@ open_system(NAME_SIMULATION);
 % % set_param();
 % 
 % % Set simulation parameters
-set_param(NAME_SIMULATION, 'StartTime', '0', 'StopTime', Sim_Horizon, 'Solver', 'ode45');
+set_param(NAME_SIMULATION, 'StartTime', '0', 'StopTime', num2str(SimHorizon), 'Solver', 'ode45');
 % 
 % % Run the simulation
 simOut = sim(NAME_SIMULATION);
