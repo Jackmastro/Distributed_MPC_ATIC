@@ -7,7 +7,7 @@ close all;
 NAME_SIMULATION = 'Simulation';
 
 % Controllers
-ADDRESS_CONTROLLERS = strcat(NAME_SIMULATION, '/Controller/While');
+ADDRESS_CONTROLLERS = strcat(NAME_SIMULATION, '/Controller');
 
 NAME_NMPC_A = 'NMPC_A';
 NAME_BUS_NMPC_A = 'BusParamsA';
@@ -33,7 +33,7 @@ T_amb = 273;
 Sim_Horizon = '8640';
 
 % Controller hyperparameters 
-Ts = 1;
+Ts = 15*60;
 K = 4;
 Q = 1;
 validation = false;
