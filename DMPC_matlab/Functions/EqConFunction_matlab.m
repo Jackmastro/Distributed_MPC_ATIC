@@ -1,4 +1,4 @@
-function ceq = EqConFunction(x, u, ~, params)
+function ceq = EqConFunction_matlab(x, u, ~, params)
 
     is_bypass_house = params(49);
     

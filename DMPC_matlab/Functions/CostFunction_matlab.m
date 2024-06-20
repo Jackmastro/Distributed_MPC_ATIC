@@ -1,11 +1,11 @@
-function cost = CostFunction(x, u, ~, ~, params) 
+function cost = CostFunction_matlab(x, u, ~, ~, params) 
 
-    % NMPC Parameters 
+    % NMPC Parameters
     Q = params(44);
 
     T_set = params(40);
 
-    is_first_house = params(50); 
+    is_first_house = params(50);
     is_bypass_house = params(49);
 
     delta_m_O_pred = params(51);
