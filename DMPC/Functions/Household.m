@@ -75,16 +75,6 @@ classdef Household
         delta_T_R_pred = 1;
         delta_T_R_succ = 1;
 
-        % Step sizes - Lagrange Multipliers Update 
-        alfa_m_O_pred = 1; 
-        alfa_m_O_succ = 1;
-        alfa_m_R_pred = 1;
-        alfa_m_R_succ = 1;
-        alfa_T_F_pred = 1;
-        alfa_T_F_succ = 1;
-        alfa_T_R_pred = 1;
-        alfa_T_R_succ = 1;
-
         % NMPC object and adress for Simulink
         nlobj
         adressBusParams
