@@ -48,10 +48,9 @@ options_C.Parameters = {C.params};
 %% Initializations
 
 % Initial conditions
-x0 = [A.T_F_0, A.T_S1_0, A.T_S2_0, A.T_S3_0, A.T_b_0, A.T_R_0, A.T_BYP_0];
-x_A = x0;
-x_B = x0; 
-x_C = x0; 
+x_A = [A.T_F_0, A.T_S1_0, A.T_S2_0, A.T_S3_0, A.T_b_0, A.T_R_0];
+x_B = [B.T_F_0, B.T_S1_0, B.T_S2_0, B.T_S3_0, B.T_b_0, B.T_R_0, B.T_BYP_0]; 
+x_C = [C.T_F_0, C.T_S1_0, C.T_S2_0, C.T_S3_0, C.T_b_0, C.T_R_0]; 
 
 % Manipulated Variables
 mv_0 = [300, 300, 2, 1, 1, 1, 2];
@@ -60,9 +59,9 @@ lastmv_B = mv_0;
 lastmv_C = mv_0;
 
 % Measured Disturbances
-md_A = zeros(A.K, A.nu_md);
-md_B = zeros(B.K, B.nu_md);
-md_C = zeros(C.K, C.nu_md);
+md_A = zeros(A.K+1, A.nu_md);
+md_B = zeros(B.K+1, B.nu_md);
+md_C = zeros(C.K+1, C.nu_md);
 
 %% Simulation
 
@@ -78,7 +77,7 @@ for t = 1:T
     while ~is_converged
         
         % A solves
-        [mv_A,~,info] = nlmpcmove(A.nlobj, x_A, lastmv_A, ref_A(t:A.K), md_A, options_A); 
+        [mv_A,~,info] = nlmpcmove(A.nlobj, x_A, lastmv_A, [], md_A, options_A); 
         
         lastmv_A = mv_A;
          X_A = info.Xopt;
@@ -89,7 +88,7 @@ for t = 1:T
          md_B(:,1:4) = [MV_A(:,5), MV_A(:,6), X_A(:,1), MV_A(:,2)];
          
          % B solves
-         [mv_B,~,info] = nlmpcmove(B.nlobj, x_B, lastmv_B, ref_B(t:B.K), md_B, options_B); 
+         [mv_B,~,info] = nlmpcmove(B.nlobj, x_B, lastmv_B, [], md_B, options_B); 
          
          lastmv_B = mv_B;
          X_B = info.Xopt;
@@ -101,7 +100,7 @@ for t = 1:T
          md_C(:,1:4) = [MV_B(:,5), MV_B(:,6), X_B(:,1), MV_B(:,2)];
 
          % C solves 
-         [mv_C,~,info] = nlmpcmove(C.nlobj, x_C, lastmv_C, ref_C(t:C.K), md_C, options_C); 
+         [mv_C,~,info] = nlmpcmove(C.nlobj, x_C, lastmv_C, [], md_C, options_C); 
          
          lastmv_C = mv_C;
          X_C = info.Xopt;
@@ -120,7 +119,7 @@ for t = 1:T
 
     end
     
-    x = [x_A(1,:), x_B(1,:), x_C(1,:)];
+    x = [x_A(2,:), x_B(2,:), x_C(2,:)];
     u = [MV_A(1,1), MV_A(1,3), MV_A(1,4), MV_B(1,4), MV_C(1,4)];
 
 end
