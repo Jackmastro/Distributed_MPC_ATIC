@@ -2,11 +2,11 @@ function [lambda_AB, lambda_BC, difference_m, difference_T, is_converged] = Upda
     
     difference_m = 0;
     mass_tolerance = 1;
-    alfa_m = 0.1; 
+    alfa_m = 0.001; 
 
     difference_T = 0;
     temperature_tolerance = 1;
-    alfa_T = 1; 
+    alfa_T = 0.001;
 
     %% A-B 
 
