@@ -33,45 +33,43 @@ Q = 1;
 
 validation = true;
 
-% A = Household_matlab(true, false, T_set, T_amb, Ts, K, Q, validation);
-
-% B = Household_matlab(false, false, T_set, T_amb, Ts, K, Q, validation);
-
-C = Household_matlab(false, true, T_set, T_amb, Ts, K, Q, validation);
-
-%% Initial conditions
-
-% Initial conditions
-x0_A = ones(A.nx);
-x_A = x0_A;
-
-mv_0 = ones(A.nu);
-lastmv_A = mv_0;
-
-ref_A
-
-% Controller
-
+A = Household_matlab(true, false, T_set, T_amb, Ts, K, Q, validation);
 options_A = nlmpcmoveopt;
 options_A.Parameters = {A.params};
 
+B = Household_matlab(false, false, T_set, T_amb, Ts, K, Q, validation);
 options_B = nlmpcmoveopt;
 options_B.Parameters = {B.params};
 
+C = Household_matlab(false, true, T_set, T_amb, Ts, K, Q, validation);
 options_C = nlmpcmoveopt;
 options_C.Parameters = {C.params};
 
+%% Initializations
+
+% Initial conditions
+x0 = [A.T_F_0, A.T_S1_0, A.T_S2_0, A.T_S3_0, A.T_b_0, A.T_R_0, A.T_BYP_0];
+x_A = x0;
+x_B = x0; 
+x_C = x0; 
+
+% Manipulated Variables
+mv_0 = [300, 300, 2, 1, 1, 1, 2];
+lastmv_A = mv_0;
+lastmv_B = mv_0;
+lastmv_C = mv_0;
+
+% Measured Disturbances
 md_A = zeros(A.K, A.nu_md);
 md_B = zeros(B.K, B.nu_md);
 md_C = zeros(C.K, C.nu_md);
 
-% Simulation 
+%% Simulation
 
 T = 86400;
 x = zeros(T, A.nx+B.nx+C.nx);
 u = zeros(T, 5);
 
-%% For loop of simulated day
 for t = 1:T
     
     % While loop - ADMM
@@ -80,8 +78,9 @@ for t = 1:T
     while ~is_converged
         
         % A solves
-        [~,~,info] = nlmpcmove(A.nlobj, x_A, lastmv_A, ref_A(t:A.K), md_A, options_A); 
-
+        [mv_A,~,info] = nlmpcmove(A.nlobj, x_A, lastmv_A, ref_A(t:A.K), md_A, options_A); 
+        
+        lastmv_A = mv_A;
          X_A = info.Xopt;
          MV_A = info.MVopt;
          T_b_A = info.Yopt;
@@ -90,8 +89,9 @@ for t = 1:T
          md_B(:,1:4) = [MV_A(:,5), MV_A(:,6), X_A(:,1), MV_A(:,2)];
          
          % B solves
-         [~,~,info] = nlmpcmove(B.nlobj, x_B, lastmv_B, ref_B(t:B.K), md_B, options_B); 
-
+         [mv_B,~,info] = nlmpcmove(B.nlobj, x_B, lastmv_B, ref_B(t:B.K), md_B, options_B); 
+         
+         lastmv_B = mv_B;
          X_B = info.Xopt;
          MV_B = info.MVopt;
          T_b_B = info.Yopt;
@@ -101,8 +101,9 @@ for t = 1:T
          md_C(:,1:4) = [MV_B(:,5), MV_B(:,6), X_B(:,1), MV_B(:,2)];
 
          % C solves 
-         [~,~,info] = nlmpcmove(C.nlobj, x_C, lastmv_C, ref_C(t:C.K), md_C, options_C); 
-
+         [mv_C,~,info] = nlmpcmove(C.nlobj, x_C, lastmv_C, ref_C(t:C.K), md_C, options_C); 
+         
+         lastmv_C = mv_C;
          X_C = info.Xopt;
          MV_C = info.MVopt;
          T_b_C = info.Yopt;
