@@ -283,7 +283,7 @@ classdef Household_matlab
             nlobj.Jacobian.StateFcn = @(x,u,params) JacobianState_matlab(x,u,params);
             nlobj.Jacobian.OutputFcn = @(x,u,params) JacobianOutput_matlab(x,u,params);
             % nlobj.Jacobian.CustomCostFcn = @(x,u,params) (x,u,params);
-            % nlobj.Jacobian.CustomEqConFcn = @(x,u,e,data,params) (x,u,e,data,params);
+            nlobj.Jacobian.CustomEqConFcn = @(x,u,data,params) JacobianEqCon_matlab(x,u,data,params);
             % nlobj.Jacobian.CustomIneqConFcn = @(x,u,e,data,params) (x,u,e,data,params);
         end
 

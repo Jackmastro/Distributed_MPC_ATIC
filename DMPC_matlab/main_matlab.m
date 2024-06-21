@@ -33,9 +33,9 @@ Q = 1;
 
 validation = true;
 
-A = Household_matlab(true, false, T_set, T_amb, Ts, K, Q, validation);
+% A = Household_matlab(true, false, T_set, T_amb, Ts, K, Q, validation);
 
-B = Household_matlab(false, false, T_set, T_amb, Ts, K, Q, validation);
+% B = Household_matlab(false, false, T_set, T_amb, Ts, K, Q, validation);
 
 C = Household_matlab(false, true, T_set, T_amb, Ts, K, Q, validation);
 
