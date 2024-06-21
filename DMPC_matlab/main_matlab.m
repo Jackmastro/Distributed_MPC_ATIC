@@ -49,8 +49,8 @@ options_C.Parameters = {C.params};
 
 % Initial conditions
 x_A = [A.T_F_0, A.T_S1_0, A.T_S2_0, A.T_S3_0, A.T_b_0, A.T_R_0];
-x_B = [B.T_F_0, B.T_S1_0, B.T_S2_0, B.T_S3_0, B.T_b_0, B.T_R_0, B.T_BYP_0]; 
-x_C = [C.T_F_0, C.T_S1_0, C.T_S2_0, C.T_S3_0, C.T_b_0, C.T_R_0]; 
+x_B = [B.T_F_0, B.T_S1_0, B.T_S2_0, B.T_S3_0, B.T_b_0, B.T_R_0]; 
+x_C = [C.T_F_0, C.T_S1_0, C.T_S2_0, C.T_S3_0, C.T_b_0, C.T_R_0, C.T_BYP_0]; 
 
 % Manipulated Variables
 mv_0 = [300, 300, 2, 1, 1, 1, 2];
@@ -65,21 +65,41 @@ md_C = zeros(C.K+1, C.nu_md);
 
 %% Simulation
 
-T = 86400;
+T = 20;
 x = zeros(T, A.nx+B.nx+C.nx);
 u = zeros(T, 5);
 
 for t = 1:T
     
+    % Plotting 
+    fprintf('Simulation time step: %.2f\n', t);
+
+    % figure;
+    % 
+    % % Subplot for difference_m
+    % subplot(2, 1, 1);
+    % fig1 = plot(NaN, NaN);
+    % xlabel('Iterations', 'Interpreter', 'latex');
+    % ylabel('$||\Delta T||$', 'Interpreter', 'latex');
+    % 
+    % % Subplot for difference_T
+    % subplot(2, 1, 2);
+    % fig2 = plot(NaN, NaN);
+    % xlabel('Iterations', 'Interpreter', 'latex');
+    % ylabel('$||\Delta m||$', 'Interpreter', 'latex');
+
     % While loop - ADMM
     is_converged = false;
+    iteration = 0;
 
     while ~is_converged
+
+         iteration = iteration + 1;
         
-        % A solves
-        [mv_A,~,info] = nlmpcmove(A.nlobj, x_A, lastmv_A, [], md_A, options_A); 
-        
-        lastmv_A = mv_A;
+         % A solves
+         [mv_A,~,info] = nlmpcmove(A.nlobj, x_A, lastmv_A, [], md_A, options_A); 
+         
+         lastmv_A = mv_A;
          X_A = info.Xopt;
          MV_A = info.MVopt;
          T_b_A = info.Yopt;
@@ -111,18 +131,32 @@ for t = 1:T
          md_B(:,5:8) = [MV_C(:,3), MV_C(:,7), X_C(:,6), MV_C(:,1)];
 
          % Update and Check
-         [lambda_AB, lambda_BC, is_converged] = UpdateMultipliers(X_A, MV_A, X_B, MV_B, X_C, MV_C, md_A, md_C);
+         [lambda_AB, lambda_BC,difference_m, difference_T, is_converged] = UpdateMultipliers(X_A, MV_A, X_B, MV_B, X_C, MV_C, md_A, md_C);
          
-         md_A(5:8) = lambda_AB;
-         md_B(9:16) = [lambda_AB, lambda_BC];
-         md_C(5:8) = lambda_BC;
+         md_A(:,5:8) = lambda_AB;
+         md_B(:,9:16) = [lambda_AB, lambda_BC];
+         md_C(:,5:8) = lambda_BC;
+
+         % Plotting
+         difference_m = [difference_m, difference_m];
+         fprintf('m error: %.2f\n', difference_m);
+         difference_T = [difference_T, difference_T];
+         fprintf('T error: %.2f\n', difference_T);
+
+         % set(fig1, 'XData', 1:iteration, 'YData', difference_m(:, 1));
+         % xlim([0, T]); % Adjust the x-axis limit as per your requirement
+         % ylim([0, 100]); 
+         % 
+         % set(fig2, 'XData', 1:iteration, 'YData', difference_T(:, 1));
+         % xlim([0, T]); % Adjust the x-axis limit as per your requirement
+         % ylim([0, 100]); 
+         % drawnow;
 
     end
     
-    x = [x_A(2,:), x_B(2,:), x_C(2,:)];
-    u = [MV_A(1,1), MV_A(1,3), MV_A(1,4), MV_B(1,4), MV_C(1,4)];
+    x(t,:) = [x_A(2,:), x_B(2,:), x_C(2,:)];
+    u(t,:) = [MV_A(1,1), MV_A(1,3), MV_A(1,4), MV_B(1,4), MV_C(1,4)];
 
 end
-% Live plot
 
 %% Save data
