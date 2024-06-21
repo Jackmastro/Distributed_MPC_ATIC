@@ -67,14 +67,14 @@ classdef Household_matlab
         Q % 34
         
         % Damping Weights - Lagrange Multipliers Cost Function
-        delta_m_O_pred = 1;
-        delta_m_O_succ = 1;
-        delta_m_R_pred = 1;
-        delta_m_R_succ = 1;
-        delta_T_F_pred = 1;
-        delta_T_F_succ = 1;
-        delta_T_R_pred = 1;
-        delta_T_R_succ = 1;
+        delta_m_O_pred = 0.5;
+        delta_m_O_succ = 0.5;
+        delta_m_R_pred = 0.5;
+        delta_m_R_succ = 0.5;
+        delta_T_F_pred = 0.5;
+        delta_T_F_succ = 0.5;
+        delta_T_R_pred = 0.5;
+        delta_T_R_succ = 0.5;
 
         % NMPC object
         params
