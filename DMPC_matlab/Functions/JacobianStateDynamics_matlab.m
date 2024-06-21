@@ -1,38 +1,40 @@
-function [J_x_x, J_x_u] = JacobianHouseholdTemperatureDynamic(x, u, household)
+function [J_x_x, J_x_u] = JacobianStateDynamics_matlab(x, u, params)
     
     % Constants
-    rho_w   = household.rho_w;
-    cp_w    = household.cp_w;
-    V_F     = household.V_F;
-    h_F     = household.h_F;
-    A_F     = household.A_F;
-    V_S1    = household.V_S1;
-    h_S1    = household.h_S1;
-    A_S1    = household.A_S1;
-    V_S2    = household.V_S2;
-    h_S2    = household.h_S2;
-    A_S2    = household.A_S2;
-    V_S3    = household.V_S3;
-    h_S3    = household.h_S3;
-    A_S3    = household.A_S3;
-    V_R     = household.V_R;
-    h_R     = household.h_R;
-    A_R     = household.A_R;
-    V_B     = household.V_B;
-    h_B     = household.h_B;
-    A_B     = household.A_B;
-    C_b     = household.C_b;
-    h_b     = household.h_b;
-    A_b     = household.A_b;
-    is_bypass_house = household.is_bypass_house;
-    nx      = household.nx;
-    nu      = household.nu;
+    rho_w   = params(1);
+    cp_w    = params(2);
+    V_F     = params(3);
+    h_F     = params(4);
+    A_F     = params(5);
+    V_S1    = params(8);
+    h_S1    = params(9);
+    A_S1    = params(10);
+    V_S2    = params(13);
+    h_S2    = params(14);
+    A_S2    = params(15);
+    h_b     = params(18);
+    A_b     = params(19);
+    C_b     = params(20);
+    V_S3    = params(21);
+    h_S3    = params(22);
+    A_S3    = params(23);
+    V_R     = params(26);
+    h_R     = params(27);
+    A_R     = params(28);
+    V_B     = params(31);
+    h_B     = params(32);
+    A_B     = params(33);
+
+    nx     = params(45);
+    nu     = params(47) + params(48);
+
+    is_bypass_house = params(49);
 
     % States
     T_F  = x(1);
     T_S1 = x(2);
     T_S2 = x(3);
-    T_b  = x(4);
+    % T_b  = x(4);
     T_S3 = x(5);
     T_R  = x(6);
     
@@ -74,7 +76,7 @@ function [J_x_x, J_x_u] = JacobianHouseholdTemperatureDynamic(x, u, household)
 
     % Bypass
     if is_bypass_house
-        T_B  = x(7);
+        % T_B  = x(7);
 
         J_x_x(7,1) = m_O / (rho_w * V_B);
         J_x_x(7,7) = (- m_R_succ_I * cp_w - h_B * A_B) / (rho_w * cp_w * V_B);

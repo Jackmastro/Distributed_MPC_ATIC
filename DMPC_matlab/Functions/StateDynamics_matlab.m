@@ -1,4 +1,4 @@
-function dxdt = ContHouseholdTemperatureDynamic(x, u, params)
+function dxdt = StateDynamics_matlab(x,u,params)
     
     % Constants
     rho_w   = params(1);
@@ -25,7 +25,6 @@ function dxdt = ContHouseholdTemperatureDynamic(x, u, params)
     h_BYP     = params(32);
     A_BYP     = params(33);
 
-
     T_amb = params(41);
 
     is_bypass_house = params(49);
@@ -41,11 +40,11 @@ function dxdt = ContHouseholdTemperatureDynamic(x, u, params)
     % Inputs
     T_F_pred_I = u(1);
     T_R_succ_I = u(2);
-    m_F  = u(3);
-    m_U  = u(4);
-    m_O  = u(5);
+    m_F        = u(3);
+    m_U        = u(4);
+    m_O        = u(5);
     m_R_succ_I = u(6);
-    m_R  = u(7);
+    m_R        = u(7);
 
     % System of equations 
     dT_F  = (m_F * cp_w * T_F_pred_I     - m_F * cp_w * T_F     - h_F * A_F * (T_F - T_amb))                                           / (rho_w * cp_w * V_F);
