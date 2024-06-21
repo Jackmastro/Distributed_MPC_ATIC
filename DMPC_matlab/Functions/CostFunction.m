@@ -1,11 +1,11 @@
-function cost = CostFunction_matlab(x, u, ~, ~, params) 
+function cost = CostFunction(x, u, ~, ~, params) 
 
-    % NMPC Parameters
+    % NMPC Parameters 
     Q = params(44);
 
     T_set = params(40);
 
-    is_first_house = params(50);
+    is_first_house = params(50); 
     is_bypass_house = params(49);
 
     delta_m_O_pred = params(51);
@@ -35,7 +35,7 @@ function cost = CostFunction_matlab(x, u, ~, ~, params)
     m_R_succ_I = u(:,6);
     m_R  = u(:,7);
 
-
+ 
     
     if is_first_house
 
@@ -59,7 +59,7 @@ function cost = CostFunction_matlab(x, u, ~, ~, params)
              + 0.5 * delta_T_F_succ * (norm(T_F - T_F_I_succ)).^2 ....
              + lambda_T_R_succ' * (T_R_succ_I - T_R_succ_succ)...
              + 0.5 * delta_T_R_succ *  (norm(T_R_succ_I - T_R_succ_succ)).^2;  
-        
+    
     elseif is_bypass_house
 
         % Measured Disturbances
@@ -81,7 +81,7 @@ function cost = CostFunction_matlab(x, u, ~, ~, params)
              + lambda_T_F_pred' * (T_F_pred_I - T_F_pred_pred)...
              + 0.5 * delta_T_F_pred * (norm(T_F_pred_I - T_F_pred_pred)).^2 ...
              + lambda_T_R_pred' * (T_R - T_R_I_pred)...
-             + 0.5 * delta_T_R_pred * (norm(T_R - T_R_I_pred)).^2;  
+             + 0.5 * delta_T_R_pred * (norm(T_R - T_R_I_pred)).^2; 
     
     else
         % Middle House
