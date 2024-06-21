@@ -135,8 +135,8 @@ classdef Household_matlab
             obj.h_R = 1.5;
             obj.h_BYP = 1.5;
       
-            obj.A_b = 500;
-            obj.C_b = 3*1000000;
+            obj.A_b = 200;
+            obj.C_b = 3*1e6;
 	      
             obj.V_S1  = pi/4*obj.D_S1^2*obj.L_S1;
             obj.A_S1  = pi*obj.D_S1*obj.L_S1;
@@ -156,13 +156,13 @@ classdef Household_matlab
             obj.DeltaP_S2_max = 10*100000;
             obj.DeltaP_S3_max = 10*100000;
 
-            obj.T_F_0 = 283;
-            obj.T_S1_0 = 283;
-            obj.T_S2_0 = 283;
-            obj.T_S3_0 = 283;
-            obj.T_b_0 = 286;
-            obj.T_R_0 = 283;
-            obj.T_BYP_0 = 283;
+            obj.T_F_0   = 273 + 10;
+            obj.T_S1_0  = 273 + 10;
+            obj.T_S2_0  = 273 + 10;
+            obj.T_S3_0  = 273 + 10;
+            obj.T_b_0   = 273 + 15;
+            obj.T_R_0   = 273 + 10;
+            obj.T_BYP_0 = 273 + 10;
                  
             % Set temperature values
             obj.T_amb = T_amb;
@@ -276,7 +276,7 @@ classdef Household_matlab
             % nlobj.Jacobian.CustomEqConFcn = @(x,u,data,params)
             % JacobianEqCon_matlab(x,u,data,params); TODO STILL NEED DEBUG
 
-            nlobj.Optimization.CustomIneqConFcn = @(x,u,e,data,params) IneqConFunction_matlab(x,u,e,data,params);
+            % nlobj.Optimization.CustomIneqConFcn = @(x,u,e,data,params) IneqConFunction_matlab(x,u,e,data,params);
             % nlobj.Jacobian.CustomIneqConFcn = @(x,u,e,data,params) (x,u,e,data,params);
 
             % State & Manipulated Variable constraints
@@ -287,12 +287,14 @@ classdef Household_matlab
             for i = 1:obj.nu_mv
                 nlobj.ManipulatedVariables(i).Min = 0;
             end
+
+            nlobj.ManipulatedVariables(4).Max = HouseholdPressureDrop_matlab(obj.params);
         end
 
 
         function validateNMPC(obj) % (https://ch.mathworks.com/help/mpc/ref/nlmpc.validatefcns.html)
-            x0 = 300 * linspace(1, obj.nx, obj.nx)';
-            mv0 = 10 * ones(obj.nu_mv, 1);
+            x0 = linspace(obj.T_F_0, obj.T_F_0+5, obj.nx)';
+            mv0 = 3 * ones(obj.nu_mv, 1);
             md0 = ones(1, obj.nu_md);
             validateFcns(obj.nlobj, x0, mv0, md0, obj.paramsCell);
         end

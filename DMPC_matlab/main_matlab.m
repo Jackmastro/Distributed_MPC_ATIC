@@ -26,9 +26,9 @@ disp(['Current directory changed to: ', scriptDir]);
 T_set = 273 + 22;
 T_amb = 273;
 
-% Controller hyperparameters 
+% Controller hyperparameters
 Ts = 15*60;
-K = 7;
+K = 4;
 Q = 1;
 
 validation = true;

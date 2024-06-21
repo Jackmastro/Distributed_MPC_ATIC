@@ -57,7 +57,7 @@ function dxdt = StateFunction_matlab(x, u, params)
     % Bypass
     if is_bypass_house
         T_BYP  = x(7);
-        dT_BYP = (m_O * cp_w * T_F - h_BYP * A_BYP * (T_BYP - T_amb) - m_R_succ_I * cp_w * T_BYP) / (rho_w * cp_w * V_BYP);
+        dT_BYP = (m_O * cp_w * T_F                              - h_BYP * A_BYP * (T_BYP - T_amb)  - m_R_succ_I * cp_w * T_BYP)         / (rho_w * cp_w * V_BYP);
         dxdt = [dT_F; dT_S1; dT_S2; dT_b; dT_S3; dT_R; dT_BYP];
     else
         dxdt = [dT_F; dT_S1; dT_S2; dT_b; dT_S3; dT_R];
