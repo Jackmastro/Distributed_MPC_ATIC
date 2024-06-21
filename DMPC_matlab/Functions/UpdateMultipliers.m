@@ -2,7 +2,7 @@ function [lambda_AB, lambda_BC, difference_m, difference_T, is_converged] = Upda
     
     difference_m = 0;
     mass_tolerance = 1;
-    alfa_m = 1; 
+    alfa_m = 0.1; 
 
     difference_T = 0;
     temperature_tolerance = 1;
@@ -10,10 +10,10 @@ function [lambda_AB, lambda_BC, difference_m, difference_T, is_converged] = Upda
 
     %% A-B 
 
-    lambda_AB_m_O = md_A(:,1);
-    lambda_AB_m_R = md_A(:,2);
-    lambda_AB_T_F = md_A(:,3);
-    lambda_AB_T_R = md_A(:,4);
+    lambda_AB_m_O = md_A(:,5);
+    lambda_AB_m_R = md_A(:,6);
+    lambda_AB_T_F = md_A(:,7);
+    lambda_AB_T_R = md_A(:,8);
 
     % lambda_AB_m_O
     lambda_AB_m_O = lambda_AB_m_O + alfa_m * (MV_A(:,5) - MV_B(:,3));
@@ -35,10 +35,10 @@ function [lambda_AB, lambda_BC, difference_m, difference_T, is_converged] = Upda
 
     %% B-C 
     
-    lambda_BC_m_O = md_C(:,1);
-    lambda_BC_m_R = md_C(:,2);
-    lambda_BC_T_F = md_C(:,3);
-    lambda_BC_T_R = md_C(:,4);
+    lambda_BC_m_O = md_C(:,5);
+    lambda_BC_m_R = md_C(:,6);
+    lambda_BC_T_F = md_C(:,7);
+    lambda_BC_T_R = md_C(:,8);
 
     % lambda_BC_m_O
     lambda_BC_m_O = lambda_BC_m_O + alfa_m * (MV_B(:,5) - MV_C(:,3));
