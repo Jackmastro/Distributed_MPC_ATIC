@@ -78,12 +78,14 @@ classdef Household_matlab
 
         % NMPC object
         params
+        paramsCell
+        validation
         nlobj
     end
     
     methods
 
-        function obj = Household_matlab(is_first_house, is_bypass_house, T_set, T_amb, Ts, K, Q)
+        function obj = Household_matlab(is_first_house, is_bypass_house, T_set, T_amb, Ts, K, Q, validation)
             
             % Set the first_house and bypass_house properties
             obj.is_first_house = is_first_house;
@@ -132,7 +134,6 @@ classdef Household_matlab
             obj.h_F = 1.5;
             obj.h_R = 1.5;
             obj.h_BYP = 1.5;
-      
       
             obj.A_b = 500;
             obj.C_b = 3*1000000;
@@ -230,16 +231,24 @@ classdef Household_matlab
                           obj.delta_T_F_pred; %55
                           obj.delta_T_F_succ;
                           obj.delta_T_R_pred;
-                          obj.delta_T_R_succ;]; %58
+                          obj.delta_T_R_succ %58
+                ];
+
+            obj.paramsCell = {obj.params};
 
             obj.nlobj = obj.createNMPC();
+
+            obj.validation = validation;
+            if obj.validation
+                obj.validateNMPC()
+            end
         end
 
 %%%%%%%%% Helper functions
 
         function nlobj = createNMPC(obj)
 
-            % Create NMPC object
+            % Create NMPC object (https://ch.mathworks.com/help/mpc/ref/nlmpc.html#mw_e9ec0499-492f-4b58-a718-c05de56a7666)
             nlobj = nlmpc(obj.nx, obj.ny, 'MV', [1:obj.nu_mv], 'MD', [(obj.nu_mv+1):(obj.nu_mv+obj.nu_md)]);
 
             % NMPC parameters
@@ -251,13 +260,15 @@ classdef Household_matlab
             nlobj.Model.StateFcn = @(x,u,params) StateDynamics_matlab(x,u,params);
             nlobj.Model.IsContinuousTime = true;
             nlobj.Model.OutputFcn = @(x,u,params) OutputFunction_matlab(x,u,params);
-            nlobj.Model.NumberOfParameters = 1;
+            nlobj.Model.NumberOfParameters = numel(obj.paramsCell);
 
-            % Cost
+            % Cost (https://ch.mathworks.com/help/mpc/ug/specify-cost-function-for-nonlinear-mpc.html)
             nlobj.Optimization.CustomCostFcn = @(x,u,e,data,params) CostFunction_matlab(x,u,e,data,params);
+            nlobj.Optimization.ReplaceStandardCost = true;
 
-            % Constraints
+            % Constraints (https://ch.mathworks.com/help/mpc/ug/specify-constraints-for-nonlinear-mpc.html)
             nlobj.Optimization.CustomEqConFcn = @(x,u,data,params) EqConFunction_matlab(x,u,data,params);
+            nlobj.Optimization.CustomIneqConFcn = @(x,u,e,data,params) IneqConFunction_matlab(x,u,e,data,params);
 
             % State & Manipulated Variable constraints
             for i = 1:obj.nx
@@ -268,9 +279,21 @@ classdef Household_matlab
                 nlobj.ManipulatedVariables(i).Min = 0;
             end
 
-            % Jacobians
-            nlobj.Jacobian.StateFcn = @(x,u,params) JacobianStateDynamics_matlab(x,u,params);
-            nlobj.Jacobian.OutputFcn = @(x,u,params) JacobianOutput_matlab;
+            % Jacobians (https://ch.mathworks.com/help/mpc/ug/specify-prediction-model-for-nonlinear-mpc.html)
+            nlobj.Jacobian.StateFcn = @(x,u,params) JacobianState_matlab(x,u,params);
+            nlobj.Jacobian.OutputFcn = @(x,u,params) JacobianOutput_matlab(x,u,params);
+            % nlobj.Jacobian.CustomCostFcn = @(x,u,params) (x,u,params);
+            % nlobj.Jacobian.CustomEqConFcn = @(x,u,e,data,params) (x,u,e,data,params);
+            % nlobj.Jacobian.CustomIneqConFcn = @(x,u,e,data,params) (x,u,e,data,params);
+        end
+
+
+        function validateNMPC(obj)
+            % https://ch.mathworks.com/help/mpc/ref/nlmpc.validatefcns.html
+            x0 = 300 * ones(obj.nx, 1);
+            mv0 = 10 * ones(obj.nu_mv, 1);
+            md0 = ones(1, obj.nu_md);
+            validateFcns(obj.nlobj, x0, mv0, md0, obj.paramsCell);
         end
     end
 end

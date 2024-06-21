@@ -31,13 +31,13 @@ Ts = 15*60;
 K = 4;
 Q = 1;
 
-validation = false;
+validation = true;
 
-A = Household_matlab(true, false, T_set, T_amb, Ts, K, Q);
+A = Household_matlab(true, false, T_set, T_amb, Ts, K, Q, validation);
 
-% B = Household_matlab(false, false, T_set, T_amb, Ts, K, Q, ADDRESS_NMPC_B);
-% 
-% C = Household_matlab(false, true, T_set, T_amb, Ts, K, Q, ADDRESS_NMPC_C);
+B = Household_matlab(false, false, T_set, T_amb, Ts, K, Q, validation);
+
+C = Household_matlab(false, true, T_set, T_amb, Ts, K, Q, validation);
 
 %% Initial conditions
 

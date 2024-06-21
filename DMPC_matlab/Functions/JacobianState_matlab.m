@@ -1,4 +1,4 @@
-function [J_x_x, J_x_u] = JacobianStateDynamics_matlab(x, u, params)
+function [J_x_x, J_x_u] = JacobianState_matlab(x, u, params)
     
     % Constants
     rho_w   = params(1);
@@ -26,7 +26,7 @@ function [J_x_x, J_x_u] = JacobianStateDynamics_matlab(x, u, params)
     A_B     = params(33);
 
     nx     = params(45);
-    nu     = params(47) + params(48);
+    nu_mv  = params(47);
 
     is_bypass_house = params(49);
 
@@ -63,26 +63,26 @@ function [J_x_x, J_x_u] = JacobianStateDynamics_matlab(x, u, params)
     J_x_x(6,6) = (- m_R * cp_w - h_R * A_R) / (rho_w * cp_w * V_R);
 
     % Input Jacobian
-    J_x_u = zeros(nx, nu);
+    J_x_u = zeros(nx, nu_mv);
     J_x_u(1,1) = m_F / (rho_w * V_F);
     J_x_u(1,3) = (T_F_pred_I - T_F) / (rho_w * V_F);
-    J_x_u(2,5) = (T_F - T_S1) / (rho_w * V_S1);
-    J_x_u(3,5) = (T_S1 - T_S2) / (rho_w * V_S2);
-    J_x_u(5,5) = (T_S2 - T_S3) / (rho_w * V_S3);
+    J_x_u(2,4) = (T_F - T_S1) / (rho_w * V_S1);
+    J_x_u(3,4) = (T_S1 - T_S2) / (rho_w * V_S2);
+    J_x_u(5,4) = (T_S2 - T_S3) / (rho_w * V_S3);
     J_x_u(6,2) = m_R_succ_I / (rho_w * V_R);
-    J_x_u(6,5) = T_S3 / (rho_w * V_R);
+    J_x_u(6,4) = T_S3 / (rho_w * V_R);
     J_x_u(6,6) = T_R_succ_I / (rho_w * V_R);
     J_x_u(6,7) = - T_R / (rho_w * V_R);
 
     % Bypass
     if is_bypass_house
-        % T_B  = x(7);
+        T_B  = x(7);
 
         J_x_x(7,1) = m_O / (rho_w * V_B);
         J_x_x(7,7) = (- m_R_succ_I * cp_w - h_B * A_B) / (rho_w * cp_w * V_B);
 
-        J_x_u(7,4) = T_F / (rho_w * V_B);
-        J_x_u(7,7) = T_S3 / (rho_w * V_B);
+        J_x_u(7,5) = T_F / (rho_w * V_B);
+        J_x_u(7,6) = - T_B / (rho_w * V_B);
     end
 
 end

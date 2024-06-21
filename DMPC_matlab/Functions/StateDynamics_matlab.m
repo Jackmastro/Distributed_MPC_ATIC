@@ -1,4 +1,4 @@
-function dxdt = StateDynamics_matlab(x,u,params)
+function dxdt = StateDynamics_matlab(x, u, params)
     
     % Constants
     rho_w   = params(1);
@@ -21,9 +21,9 @@ function dxdt = StateDynamics_matlab(x,u,params)
     V_R     = params(26);
     h_R     = params(27);
     A_R     = params(28);
-    V_BYP     = params(31);
-    h_BYP     = params(32);
-    A_BYP     = params(33);
+    V_BYP   = params(31);
+    h_BYP   = params(32);
+    A_BYP   = params(33);
 
     T_amb = params(41);
 
@@ -57,7 +57,7 @@ function dxdt = StateDynamics_matlab(x,u,params)
     % Bypass
     if is_bypass_house
         T_BYP  = x(7);
-        dT_BYP = (m_O * cp_w * T_F - h_BYP * A_BYP * (T_BYP - T_amb) - m_O * cp_w * T_R) / (rho_w * cp_w * V_BYP);
+        dT_BYP = (m_O * cp_w * T_F - h_BYP * A_BYP * (T_BYP - T_amb) - m_R_succ_I * cp_w * T_BYP) / (rho_w * cp_w * V_BYP);
         dxdt = [dT_F; dT_S1; dT_S2; dT_b; dT_S3; dT_R; dT_BYP];
     else
         dxdt = [dT_F; dT_S1; dT_S2; dT_b; dT_S3; dT_R];
