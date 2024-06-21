@@ -67,7 +67,6 @@ classdef Household_DecMPC
         adressBusParams
         validation
         params
-        index
     end
 
     
@@ -143,7 +142,6 @@ classdef Household_DecMPC
             obj.K = K;
             obj.Ts = Ts;
             obj.Q = Q;
-            obj.index = 1;
             
             % Add here all the parameters (public and private) used by mpc
             obj.params = [obj.rho_w; %1
@@ -178,8 +176,7 @@ classdef Household_DecMPC
                           obj.nx; %30
                           obj.ny;
                           obj.nu_mv;
-                          obj.nu_md 
-                          obj.index];
+                          obj.nu_md];
 
 
             % Create NMPC object
@@ -201,16 +198,17 @@ classdef Household_DecMPC
             nlobj.Model.NumberOfParameters = numel({obj.params});
             nlobj.Model.StateFcn = "HouseholdTemperatureDynamic_DecMPC";
             nlobj.Model.OutputFcn = "HouseholdOutput_DecMPC";
-
+            nlobj.ControlHorizon = obj.K;
+            
             % Cost
             nlobj.Optimization.CustomCostFcn = "CostFunction_DecMPC";
             
-            % To use the cost function
-            %nlobj.Optimization.ReplaceStandardCost = false;
+            %To use the cost function
+            nlobj.Optimization.ReplaceStandardCost = false;
             % nlobj.Weights.ManipulatedVariables = 
             % nlobj.Weights.ManipulatedVariablesRate = 
             % nlobj.Weights.ECR = ;
-            %nlobj.Weights.OutputVariables = obj.Q;
+            nlobj.Weights.OutputVariables = obj.Q;
 
             % Constraints
             nlobj.Optimization.CustomIneqConFcn = "IneqConFunction_DecMPC";

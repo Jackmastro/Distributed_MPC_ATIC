@@ -2,6 +2,7 @@ clc;
 clear; 
 %close all;
 
+load("TemperatureSP_Dec.mat")
 %% Set Network Objects
 
 %Define the name coherently with Simulink
@@ -20,9 +21,9 @@ ADRESS_NMPC_C = 'NMPC_C';
 NAME_BUS_NMPC_C = 'BusParamsC';
 
 % Controller hyperparameters 
-Ts = 30*60;
-K = 4;
-Q = 1000000;
+Ts = 60*60;
+K = 10;
+Q = 1000;
 SimHorizon = 86400;
 t = [0:Ts:(SimHorizon+K*Ts+1)];
 
@@ -32,19 +33,17 @@ T_amb = 273;
 T_amb_average = 273;
 T_amb_day_excursion_pp = 10; %peak to peak temperature excursion
 
-global T_amb_signal;
-global T_ref_signal;
 T_amb_signal = T_amb_day_excursion_pp*sin(pi/86400*t)+T_amb_average
-T_ref_signal = [(273+19)*ones(1,round(1*3600/Ts)) , (273+23)*ones(1, round(17*3600/Ts )), (273+19)*ones(1, round(6*3600/Ts)), (273+19)*ones(1, K+1) ] % we use as SetPoint a square wave from 19°c during eco phase (midnight -> 6am and 6pm->midnight) and 23 during comfort phase (6am ->6pm)
+% T_ref_signal = [(273+19)*ones(1,round(1*3600/Ts)) , (273+23)*ones(1, round(17*3600/Ts )), (273+19)*ones(1, round(6*3600/Ts)), (273+19)*ones(1, K+1) ] % we use as SetPoint a square wave from 19°c during eco phase (midnight -> 6am and 6pm->midnight) and 23 during comfort phase (6am ->6pm)
 
 %Tuning values of HEAT_PRODUCED
 T_NOMINAL_FEED = 350;
-T_FEED_MAX = 370;
+T_FEED_MAX =  370;
 T_FEED_MIN = 320;
 
 T_SP_RETURN = 310;      
-m_dot_NOMINAL_FEED = 10;
-m_dot_NOMINAL_BYP = 0.1 * m_dot_NOMINAL_FEED;
+m_dot_NOMINAL_FEED = 30;
+m_dot_NOMINAL_BYP = 0.1 *  m_dot_NOMINAL_FEED;
 m_dot_FEED_MAX = 20;
 
 K_temp = 0; % TODO: TUNING PER K>0
