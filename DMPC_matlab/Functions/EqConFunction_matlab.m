@@ -1,7 +1,4 @@
 function ceq = EqConFunction_matlab(x, u, ~, params)
-    % disp("equality")
-    % size(x)
-    % size(u)
 
     is_bypass_house = params(49);
 

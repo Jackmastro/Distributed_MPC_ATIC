@@ -21,17 +21,14 @@ function [J_eq_x, J_eq_u] = JacobianEqCon_matlab(~, ~, data, params)
     % Input Jacobian
     J_eq_u = zeros(K, nu_mv, nc);
 
-    % J_eq_u(:, :, 1:K) = repmat([0, 0, 1, -1, -1, 0, 0], K, 1);
-    % J_eq_u(:,:, K+1:2*K) = repmat([0, 0, 0, -1, 0, -1, 1], K, 1);
+    J_eq_u(:, :, 1:K)       = repmat(repmat([0, 0, 1, -1, -1, 0, 0], K, 1), 1, 1, K);
+    J_eq_u(:, :, K+1:2*K)   = repmat(repmat([0, 0, 0, -1, 0, -1, 1], K, 1), 1, 1, K);
 
-    % Bypass
     if is_bypass_house
-        J_eq_x(:,7,4) = -ones(K, 1);
+        J_eq_x(:, 7, 4*K) = -ones(K, 1);
 
-        J_eq_u(:,:,3) = repmat([0, 0, 0, 0, -1, 1, 0], K, 1);
-        J_eq_u(:,2,4) = ones(K, 1);
+        J_eq_u(:, :, 3*K+1:4*K) = repmat(repmat([0, 0, 0, 0, -1, 1, 0], K, 1), 1, 1, K);
+        J_eq_u(:, 2, 4*K) = ones(K, 1);
     end
-
-    J_eq_x
     J_eq_u
 end

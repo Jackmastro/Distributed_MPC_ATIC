@@ -35,15 +35,15 @@ validation = true;
 
 A = Household_matlab(true, false, T_set, T_amb, Ts, K, Q, validation);
 options_A = nlmpcmoveopt;
-options_A.Parameters = {A.params};
+options_A.Parameters = A.paramsCell;
 
 B = Household_matlab(false, false, T_set, T_amb, Ts, K, Q, validation);
 options_B = nlmpcmoveopt;
-options_B.Parameters = {B.params};
+options_B.Parameters = B.paramsCell;
 
 C = Household_matlab(false, true, T_set, T_amb, Ts, K, Q, validation);
 options_C = nlmpcmoveopt;
-options_C.Parameters = {C.params};
+options_C.Parameters = C.paramsCell;
 
 %% Initializations
 

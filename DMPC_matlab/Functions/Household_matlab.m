@@ -273,7 +273,8 @@ classdef Household_matlab
 
             % Constraints (https://ch.mathworks.com/help/mpc/ug/specify-constraints-for-nonlinear-mpc.html)
             nlobj.Optimization.CustomEqConFcn = @(x,u,data,params) EqConFunction_matlab(x,u,data,params);
-            % nlobj.Jacobian.CustomEqConFcn = @(x,u,data,params) JacobianEqCon_matlab(x,u,data,params);
+            % nlobj.Jacobian.CustomEqConFcn = @(x,u,data,params)
+            % JacobianEqCon_matlab(x,u,data,params); TODO STILL NEED DEBUG
 
             nlobj.Optimization.CustomIneqConFcn = @(x,u,e,data,params) IneqConFunction_matlab(x,u,e,data,params);
             % nlobj.Jacobian.CustomIneqConFcn = @(x,u,e,data,params) (x,u,e,data,params);
@@ -289,8 +290,7 @@ classdef Household_matlab
         end
 
 
-        function validateNMPC(obj)
-            % https://ch.mathworks.com/help/mpc/ref/nlmpc.validatefcns.html
+        function validateNMPC(obj) % (https://ch.mathworks.com/help/mpc/ref/nlmpc.validatefcns.html)
             x0 = 300 * linspace(1, obj.nx, obj.nx)';
             mv0 = 10 * ones(obj.nu_mv, 1);
             md0 = ones(1, obj.nu_md);
