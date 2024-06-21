@@ -70,35 +70,35 @@ x = zeros(T, A.nx+B.nx+C.nx);
 u = zeros(T, 5);
 
 for t = 1:T
-    
+
     % Plotting 
     fprintf('Simulation time step: %.2f\n', t);
 
-    % figure;
-    % 
-    % % Subplot for difference_m
-    % subplot(2, 1, 1);
-    % fig1 = plot(NaN, NaN);
-    % xlabel('Iterations', 'Interpreter', 'latex');
-    % ylabel('$||\Delta T||$', 'Interpreter', 'latex');
-    % 
-    % % Subplot for difference_T
-    % subplot(2, 1, 2);
-    % fig2 = plot(NaN, NaN);
-    % xlabel('Iterations', 'Interpreter', 'latex');
-    % ylabel('$||\Delta m||$', 'Interpreter', 'latex');
+    figure;
+
+    h = plot(NaN, NaN);
+    xlabel('Iterations', 'Interpreter', 'latex');
+    ylabel('$||\Delta T||, ||\Delta m||$', 'Interpreter', 'latex');
+    grid on;
+    hold on;
 
     % While loop - ADMM
+    max_iter = 100;
+    error_m = zeros(1, max_iter);
+    error_T = zeros(1, max_iter);
     is_converged = false;
     iteration = 0;
+
+    % xlim([1 max_iter]);
+    % ylim([1 2000]);
 
     while ~is_converged
 
          iteration = iteration + 1;
-        
+
          % A solves
          [mv_A,~,info] = nlmpcmove(A.nlobj, x_A, lastmv_A, [], md_A, options_A); 
-         
+
          lastmv_A = mv_A;
          X_A = info.Xopt;
          MV_A = info.MVopt
@@ -107,10 +107,10 @@ for t = 1:T
          % A sends to B
          %              m_O_A_A,    m_R_B_A,  T_F_A_A,  T_R_B_A
          md_B(:,1:4) = [MV_A(:,5), MV_A(:,6), X_A(:,1), MV_A(:,2)];
-         
+
          % B solves
          [mv_B,~,info] = nlmpcmove(B.nlobj, x_B, lastmv_B, [], md_B, options_B);
-         
+
          lastmv_B = mv_B;
          X_B = info.Xopt;
          MV_B = info.MVopt
@@ -124,7 +124,7 @@ for t = 1:T
 
          % C solves
          [mv_C,~,info] = nlmpcmove(C.nlobj, x_C, lastmv_C, [], md_C, options_C); 
-         
+
          lastmv_C = mv_C;
          X_C = info.Xopt;
          MV_C = info.MVopt
@@ -136,29 +136,25 @@ for t = 1:T
 
          % Update and Check
          [lambda_AB, lambda_BC, difference_m, difference_T, is_converged] = UpdateMultipliers(X_A, MV_A, X_B, MV_B, X_C, MV_C, md_A, md_C);
-         
+
          md_A(:,5:8) = lambda_AB;
          md_B(:,9:16) = [lambda_AB, lambda_BC];
          md_C(:,5:8) = lambda_BC;
 
          % Plotting
-         % difference_m = [difference_m, difference_m];
          fprintf('m error: %.2f\n', difference_m);
-         % difference_T = [difference_T, difference_T];
          fprintf('T error: %.2f\n', difference_T);
 
-         % set(fig1, 'XData', 1:iteration, 'YData', difference_m(:, 1));
-         % xlim([0, T]); % Adjust the x-axis limit as per your requirement
-         % ylim([0, 100]); 
-         % 
-         % set(fig2, 'XData', 1:iteration, 'YData', difference_T(:, 1));
-         % xlim([0, T]); % Adjust the x-axis limit as per your requirement
-         % ylim([0, 100]); 
-         % drawnow;
+         error_m(iteration) = difference_m;
+         error_T(iteration) = difference_T;
+
+         set(h, 'XData', 1:iteration, 'YData', error_m(1:iteration));
+         set(h, 'XData', 1:iteration, 'YData', error_T(1:iteration));
+         drawnow;
 
     end
     % TODO UPDATE STATES
-    
+
     x(t,:) = [x_A(2,:), x_B(2,:), x_C(2,:)];
     u(t,:) = [MV_A(1,1), MV_A(1,3), MV_A(1,4), MV_B(1,4), MV_C(1,4)];
 
