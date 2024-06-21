@@ -1,4 +1,4 @@
-function dxdt = StateDynamics_matlab(x, u, params)
+function dxdt = StateFunction_matlab(x, u, params)
     
     % Constants
     rho_w   = params(1);

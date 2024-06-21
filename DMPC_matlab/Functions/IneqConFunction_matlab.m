@@ -1,9 +1,8 @@
-function cineq = IneqConFunction_matlab(~, u, ~, data, params)
+function cineq = IneqConFunction_matlab(~, u, ~, ~, params)
 
-    K = data.PredictionHorizon;
-    m_U = u(1:K,1);
+    m_U = u(1:end-1, 1);
 
-    m_U_max = HouseholdPressureDrop_matlab(params) * ones(K,1);
+    m_U_max = HouseholdPressureDrop_matlab(params) * ones(size(m_U));
   
     cineq = m_U - m_U_max;
 end

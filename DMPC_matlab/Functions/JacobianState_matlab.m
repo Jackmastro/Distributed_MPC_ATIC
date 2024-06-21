@@ -84,5 +84,4 @@ function [J_x_x, J_x_u] = JacobianState_matlab(x, u, params)
         J_x_u(7,5) = T_F / (rho_w * V_B);
         J_x_u(7,6) = - T_B / (rho_w * V_B);
     end
-
 end

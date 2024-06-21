@@ -256,19 +256,27 @@ classdef Household_matlab
             nlobj.ControlHorizon = obj.K;
             nlobj.Ts = obj.Ts;
 
-            % Prediction model
-            nlobj.Model.StateFcn = @(x,u,params) StateDynamics_matlab(x,u,params);
+            % Prediction model and jacobians (https://ch.mathworks.com/help/mpc/ug/specify-prediction-model-for-nonlinear-mpc.html)
             nlobj.Model.IsContinuousTime = true;
-            nlobj.Model.OutputFcn = @(x,u,params) OutputFunction_matlab(x,u,params);
             nlobj.Model.NumberOfParameters = numel(obj.paramsCell);
 
+            nlobj.Model.StateFcn = @(x,u,params) StateFunction_matlab(x,u,params);
+            nlobj.Jacobian.StateFcn = @(x,u,params) JacobianState_matlab(x,u,params);
+
+            nlobj.Model.OutputFcn = @(x,u,params) OutputFunction_matlab(x,u,params);
+            nlobj.Jacobian.OutputFcn = @(x,u,params) JacobianOutput_matlab(x,u,params);
+
             % Cost (https://ch.mathworks.com/help/mpc/ug/specify-cost-function-for-nonlinear-mpc.html)
-            nlobj.Optimization.CustomCostFcn = @(x,u,e,data,params) CostFunction_matlab(x,u,e,data,params);
             nlobj.Optimization.ReplaceStandardCost = true;
+            nlobj.Optimization.CustomCostFcn = @(x,u,e,data,params) CostFunction_matlab(x,u,e,data,params);
+            % nlobj.Jacobian.CustomCostFcn = @(x,u,params) (x,u,params);
 
             % Constraints (https://ch.mathworks.com/help/mpc/ug/specify-constraints-for-nonlinear-mpc.html)
             nlobj.Optimization.CustomEqConFcn = @(x,u,data,params) EqConFunction_matlab(x,u,data,params);
+            % nlobj.Jacobian.CustomEqConFcn = @(x,u,data,params) JacobianEqCon_matlab(x,u,data,params);
+
             nlobj.Optimization.CustomIneqConFcn = @(x,u,e,data,params) IneqConFunction_matlab(x,u,e,data,params);
+            % nlobj.Jacobian.CustomIneqConFcn = @(x,u,e,data,params) (x,u,e,data,params);
 
             % State & Manipulated Variable constraints
             for i = 1:obj.nx
@@ -278,19 +286,12 @@ classdef Household_matlab
             for i = 1:obj.nu_mv
                 nlobj.ManipulatedVariables(i).Min = 0;
             end
-
-            % Jacobians (https://ch.mathworks.com/help/mpc/ug/specify-prediction-model-for-nonlinear-mpc.html)
-            nlobj.Jacobian.StateFcn = @(x,u,params) JacobianState_matlab(x,u,params);
-            nlobj.Jacobian.OutputFcn = @(x,u,params) JacobianOutput_matlab(x,u,params);
-            % nlobj.Jacobian.CustomCostFcn = @(x,u,params) (x,u,params);
-            nlobj.Jacobian.CustomEqConFcn = @(x,u,data,params) JacobianEqCon_matlab(x,u,data,params);
-            % nlobj.Jacobian.CustomIneqConFcn = @(x,u,e,data,params) (x,u,e,data,params);
         end
 
 
         function validateNMPC(obj)
             % https://ch.mathworks.com/help/mpc/ref/nlmpc.validatefcns.html
-            x0 = 300 * ones(obj.nx, 1);
+            x0 = 300 * linspace(1, obj.nx, obj.nx)';
             mv0 = 10 * ones(obj.nu_mv, 1);
             md0 = ones(1, obj.nu_md);
             validateFcns(obj.nlobj, x0, mv0, md0, obj.paramsCell);

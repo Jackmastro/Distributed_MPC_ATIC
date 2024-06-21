@@ -18,37 +18,35 @@ function cost = CostFunction_matlab(x, u, ~, ~, params)
     delta_T_R_succ = params(58);
 
     % States
-    T_F  = x(:,1);
-    % T_S1 = x(:,2);
-    % T_S2 = x(:,3);
-    T_b  = x(:,4);
-    % T_S3 = x(:,5);
-    T_R  = x(:,6);
+    T_F     = x(2:end, 1);
+    % T_S1  = x(2:end, 2);
+    % T_S2  = x(2:end, 3);
+    T_b     = x(2:end, 4);
+    % T_S3  = x(2:end, 5);
+    T_R     = x(2:end, 6);
     
     % Inputs
     %  Manipulated Variables 
-    T_F_pred_I = u(:,1);
-    T_R_succ_I = u(:,2);
-    m_F  = u(:,3);
-    % m_U  = u(:,4);
-    m_O  = u(:,5);
-    m_R_succ_I = u(:,6);
-    m_R  = u(:,7);
-
-
+    T_F_pred_I  = u(1:end-1, 1);
+    T_R_succ_I  = u(1:end-1, 2);
+    m_F         = u(1:end-1, 3);
+    % m_U       = u(1:end-1, 4);
+    m_O         = u(1:end-1, 5);
+    m_R_succ_I  = u(1:end-1, 6);
+    m_R         = u(1:end-1, 7);
     
     if is_first_house
 
         % Measured Disturbances
-        m_O_I_succ      = u(:,8);
-        m_R_succ_succ   = u(:,9);
-        T_F_I_succ      = u(:,10);
-        T_R_succ_succ   = u(:,11);
+        m_O_I_succ      = u(1:end-1, 8);
+        m_R_succ_succ   = u(1:end-1, 9);
+        T_F_I_succ      = u(1:end-1, 10);
+        T_R_succ_succ   = u(1:end-1, 11);
 
-        lambda_m_O_succ = u(:,12);
-        lambda_m_R_succ = u(:,13);
-        lambda_T_F_succ = u(:,14);
-        lambda_T_R_succ = u(:,15);
+        lambda_m_O_succ = u(1:end-1, 12);
+        lambda_m_R_succ = u(1:end-1, 13);
+        lambda_T_F_succ = u(1:end-1, 14);
+        lambda_T_R_succ = u(1:end-1, 15);
 
         cost =     Q .* norm(T_b - T_set).^2 ...
              + lambda_m_O_succ' * (m_O - m_O_I_succ)...
@@ -63,15 +61,15 @@ function cost = CostFunction_matlab(x, u, ~, ~, params)
     elseif is_bypass_house
 
         % Measured Disturbances
-        m_O_pred_pred   = u(:,8);
-        m_R_I_pred      = u(:,9);
-        T_F_pred_pred   = u(:,10);
-        T_R_I_pred      = u(:,11);
+        m_O_pred_pred   = u(1:end-1, 8);
+        m_R_I_pred      = u(1:end-1, 9);
+        T_F_pred_pred   = u(1:end-1, 10);
+        T_R_I_pred      = u(1:end-1, 11);
 
-        lambda_m_O_pred = u(:,12);
-        lambda_m_R_pred = u(:,13);
-        lambda_T_F_pred = u(:,14);
-        lambda_T_R_pred = u(:,15);
+        lambda_m_O_pred = u(1:end-1, 12);
+        lambda_m_R_pred = u(1:end-1, 13);
+        lambda_T_F_pred = u(1:end-1, 14);
+        lambda_T_R_pred = u(1:end-1, 15);
 
         cost =     Q .* norm(T_b - T_set).^2 ...
              + lambda_m_O_pred' * (m_F - m_O_pred_pred)...
@@ -86,24 +84,23 @@ function cost = CostFunction_matlab(x, u, ~, ~, params)
     else
         % Middle House
         % Measured Disturbances
-        m_O_pred_pred   = u(:,8);
-        m_R_I_pred      = u(:,9);
-        T_F_pred_pred   = u(:,10);
-        T_R_I_pred      = u(:,11);
-        m_O_I_succ      = u(:,12);
-        m_R_succ_succ   = u(:,13);
-        T_F_I_succ      = u(:,14);
-        T_R_succ_succ   = u(:,15);
-        
-        
-        lambda_m_O_pred = u(:,16);
-        lambda_m_R_pred = u(:,17);
-        lambda_T_F_pred = u(:,18);
-        lambda_T_R_pred = u(:,19);
-        lambda_m_O_succ = u(:,20);
-        lambda_m_R_succ = u(:,21);
-        lambda_T_F_succ = u(:,22);
-        lambda_T_R_succ = u(:,23);
+        m_O_pred_pred   = u(1:end-1, 8);
+        m_R_I_pred      = u(1:end-1, 9);
+        T_F_pred_pred   = u(1:end-1, 10);
+        T_R_I_pred      = u(1:end-1, 11);
+        m_O_I_succ      = u(1:end-1, 12);
+        m_R_succ_succ   = u(1:end-1, 13);
+        T_F_I_succ      = u(1:end-1, 14);
+        T_R_succ_succ   = u(1:end-1, 15);
+
+        lambda_m_O_pred = u(1:end-1, 16);
+        lambda_m_R_pred = u(1:end-1, 17);
+        lambda_T_F_pred = u(1:end-1, 18);
+        lambda_T_R_pred = u(1:end-1, 19);
+        lambda_m_O_succ = u(1:end-1, 20);
+        lambda_m_R_succ = u(1:end-1, 21);
+        lambda_T_F_succ = u(1:end-1, 22);
+        lambda_T_R_succ = u(1:end-1, 23);
 
         cost =     Q .* norm(T_b - T_set).^2 ...
              + lambda_m_O_pred' * (m_F - m_O_pred_pred)...
