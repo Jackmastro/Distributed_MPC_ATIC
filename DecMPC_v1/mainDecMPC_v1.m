@@ -23,7 +23,7 @@ NAME_BUS_NMPC_C = 'BusParamsC';
 % Controller hyperparameters 
 Ts = 15*60;
 K = 4;
-Q = 10000;
+Q = 100000;
 SimHorizon = 8640;
 t = [0:Ts:(SimHorizon+K*Ts+1)];
 
@@ -46,8 +46,8 @@ m_dot_NOMINAL_FEED  = 30;
 m_dot_FEED_MAX      = 40;
 m_dot_NOMINAL_BYP   = 0.1 * m_dot_NOMINAL_FEED;
 
-K_temp = 0; % TODO: TUNING PER K>0
-K_m_dot = 0; 
+K_temp = 10; % TODO: TUNING PER K>0
+K_m_dot = 1; 
 
 
 % Instiantating household objects
@@ -62,24 +62,7 @@ InitializeParamInSimulator_DecMPC(ADRESS_HOUSE_B, B)
 
 C = Household_DecMPC(T_set, T_amb, Ts, K, Q, [NAME_SIMULATION '/' ADRESS_NMPC_C ], true);
 createParameterBus(C.nlobj, C.adressBusParams, NAME_BUS_NMPC_C, {C.params});
-InitializeParamInSimulator_DecMPC(ADRESS_HOUSE_C, C)
-
-
-% options_A = nlmpcmoveopt;
-% options_A.Parameters = {A.params};
-% 
-% x_A = [A.T_S1_0, A.T_S2_0, A.T_b_0, A.T_S3_0];
-% 
-% mv_0 = 2;
-% lastmv_A = mv_0;
-% 
-% md_A = [350, 30];
-% 
-% [mv_A,~,info] = nlmpcmove(A.nlobj, x_A, lastmv_A, [], md_A, options_A); 
-% 
-% % disp(md_A)
-% disp(mv_A)
-        
+InitializeParamInSimulator_DecMPC(ADRESS_HOUSE_C, C);      
 
 %% Simulink Simulation
 % Open
