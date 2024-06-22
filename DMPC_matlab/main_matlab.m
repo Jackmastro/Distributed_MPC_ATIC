@@ -31,10 +31,11 @@ Q = 1;
 T_set = 273 + 22; % PLACE HOLDER
 T_amb = 273;
 
-Tsetter = Tset_matlab(Ts, K);
-a = Tsetter.getTsetTrajectory(20000)
+Tset_obj = Tset_matlab(Ts, K);
 
-plot(Tsetter.interpolated_time, Tsetter.interpolated_data)
+T_mean = 273;
+T_var_pp = 10;
+Tamb_obj = Tamb_matlab(Ts, K, T_mean, T_var_pp);
 
 % Validate NMPC
 validation = true;
@@ -54,8 +55,10 @@ options_C.Parameters = C.paramsCell;
 
 %% Initialization
 
-T = 2;
-max_iter = 20;
+hours_sim = 8 * 3600;
+T = hours_sim / (K * Ts);
+% T = 2;
+max_iter = 30;
 
 % Initial conditions
 x_A = [A.T_F_0, A.T_S1_0, A.T_S2_0, A.T_b_0, A.T_S3_0, A.T_R_0];
@@ -72,6 +75,14 @@ lastmv_C = mv_0;
 md_A = zeros(A.K+1, A.nu_md);
 md_B = zeros(B.K+1, B.nu_md);
 md_C = zeros(C.K+1, C.nu_md);
+% T_set
+md_A(:, 10) = Tset_obj.getTsetTrajectory(0);
+md_B(:, 18) = Tset_obj.getTsetTrajectory(0);
+md_C(:, 10) = Tset_obj.getTsetTrajectory(0);
+% T_amb
+md_A(:, 9)  = Tamb_obj.getTambTrajectory(0);
+md_B(:, 17) = Tamb_obj.getTambTrajectory(0);
+md_C(:, 9)  = Tamb_obj.getTambTrajectory(0);
 
 % For Plots
 save_plot = false;
@@ -190,6 +201,17 @@ for t = 1:T
     x_A = X_A(end, :);
     x_B = X_B(end, :);
     x_C = X_C(end, :);
+
+    % Update T_set
+    current_time = t * K * Ts;
+    md_A(:, 10) = Tset_obj.getTsetTrajectory(current_time);
+    md_B(:, 18) = Tset_obj.getTsetTrajectory(current_time);
+    md_C(:, 10) = Tset_obj.getTsetTrajectory(current_time);
+
+    % Update T_amb
+    md_A(:, 9)  = Tamb_obj.getTambTrajectory(current_time);
+    md_B(:, 17) = Tamb_obj.getTambTrajectory(current_time);
+    md_C(:, 9)  = Tamb_obj.getTambTrajectory(current_time);
 
     % Save trajectories
     idx = (t-1)*K+2;

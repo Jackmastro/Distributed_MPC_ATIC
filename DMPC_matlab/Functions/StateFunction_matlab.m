@@ -28,6 +28,7 @@ function dxdt = StateFunction_matlab(x, u, params)
     % T_amb = params(41);
 
     is_bypass_house = params(49);
+    is_first_house  = params(50);
 
     % States
     T_F  = x(1);
@@ -47,10 +48,12 @@ function dxdt = StateFunction_matlab(x, u, params)
     m_R        = u(7);
 
     % Measured disturbances
-    if is_bypass_house
-        T_amb = u(24);
-    else
+    if is_first_house
         T_amb = u(16);
+    elseif is_bypass_house
+        T_amb = u(16);
+    else
+        T_amb = u(24);
     end
 
     % System of equations 
