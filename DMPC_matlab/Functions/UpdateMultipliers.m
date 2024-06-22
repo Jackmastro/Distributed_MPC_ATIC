@@ -58,6 +58,8 @@ function [lambda_AB, lambda_BC, difference_m, difference_T, is_converged] = Upda
 
     lambda_BC = [lambda_BC_m_O, lambda_BC_m_R, lambda_BC_T_F, lambda_BC_T_R];
 
+    %% Tolerance check
+    
     if difference_m <= mass_tolerance && difference_T <= temperature_tolerance
         is_converged = true;
     else 

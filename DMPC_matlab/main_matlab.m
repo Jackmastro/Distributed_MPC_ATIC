@@ -69,12 +69,14 @@ T = 2;
 x = zeros(T, A.nx + B.nx + C.nx);
 u = zeros(T, 5);
 
+save_plot = false;
+
 for t = 1:T
 
     % Plotting 
     fprintf('Simulation time step: %.2f\n', t);
 
-    figure;
+    figToPlot = figure;
 
     h_m = plot(NaN, NaN, 'b', 'DisplayName', 'Mass flow');
     hold on;
@@ -167,4 +169,8 @@ for t = 1:T
 
 end
 
-%% Save data
+%% Save plots
+
+if save_plot
+    saveTikzPlot('convergence_plot.tex', figToPlot, 'height', '\figureheight', 'width', '\figurewidth');
+end
