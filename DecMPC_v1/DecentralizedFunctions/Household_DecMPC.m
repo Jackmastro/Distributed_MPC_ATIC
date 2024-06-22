@@ -108,8 +108,8 @@ classdef Household_DecMPC
             obj.h_R = 1.5;
             obj.h_BYP = 1.5;
       
-            obj.A_b = 100;
-            obj.C_b = 3*1e6;
+            obj.A_b = 300;
+            obj.C_b = 5*1e6;
 	      
             obj.V_S1  = pi/4*obj.D_S1^2*obj.L_S1;
             obj.A_S1  = pi*obj.D_S1*obj.L_S1;

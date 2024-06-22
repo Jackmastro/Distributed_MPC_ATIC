@@ -2,7 +2,9 @@ clc;
 clear; 
 %close all;
 
+
 load("TemperatureSP_Dec.mat")
+% disp("Press enter when Simulink is open");
 %% Set Network Objects
 
 %Define the name coherently with Simulink
@@ -22,9 +24,9 @@ NAME_BUS_NMPC_C = 'BusParamsC';
 
 % Controller hyperparameters 
 Ts = 15*60;
-K = 4;
+K = 10;
 Q = 1000;
-SimHorizon = 8640;
+SimHorizon = 86400;
 t = [0:Ts:(SimHorizon+K*Ts+1)];
 
 % Set temperatures
@@ -38,19 +40,29 @@ T_amb_signal = T_amb_day_excursion_pp*sin(pi/86400*t)+T_amb_average;
 
 %Tuning values of HEAT_PRODUCED
 T_NOMINAL_FEED      = 273 + 80;
+T_NOMINAL_FEED_0    = 273 + 80;
 T_FEED_MAX          = 273 + 110; 
 T_FEED_MIN          = 273 + 50;
-T_SP_RETURN         = 273 + 40;
+T_SP_RETURN         = 273 + 30;
 
 m_dot_NOMINAL_FEED  = 30;
 m_dot_FEED_MAX      = 40;
 m_dot_NOMINAL_BYP   = 0.1 * m_dot_NOMINAL_FEED;
+m_dot_NOMINAL_BYP_0 = m_dot_NOMINAL_BYP;
 
 K_temp = 10; % TODO: TUNING PER K>0
-K_m_dot = 10; 
+K_m_dot = 100; 
 
+%% Simulink opening
+% Open
+open_system(NAME_SIMULATION);
+% toWksData = out.simout;
+% Set simulation parameters
+set_param(NAME_SIMULATION, 'StartTime', '0', 'StopTime', num2str(SimHorizon), 'Solver', 'ode45');
 
-% Instiantating household objects
+%pause
+
+%% Instiantating household objects
 
 A = Household_DecMPC(T_set, T_amb, Ts, K, Q, [NAME_SIMULATION '/' ADRESS_NMPC_A ], true);
 createParameterBus(A.nlobj, A.adressBusParams, NAME_BUS_NMPC_A, {A.params});
