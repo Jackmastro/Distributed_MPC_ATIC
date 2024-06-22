@@ -3,8 +3,9 @@ function cost = CostFunction_DecMPC(x, u, ~, ~, params)
     Q = params(29);
     
     % Measured Disturbance
-    T_set = u(4);
+    % T_set = u(4);
 
+    T_set = params(25);
     % States
     T_b  = x(2:end, 3);
 
