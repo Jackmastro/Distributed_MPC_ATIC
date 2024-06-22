@@ -1,7 +1,5 @@
 function dxdt = HouseholdTemperatureDynamic_DecMPC(x, u, params)
 
-    % disp(x)
-    
     % Constants
     rho_w   = params(1);
     cp_w    = params(2);
@@ -29,7 +27,6 @@ function dxdt = HouseholdTemperatureDynamic_DecMPC(x, u, params)
     m_U  = u(1);
     T_F = u(2);
     % m_F  = u(3);
-
 
     % System of equations 
     dT_S1 = (m_U * cp_w * T_F - m_U * cp_w * T_S1 - h_S1 * A_S1 * (T_S1 - T_amb))   / (rho_w * cp_w * V_S1);

@@ -45,7 +45,8 @@ classdef Household_DecMPC
         T_S3_0
         T_b_0
         T_R_0
-        T_BYP_0
+        T_BYP_0  
+        m_dot_U_0 
 
         % Building set and ambient temperature
         T_set 
@@ -67,6 +68,7 @@ classdef Household_DecMPC
         adressBusParams
         validation
         params
+
     end
 
     
@@ -126,13 +128,14 @@ classdef Household_DecMPC
             obj.DeltaP_S2_max = 10*1e5;
             obj.DeltaP_S3_max = 10*1e5;
 
-            obj.T_F_0   = 273 + 10;
-            obj.T_S1_0  = 273 + 10;
-            obj.T_S2_0  = 273 + 10;
-            obj.T_S3_0  = 273 + 10;
+            obj.T_F_0   = 273 + 60;
+            obj.T_S1_0  = 273 + 60;
+            obj.T_S2_0  = 273 + 60;
+            obj.T_S3_0  = 273 + 60;
             obj.T_b_0   = 273 + 15;
-            obj.T_R_0   = 273 + 10;
-            obj.T_BYP_0 = 273 + 10;
+            obj.T_R_0   = 273 + 30;
+            obj.T_BYP_0 = 273 + 30;
+            obj.m_dot_U_0 = 5;
                  
             % Set temperature values
             obj.T_amb = T_amb;
@@ -224,7 +227,7 @@ classdef Household_DecMPC
                 nlobj.ManipulatedVariables(i).Min = 0;
             end
 
-            nlobj.ManipulatedVariables(1).Max = HouseholdPressureDrop_DecMPC(obj.params);
+            nlobj.MV(1).Max = HouseholdPressureDrop_DecMPC(obj.params);
         end
     end
 end
