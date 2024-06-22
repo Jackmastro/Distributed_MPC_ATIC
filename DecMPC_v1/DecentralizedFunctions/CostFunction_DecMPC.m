@@ -1,9 +1,9 @@
-function cost = CostFunction_DecMPC(x, ~, ~, ~, params) 
+function cost = CostFunction_DecMPC(x, u, ~, ~, params) 
 
     Q = params(29);
-    K = params(27); % prediction horizon
-    T_set = params(25); 
-
+    
+    % Measured Disturbance
+    T_set = u(4);
 
     % States
     T_b  = x(2:end, 3);
