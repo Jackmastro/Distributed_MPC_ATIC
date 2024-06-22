@@ -8,6 +8,7 @@ classdef Tset_matlab
 
         time
         data
+        interpolated_time
         interpolated_data
 
     end
@@ -15,18 +16,23 @@ classdef Tset_matlab
     methods
         % Constructor
         function obj = Tset_matlab(Ts, K)
-            obj.load_data();
+            obj = obj.load_data();
             obj.Ts = Ts;
             obj.K = K;
 
-            obj.interpolate();
+            obj = obj.interpolate();
 
         end
 
-        % Function to get interpolated data at specific time points
-        function output = getInterpolatedValues(obj, time_input)
-            % Interpolate the data at the specified input time
-            output = interp1(obj.time, obj.data, time_input, 'linear', 'extrap');
+        % Function to get interpolated data given current time
+        function T_set_trajectory = getTsetTrajectory(obj, current_time)
+            % input: time_input in seconds
+            % output: vector of the next K time steps (excluded time_input)
+            final_time = current_time + obj.K * obj.Ts;
+            time_query_points = linspace(current_time, final_time, obj.K+1);
+
+            T_set_trajectory = interp1(obj.interpolated_time, obj.interpolated_data, time_query_points, 'linear', 'extrap');
+            T_set_trajectory = T_set_trajectory(2:end);
         end
 
 %%%%%%%%% Helper functions
@@ -44,10 +50,10 @@ classdef Tset_matlab
             % Extract the directory part of the path
             [scriptDir, ~, ~] = fileparts(scriptFullPath);
             
-            obj.dataset = load([scriptDir, '/T_set_trajectory.mat']).Trajectory;
+            obj.dataset = load([scriptDir, '/T_set/T_set_trajectory.mat']).Trajectory;
 
             % Extract the timeseries object from the dataset
-            timeseries = obj.dataset.Trajectory.get('T_set');
+            timeseries = obj.dataset.get('T_set');
             
             % Get the time and data values from the timeseries object
             obj.time = timeseries.Time;
@@ -60,10 +66,11 @@ classdef Tset_matlab
             % Create the time vector with the specified sample time
             t_min = min(obj.time);
             t_max = max(obj.time);
-            t_interp = t_min:obj.Ts:t_max;
+            dt = 1;
+            obj.interpolated_time = t_min:dt:t_max;
             
             % Interpolate the data based on the new time vector
-            obj.interpolated_data = interp1(obj.time, obj.data, t_interp, 'linear', 'extrap');
+            obj.interpolated_data = interp1(obj.time, obj.data, obj.interpolated_time, 'linear', 'extrap');
         end
 
     end
