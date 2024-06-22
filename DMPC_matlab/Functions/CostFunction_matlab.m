@@ -21,7 +21,7 @@ function cost = CostFunction_matlab(x, u, ~, ~, params)
     T_F     = x(2:end, 1); % shared
     % T_S1  = x(2:end, 2);
     % T_S2  = x(2:end, 3);
-    T_b     = x(2:end, 4); % privat
+    T_b     = x(2:end, 4); % private
     % T_S3  = x(2:end, 5);
     T_R     = x(2:end, 6); % shared
     

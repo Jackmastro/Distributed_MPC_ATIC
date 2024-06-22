@@ -29,11 +29,11 @@ Q = 1;
 
 % Set temperatures
 T_set = 273 + 22; % PLACE HOLDER
-T_amb = 273;
+T_amb = 273; % PLACE HOLDER
 
 Tset_obj = Tset_matlab(Ts, K);
 
-T_mean = 273;
+T_mean = 273 + 15;
 T_var_pp = 10;
 Tamb_obj = Tamb_matlab(Ts, K, T_mean, T_var_pp);
 
@@ -58,7 +58,7 @@ options_C.Parameters = C.paramsCell;
 hours_sim = 8 * 3600;
 T = hours_sim / (K * Ts);
 % T = 2;
-max_iter = 30;
+max_iter = 20;
 
 % Initial conditions
 x_A = [A.T_F_0, A.T_S1_0, A.T_S2_0, A.T_b_0, A.T_S3_0, A.T_R_0];
@@ -66,7 +66,7 @@ x_B = [B.T_F_0, B.T_S1_0, B.T_S2_0, B.T_b_0, B.T_S3_0, B.T_R_0];
 x_C = [C.T_F_0, C.T_S1_0, C.T_S2_0, C.T_b_0, C.T_S3_0, C.T_R_0, C.T_BYP_0]; 
 
 % Manipulated Variables
-mv_0 = [273+70, 273+30, 2, 1, 1, 1, 2];
+mv_0 = [273+80, 273+40, 15, 5, 10, 10, 15];
 lastmv_A = mv_0;
 lastmv_B = mv_0;
 lastmv_C = mv_0;
@@ -129,6 +129,8 @@ for t = 1:T
     error_T = zeros(1, max_iter);
     is_converged = false;
     iteration = 0;
+    alfa_m = 1;
+    alfa_T = 1;
 
     while ~is_converged && ~max_iter_reached
 
@@ -178,7 +180,7 @@ for t = 1:T
         md_B(:,5:8) = [MV_C(:,3), MV_C(:,7), MV_C(:,1), X_C(:,6)];
         
         % Update and Check
-        [lambda_AB, lambda_BC, difference_m, difference_T, is_converged] = UpdateMultipliers(X_A, MV_A, X_B, MV_B, X_C, MV_C, md_A, md_C);
+        [lambda_AB, lambda_BC, difference_m, difference_T, is_converged, alfa_m, alfa_T] = UpdateMultipliers(X_A, MV_A, X_B, MV_B, X_C, MV_C, md_A, md_C, iteration, alfa_m, alfa_T);
         
         md_A(:,5:8) = lambda_AB;
         md_B(:,9:16) = [lambda_AB, lambda_BC];
@@ -232,10 +234,13 @@ temperaturePlot = figure;
 
 % TODO LEGEND FROM NAMES
 % CLICKABLE LEGEND FROM BA
-plot(time, x.C(:, 4), ".b-")
+plot(time, Tamb_obj.sinusoidal_Tamb(time*60), "c--")
 hold on
 plot(time, Tset_obj.interpolator_Tset(time*60), "k--")
-plot(time, Tamb_obj.sinusoidal_Tamb(time*60), "r--")
+plot(time, x.A(:, 4), ".b-")
+plot(time, x.B(:, 4), ".g-")
+plot(time, x.C(:, 4), ".r-")
+
 xlabel('Time / min', 'Interpreter', 'latex');
 ylabel('$T$', 'Interpreter', 'latex');
 grid on;
