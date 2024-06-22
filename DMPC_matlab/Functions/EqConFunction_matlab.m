@@ -4,12 +4,12 @@ function ceq = EqConFunction_matlab(x, u, ~, params)
 
     % Inputs
     % T_F_pred_I = u(1:end-1, 1);
-    T_R_succ_I = u(1:end-1, 2);
-    m_F        = u(1:end-1, 3);
-    m_U        = u(1:end-1, 4);
-    m_O        = u(1:end-1, 5);
-    m_R_succ_I = u(1:end-1, 6);
-    m_R        = u(1:end-1, 7);
+    T_R_succ_I   = u(1:end-1, 2);
+    m_F          = u(1:end-1, 3);
+    m_U          = u(1:end-1, 4);
+    m_O          = u(1:end-1, 5);
+    m_R_succ_I   = u(1:end-1, 6);
+    m_R          = u(1:end-1, 7);
 
     % Constraints
     ceq = [

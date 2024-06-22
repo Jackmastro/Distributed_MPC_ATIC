@@ -102,11 +102,11 @@ classdef Household_matlab
             obj.nu_mv = 7;
 
             if is_bypass_house
-                obj.nu_md = 8;
+                obj.nu_md = 10;
             elseif is_first_house
-                obj.nu_md = 8;
+                obj.nu_md = 10;
             else
-                obj.nu_md = 16;
+                obj.nu_md = 18;
             end
 
             % Set default parameters
@@ -165,8 +165,8 @@ classdef Household_matlab
             obj.T_BYP_0 = 273 + 10;
                  
             % Set temperature values
-            obj.T_amb = T_amb;
-            obj.T_set = T_set;
+            obj.T_amb = T_amb; % PLACE HOLDER
+            obj.T_set = T_set; % PLACE HOLDER
             
             % Set controller hyperparameters
             obj.K = K;
@@ -213,8 +213,8 @@ classdef Household_matlab
                           obj.DeltaP_S1_max;
                           obj.DeltaP_S2_max;
                           obj.DeltaP_S3_max;
-                          obj.T_set; %40
-                          obj.T_amb;
+                          obj.T_set; %40 SPACE HOLDER
+                          obj.T_amb; % SPACE HOLDER
                           obj.K;
                           obj.Ts;
                           obj.Q;

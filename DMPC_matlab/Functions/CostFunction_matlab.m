@@ -3,27 +3,27 @@ function cost = CostFunction_matlab(x, u, ~, ~, params)
     % NMPC Parameters
     Q = params(44);
 
-    T_set = params(40);
+    % T_set = params(40);
 
-    is_first_house = params(50);
     is_bypass_house = params(49);
+    is_first_house  = params(50);
 
-    delta_m_O_pred = params(51);
-    delta_m_O_succ = params(52);
-    delta_m_R_pred = params(53);
-    delta_m_R_succ = params(54);
-    delta_T_F_pred = params(55);
-    delta_T_F_succ = params(56);
-    delta_T_R_pred = params(57);
-    delta_T_R_succ = params(58);
+    delta_m_O_pred  = params(51);
+    delta_m_O_succ  = params(52);
+    delta_m_R_pred  = params(53);
+    delta_m_R_succ  = params(54);
+    delta_T_F_pred  = params(55);
+    delta_T_F_succ  = params(56);
+    delta_T_R_pred  = params(57);
+    delta_T_R_succ  = params(58);
 
     % States
-    T_F     = x(2:end, 1);
+    T_F     = x(2:end, 1); % shared
     % T_S1  = x(2:end, 2);
     % T_S2  = x(2:end, 3);
-    T_b     = x(2:end, 4);
+    T_b     = x(2:end, 4); % privat
     % T_S3  = x(2:end, 5);
-    T_R     = x(2:end, 6);
+    T_R     = x(2:end, 6); % shared
     
     % Inputs
     %  Manipulated Variables 
@@ -48,6 +48,9 @@ function cost = CostFunction_matlab(x, u, ~, ~, params)
         lambda_T_F_succ = u(1:end-1, 14);
         lambda_T_R_succ = u(1:end-1, 15);
 
+        % T_amb         = u(1:end-1, 16);
+        T_set           = u(1:end-1, 17);
+
         cost =     Q .* norm(T_b - T_set).^2 ...
              + lambda_m_O_succ' * (m_O - m_O_I_succ)...
              + 0.5 * delta_m_O_succ * (norm(m_O - m_O_I_succ)).^2 ...
@@ -70,6 +73,9 @@ function cost = CostFunction_matlab(x, u, ~, ~, params)
         lambda_m_R_pred = u(1:end-1, 13);
         lambda_T_F_pred = u(1:end-1, 14);
         lambda_T_R_pred = u(1:end-1, 15);
+
+        % T_amb         = u(1:end-1, 16);
+        T_set           = u(1:end-1, 17);
 
         cost =     Q .* norm(T_b - T_set).^2 ...
              + lambda_m_O_pred' * (m_F - m_O_pred_pred)...
@@ -101,6 +107,9 @@ function cost = CostFunction_matlab(x, u, ~, ~, params)
         lambda_m_R_succ = u(1:end-1, 21);
         lambda_T_F_succ = u(1:end-1, 22);
         lambda_T_R_succ = u(1:end-1, 23);
+
+        % T_amb         = u(1:end-1, 24);
+        T_set           = u(1:end-1, 25);
 
         cost =     Q .* norm(T_b - T_set).^2 ...
              + lambda_m_O_pred' * (m_F - m_O_pred_pred)...
