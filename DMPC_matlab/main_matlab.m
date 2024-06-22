@@ -232,8 +232,11 @@ temperaturePlot = figure;
 
 % TODO LEGEND FROM NAMES
 % CLICKABLE LEGEND FROM BA
-plot(time, x.A(:, 4))
-xlabel('Time / s', 'Interpreter', 'latex');
+plot(time, x.C(:, 4), ".b-")
+hold on
+plot(time, Tset_obj.interpolator_Tset(time*60), "k--")
+plot(time, Tamb_obj.sinusoidal_Tamb(time*60), "r--")
+xlabel('Time / min', 'Interpreter', 'latex');
 ylabel('$T$', 'Interpreter', 'latex');
 grid on;
 hold on;
