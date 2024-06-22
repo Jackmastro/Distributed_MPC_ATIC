@@ -1,12 +1,23 @@
-function [lambda_AB, lambda_BC, difference_m, difference_T, is_converged] = UpdateMultipliers(X_A, MV_A, X_B, MV_B, X_C, MV_C, md_A, md_C)
+function [lambda_AB, lambda_BC, difference_m, difference_T, is_converged, alfa_m, alfa_T] = UpdateMultipliers(X_A, MV_A, X_B, MV_B, X_C, MV_C, md_A, md_C, iteration, alfa_m_past, alfa_T_past)
     
     difference_m = 0;
     mass_tolerance = 1;
-    alfa_m = 0.001; 
+    % alpha_m = 0.001;
 
     difference_T = 0;
     temperature_tolerance = 1;
-    alfa_T = 0.0001;
+    % alpha_T = 0.0001;
+
+    % Nesterov acceleration
+    if iteration == 1
+        alfa_m = 1;
+        alfa_T = 1;
+    else
+        alfa_m = (1 + sqrt(1 + 4*alfa_m_past^2)) / 2;
+        alfa_T = (1 + sqrt(1 + 4*alfa_T_past^2)) / 2;
+    end
+    alpha_m = (alfa_m_past - 1) / (alfa_m);
+    alpha_T = (alfa_T_past - 1) / (alfa_T);
 
     %% A-B 
 
@@ -16,19 +27,19 @@ function [lambda_AB, lambda_BC, difference_m, difference_T, is_converged] = Upda
     lambda_AB_T_R = md_A(:,8);
 
     % lambda_AB_m_O
-    lambda_AB_m_O = lambda_AB_m_O + alfa_m * (MV_A(:,5) - MV_B(:,3));
+    lambda_AB_m_O = lambda_AB_m_O + alpha_m * (MV_A(:,5) - MV_B(:,3));
     difference_m = difference_m + norm((MV_A(:,5) - MV_B(:,3)));
 
     % lambda_AB_m_R
-    lambda_AB_m_R = lambda_AB_m_R + alfa_m * (MV_A(:,6) - MV_B(:,7));
+    lambda_AB_m_R = lambda_AB_m_R + alpha_m * (MV_A(:,6) - MV_B(:,7));
     difference_m = difference_m + norm(MV_A(:,6) - MV_B(:,7));
 
     % lambda_AB_T_F
-    lambda_AB_T_F = lambda_AB_T_F + alfa_T * (X_A(:,1) - MV_B(:,1));
+    lambda_AB_T_F = lambda_AB_T_F + alpha_T * (X_A(:,1) - MV_B(:,1));
     difference_T  = difference_T + norm((X_A(:,1) - MV_B(:,1)));
 
     % lambda_AB_T_R
-    lambda_AB_T_R = lambda_AB_T_R + alfa_T * (MV_A(:,2) - X_B(:,6));
+    lambda_AB_T_R = lambda_AB_T_R + alpha_T * (MV_A(:,2) - X_B(:,6));
     difference_T  = difference_T + norm((MV_A(:,2) - X_B(:,6)));
 
     lambda_AB = [lambda_AB_m_O, lambda_AB_m_R, lambda_AB_T_F, lambda_AB_T_R];
@@ -41,19 +52,19 @@ function [lambda_AB, lambda_BC, difference_m, difference_T, is_converged] = Upda
     lambda_BC_T_R = md_C(:,8);
 
     % lambda_BC_m_O
-    lambda_BC_m_O = lambda_BC_m_O + alfa_m * (MV_B(:,5) - MV_C(:,3));
+    lambda_BC_m_O = lambda_BC_m_O + alpha_m * (MV_B(:,5) - MV_C(:,3));
     difference_m = difference_m + norm(MV_B(:,5) - MV_C(:,3));
 
     % lambda_BC_m_R
-    lambda_BC_m_R = lambda_BC_m_R + alfa_m * (MV_B(:,6) - MV_C(:,7));
+    lambda_BC_m_R = lambda_BC_m_R + alpha_m * (MV_B(:,6) - MV_C(:,7));
     difference_m = difference_m + norm(MV_B(:,6) - MV_C(:,7));
 
     % lambda_BC_T_F
-    lambda_BC_T_F = lambda_BC_T_F + alfa_T * (X_B(:,1) - MV_C(:,1));
+    lambda_BC_T_F = lambda_BC_T_F + alpha_T * (X_B(:,1) - MV_C(:,1));
     difference_T = difference_T + norm((X_B(:,1) - MV_C(:,1)));
 
     % lambda_BC_T_R
-    lambda_BC_T_R = lambda_BC_T_R + alfa_T * (MV_B(:,2) - X_C(:,6));
+    lambda_BC_T_R = lambda_BC_T_R + alpha_T * (MV_B(:,2) - X_C(:,6));
     difference_T = difference_T + norm((MV_B(:,2) - X_C(:,6)));
 
     lambda_BC = [lambda_BC_m_O, lambda_BC_m_R, lambda_BC_T_F, lambda_BC_T_R];

@@ -156,13 +156,13 @@ classdef Household_matlab
             obj.DeltaP_S2_max = 10*100000;
             obj.DeltaP_S3_max = 10*100000;
 
-            obj.T_F_0   = 273 + 10;
-            obj.T_S1_0  = 273 + 10;
-            obj.T_S2_0  = 273 + 10;
-            obj.T_S3_0  = 273 + 10;
+            obj.T_F_0   = 273 + 70;
+            obj.T_S1_0  = 273 + 70;
+            obj.T_S2_0  = 273 + 70;
+            obj.T_S3_0  = 273 + 70;
             obj.T_b_0   = 273 + 15;
-            obj.T_R_0   = 273 + 10;
-            obj.T_BYP_0 = 273 + 10;
+            obj.T_R_0   = 273 + 30;
+            obj.T_BYP_0 = 273 + 30;
                  
             % Set temperature values
             obj.T_amb = T_amb; % PLACE HOLDER
