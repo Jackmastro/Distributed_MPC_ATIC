@@ -22,17 +22,24 @@ cd(scriptDir);
 disp(['Current directory changed to: ', scriptDir]);
 
 %% Construct objects
-% Set temperatures
-T_set = 273 + 22;
-T_amb = 273;
-
 % Controller hyperparameters
 Ts = 15*60;
 K = 4;
 Q = 1;
 
+% Set temperatures
+T_set = 273 + 22; % PLACE HOLDER
+T_amb = 273;
+
+Tsetter = Tset_matlab(Ts, K);
+a = Tsetter.getTsetTrajectory(20000)
+
+plot(Tsetter.interpolated_time, Tsetter.interpolated_data)
+
+% Validate NMPC
 validation = true;
 
+% Construct houses
 A = Household_matlab(true, false, T_set, T_amb, Ts, K, Q, validation);
 options_A = nlmpcmoveopt;
 options_A.Parameters = A.paramsCell;
@@ -45,7 +52,7 @@ C = Household_matlab(false, true, T_set, T_amb, Ts, K, Q, validation);
 options_C = nlmpcmoveopt;
 options_C.Parameters = C.paramsCell;
 
-%% Initializations
+%% Initialization
 
 T = 2;
 max_iter = 20;
