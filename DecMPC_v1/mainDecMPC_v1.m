@@ -23,7 +23,7 @@ NAME_BUS_NMPC_C = 'BusParamsC';
 % Controller hyperparameters 
 Ts = 15*60;
 K = 4;
-Q = 100000;
+Q = 1000;
 SimHorizon = 8640;
 t = [0:Ts:(SimHorizon+K*Ts+1)];
 
@@ -47,7 +47,7 @@ m_dot_FEED_MAX      = 40;
 m_dot_NOMINAL_BYP   = 0.1 * m_dot_NOMINAL_FEED;
 
 K_temp = 10; % TODO: TUNING PER K>0
-K_m_dot = 1; 
+K_m_dot = 10; 
 
 
 % Instiantating household objects
