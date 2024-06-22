@@ -25,8 +25,8 @@ function [J_x_x, J_x_u] = JacobianState_matlab(x, u, params)
     h_B     = params(32);
     A_B     = params(33);
 
-    nx     = params(45);
-    nu_mv  = params(47);
+    nx      = params(45);
+    nu_mv   = params(47);
 
     is_bypass_house = params(49);
 
@@ -34,7 +34,7 @@ function [J_x_x, J_x_u] = JacobianState_matlab(x, u, params)
     T_F  = x(1);
     T_S1 = x(2);
     T_S2 = x(3);
-    % T_b  = x(4);
+    % T_b= x(4);
     T_S3 = x(5);
     T_R  = x(6);
     

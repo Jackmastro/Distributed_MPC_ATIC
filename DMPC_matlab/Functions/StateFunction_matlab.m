@@ -25,7 +25,7 @@ function dxdt = StateFunction_matlab(x, u, params)
     h_BYP   = params(32);
     A_BYP   = params(33);
 
-    T_amb = params(41);
+    % T_amb = params(41);
 
     is_bypass_house = params(49);
 
@@ -45,6 +45,13 @@ function dxdt = StateFunction_matlab(x, u, params)
     m_O        = u(5);
     m_R_succ_I = u(6);
     m_R        = u(7);
+
+    % Measured disturbances
+    if is_bypass_house
+        T_amb = u(24);
+    else
+        T_amb = u(16);
+    end
 
     % System of equations 
     dT_F  = (m_F * cp_w * T_F_pred_I     - m_F * cp_w * T_F     - h_F * A_F * (T_F - T_amb))                                           / (rho_w * cp_w * V_F);
