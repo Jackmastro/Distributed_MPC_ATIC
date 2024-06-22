@@ -45,7 +45,8 @@ classdef Household_DecMPC
         T_S3_0
         T_b_0
         T_R_0
-        T_BYP_0
+        T_BYP_0  
+        m_dot_U_0 
 
         % Building set and ambient temperature
         T_set 
@@ -67,6 +68,7 @@ classdef Household_DecMPC
         adressBusParams
         validation
         params
+
     end
 
     
@@ -106,8 +108,8 @@ classdef Household_DecMPC
             obj.h_R = 1.5;
             obj.h_BYP = 1.5;
       
-            obj.A_b = 500;
-            obj.C_b = 300*1000000;
+            obj.A_b = 100;
+            obj.C_b = 3*1e6;
 	      
             obj.V_S1  = pi/4*obj.D_S1^2*obj.L_S1;
             obj.A_S1  = pi*obj.D_S1*obj.L_S1;
@@ -122,17 +124,18 @@ classdef Household_DecMPC
             obj.A_F  = pi*obj.D_F*obj.L_F;
       
             obj.f_Darcy = 0.025;
-            obj.DeltaP_S1_max = 10*100000;
-            obj.DeltaP_S2_max = 10*100000;
-            obj.DeltaP_S3_max = 10*100000;
+            obj.DeltaP_S1_max = 10*1e5; % 10 bar
+            obj.DeltaP_S2_max = 10*1e5;
+            obj.DeltaP_S3_max = 10*1e5;
 
-            obj.T_F_0 = 283;
-            obj.T_S1_0 = 283;
-            obj.T_S2_0 = 283;
-            obj.T_S3_0 = 283;
-            obj.T_b_0 = 286;
-            obj.T_R_0 = 283;
-            obj.T_BYP_0 = 283;
+            obj.T_F_0   = 273 + 60;
+            obj.T_S1_0  = 273 + 60;
+            obj.T_S2_0  = 273 + 60;
+            obj.T_S3_0  = 273 + 60;
+            obj.T_b_0   = 273 + 15;
+            obj.T_R_0   = 273 + 30;
+            obj.T_BYP_0 = 273 + 30;
+            obj.m_dot_U_0 = 5;
                  
             % Set temperature values
             obj.T_amb = T_amb;
@@ -192,23 +195,25 @@ classdef Household_DecMPC
 
             % NMPC parameters
             nlobj.PredictionHorizon = obj.K; 
+            nlobj.ControlHorizon = obj.K;
             nlobj.Ts = obj.Ts;
+            nlobj.Model.NumberOfParameters = numel({obj.params});
 
             % Prediction model
-            nlobj.Model.NumberOfParameters = numel({obj.params});
+            nlobj.Model.IsContinuousTime = true;
             nlobj.Model.StateFcn = "HouseholdTemperatureDynamic_DecMPC";
+
+            % Output
             nlobj.Model.OutputFcn = "HouseholdOutput_DecMPC";
-            nlobj.ControlHorizon = obj.K;
-            
+
             % Cost
+            nlobj.Optimization.ReplaceStandardCost = true;
             nlobj.Optimization.CustomCostFcn = "CostFunction_DecMPC";
-            
-            %To use the cost function
-            nlobj.Optimization.ReplaceStandardCost = false;
+            % nlobj.Optimization.ReplaceStandardCost = false;
             % nlobj.Weights.ManipulatedVariables = 
             % nlobj.Weights.ManipulatedVariablesRate = 
             % nlobj.Weights.ECR = ;
-            nlobj.Weights.OutputVariables = obj.Q;
+            % nlobj.Weights.OutputVariables = obj.Q;
 
             % Constraints
             nlobj.Optimization.CustomIneqConFcn = "IneqConFunction_DecMPC";
@@ -221,6 +226,8 @@ classdef Household_DecMPC
             for i = 1:obj.nu_mv
                 nlobj.ManipulatedVariables(i).Min = 0;
             end
+
+            nlobj.MV(1).Max = HouseholdPressureDrop_DecMPC(obj.params);
         end
     end
 end
