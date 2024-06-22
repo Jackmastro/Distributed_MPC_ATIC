@@ -28,7 +28,7 @@ T_amb = 273;
 
 % Controller hyperparameters
 Ts = 15*60;
-K = 5;
+K = 4;
 Q = 1;
 
 validation = true;
@@ -47,6 +47,9 @@ options_C.Parameters = C.paramsCell;
 
 %% Initializations
 
+T = 2;
+max_iter = 20;
+
 % Initial conditions
 x_A = [A.T_F_0, A.T_S1_0, A.T_S2_0, A.T_b_0, A.T_S3_0, A.T_R_0];
 x_B = [B.T_F_0, B.T_S1_0, B.T_S2_0, B.T_b_0, B.T_S3_0, B.T_R_0]; 
@@ -63,14 +66,28 @@ md_A = zeros(A.K+1, A.nu_md);
 md_B = zeros(B.K+1, B.nu_md);
 md_C = zeros(C.K+1, C.nu_md);
 
-%% Simulation
-
-T = 2;
-x = zeros(T, A.nx + B.nx + C.nx);
-u = zeros(T, 5);
-
+% For Plots
 save_plot = false;
 
+x = struct(); % TODO ADD NAMES OF THE COLUMNS (DIRECTLY IN HOUSEHOLD)
+x.A = zeros(T*K+1, A.nx);
+x.B = zeros(T*K+1, B.nx);
+x.C = zeros(T*K+1, C.nx);
+
+x.A(1,:) = x_A;
+x.B(1,:) = x_B;
+x.C(1,:) = x_C;
+
+u = struct();
+u.A = zeros(T*K+1, A.nu_mv);
+u.B = zeros(T*K+1, B.nu_mv);
+u.C = zeros(T*K+1, C.nu_mv);
+
+u.A(1,:) = lastmv_A;
+u.B(1,:) = lastmv_B;
+u.C(1,:) = lastmv_C;
+
+%% Simulation
 for t = 1:T
 
     % Plotting 
@@ -89,7 +106,6 @@ for t = 1:T
     hold on;
 
     % While loop - ADMM
-    max_iter = 100;
     max_iter_reached = false;
     error_m = zeros(1, max_iter);
     error_T = zeros(1, max_iter);
@@ -162,15 +178,39 @@ for t = 1:T
         drawnow;
 
     end
-    % TODO UPDATE STATES
 
-    x(t,:) = [x_A(2,:), x_B(2,:), x_C(2,:)];
-    u(t,:) = [MV_A(1,1), MV_A(1,3), MV_A(1,4), MV_B(1,4), MV_C(1,4)];
+    % Update states
+    x_A = X_A(end, :);
+    x_B = X_B(end, :);
+    x_C = X_C(end, :);
+
+    % Save trajectories
+    idx = (t-1)*K+2;
+    x.A(idx:idx+(K-1), :) = X_A(2:end, :);
+    x.B(idx:idx+(K-1), :) = X_B(2:end, :);
+    x.C(idx:idx+(K-1), :) = X_C(2:end, :);
+
+    u.A(idx:idx+(K-1), :) = MV_A(1:end-1, :);
+    u.B(idx:idx+(K-1), :) = MV_B(1:end-1, :);
+    u.C(idx:idx+(K-1), :) = MV_C(1:end-1, :);
 
 end
+
+%% Plot
+time = linspace(1, T*K+1, T*K+1) * Ts / 60; %min
+
+temperaturePlot = figure;
+
+% TODO LEGEND FROM NAMES
+% CLICKABLE LEGEND FROM BA
+plot(time, x.A(:, 4))
+xlabel('Time / s', 'Interpreter', 'latex');
+ylabel('$T$', 'Interpreter', 'latex');
+grid on;
+hold on;
 
 %% Save plots
 
 if save_plot
-    saveTikzPlot('convergence_plot.tex', figToPlot, 'height', '\figureheight', 'width', '\figurewidth');
+    saveTikzPlot('convergence_plot.tex', temperaturePlot, 'height', '\figureheight', 'width', '\figurewidth');
 end
