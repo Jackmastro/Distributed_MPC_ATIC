@@ -15,7 +15,8 @@ function dxdt = HouseholdTemperatureDynamic_DecMPC(x, u, params)
     V_S3    = params(16);
     h_S3    = params(17);
     A_S3    = params(18);
-
+    T_amb = params(26);
+    
     % States
     T_S1 = x(1);
     T_S2 = x(2);
@@ -27,7 +28,7 @@ function dxdt = HouseholdTemperatureDynamic_DecMPC(x, u, params)
     T_F = u(2);
     % m_F  = u(3);
     % T_set = u(4);
-    T_amb = u(5);
+    % T_amb = u(5);
 
     % System of equations 
     dT_S1 = (m_U * cp_w * T_F - m_U * cp_w * T_S1 - h_S1 * A_S1 * (T_S1 - T_amb))   / (rho_w * cp_w * V_S1);
