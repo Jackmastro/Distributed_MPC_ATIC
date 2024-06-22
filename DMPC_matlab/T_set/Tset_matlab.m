@@ -25,7 +25,7 @@ classdef Tset_matlab
 
         end
 
-        % Function to get interpolated data given current time
+        
         function T_set_trajectory = getTsetTrajectory(obj, current_time)
             % input: time in seconds
             % output: column vector of the next K time steps (included
@@ -33,7 +33,12 @@ classdef Tset_matlab
             final_time = current_time + obj.K * obj.Ts;
             time_query_points = linspace(current_time, final_time, obj.K+1);
 
-            T_set_trajectory = interp1(obj.interpolated_time, obj.interpolated_data, time_query_points, 'linear', 'extrap')';
+            T_set_trajectory = obj.interpolator_Tset(time_query_points)';
+        end
+
+        function Tset_vec = interpolator_Tset(obj, time_vec)
+            % output as row vector
+            Tset_vec = interp1(obj.interpolated_time, obj.interpolated_data, time_vec, 'linear', 'extrap');
         end
 
 %%%%%%%%% Helper functions
@@ -62,7 +67,6 @@ classdef Tset_matlab
         end
 
 
-        % Interpolation function
         function obj = smooth_Tset_data(obj)
             % Create the time vector with the specified sample time
             t_min = min(obj.time);

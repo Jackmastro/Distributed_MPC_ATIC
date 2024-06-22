@@ -20,7 +20,7 @@ classdef Tamb_matlab
 
         end
 
-        % Function to get interpolated data given current time
+        
         function T_amb_trajectory = getTambTrajectory(obj, current_time)
             % input: time in seconds
             % output: column vector of the next K time steps (included
@@ -31,7 +31,9 @@ classdef Tamb_matlab
             T_amb_trajectory = obj.sinusoidal_Tamb(time_query_points)';
         end
 
+
         function Tamb_vec = sinusoidal_Tamb(obj, time_vec)
+            % output as row vector
             frequency = 0.5 / (24 * 3600); % frequency of the sinusoidal wave (1 cycle every 2 days)
             
             Tamb_vec = obj.T_mean + obj.T_var_pp * sin(2 * pi * frequency * time_vec);
