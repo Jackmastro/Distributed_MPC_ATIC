@@ -56,7 +56,7 @@ options_C.Parameters = C.paramsCell;
 %% Initialization
 
 hours_sim = 12 * 3600;
-T = hours_sim / (K * Ts);
+T = hours_sim / Ts;
 % T = 2;
 max_iter = 30;
 
@@ -86,20 +86,21 @@ md_C(:, 9)  = Tamb_obj.getTambTrajectory(0);
 
 % For Plots
 save_plot = false;
+rows_plots = T+1;
 
 x = struct();
-x.A = zeros(T*K+1, A.nx);
-x.B = zeros(T*K+1, B.nx);
-x.C = zeros(T*K+1, C.nx);
+x.A = zeros(rows_plots, A.nx);
+x.B = zeros(rows_plots, B.nx);
+x.C = zeros(rows_plots, C.nx);
 
 x.A(1,:) = x_A;
 x.B(1,:) = x_B;
 x.C(1,:) = x_C;
 
 u = struct();
-u.A = zeros(T*K+1, A.nu_mv);
-u.B = zeros(T*K+1, B.nu_mv);
-u.C = zeros(T*K+1, C.nu_mv);
+u.A = zeros(rows_plots, A.nu_mv);
+u.B = zeros(rows_plots, B.nu_mv);
+u.C = zeros(rows_plots, C.nu_mv);
 
 u.A(1,:) = lastmv_A;
 u.B(1,:) = lastmv_B;
@@ -110,8 +111,6 @@ tic
 for t = 1:T
 
     % Plotting 
-    fprintf('Simulation time step: %.2f\n', t);
-
     figToPlot = figure;
     set(figToPlot, 'Name', ['Hour: ', num2str(t)]);
 
@@ -197,12 +196,12 @@ for t = 1:T
     end
 
     % Update states
-    x_A = X_A(end, :);
-    x_B = X_B(end, :);
-    x_C = X_C(end, :);
+    x_A = X_A(2, :);
+    x_B = X_B(2, :);
+    x_C = X_C(2, :);
 
     % Update T_set
-    current_time = t * K * Ts;
+    current_time = t * Ts;
     md_A(:, 10) = Tset_obj.getTsetTrajectory(current_time);
     md_B(:, 18) = Tset_obj.getTsetTrajectory(current_time);
     md_C(:, 10) = Tset_obj.getTsetTrajectory(current_time);
@@ -213,14 +212,14 @@ for t = 1:T
     md_C(:, 9)  = Tamb_obj.getTambTrajectory(current_time);
 
     % Save trajectories
-    idx = (t-1)*K+2;
-    x.A(idx:idx+(K-1), :) = X_A(2:end, :);
-    x.B(idx:idx+(K-1), :) = X_B(2:end, :);
-    x.C(idx:idx+(K-1), :) = X_C(2:end, :);
+    idx = t+1;
+    x.A(idx, :) = X_A(2, :);
+    x.B(idx, :) = X_B(2, :);
+    x.C(idx, :) = X_C(2, :);
 
-    u.A(idx:idx+(K-1), :) = MV_A(1:end-1, :);
-    u.B(idx:idx+(K-1), :) = MV_B(1:end-1, :);
-    u.C(idx:idx+(K-1), :) = MV_C(1:end-1, :);
+    u.A(idx, :) = MV_A(1, :);
+    u.B(idx, :) = MV_B(1, :);
+    u.C(idx, :) = MV_C(1, :);
 
     close;
 end
