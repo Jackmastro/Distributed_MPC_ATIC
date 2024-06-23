@@ -33,7 +33,7 @@ T_amb = 273; % PLACE HOLDER
 
 Tset_obj = Tset_matlab(Ts, K);
 
-T_mean = 273 + 5;
+T_mean = 273 - 5;
 T_var_pp = 10;
 Tamb_obj = Tamb_matlab(Ts, K, T_mean, T_var_pp);
 

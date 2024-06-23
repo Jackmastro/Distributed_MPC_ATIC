@@ -138,13 +138,13 @@ classdef Household_matlab
             obj.h_S1  = 1.5;
             obj.h_S2  = 150;
             obj.h_S3  = 1.5;
-            obj.h_b = 2;
+            obj.h_b = 20;
             obj.h_F = 1.5;
             obj.h_R = 1.5;
             obj.h_BYP = 1;
       
-            obj.A_b = 100;
-            obj.C_b = 300*1e6;
+            obj.A_b = 200;
+            obj.C_b = 10*1e6;
 	      
             obj.V_S1  = pi/4*obj.D_S1^2*obj.L_S1;
             obj.A_S1  = pi*obj.D_S1*obj.L_S1;
@@ -168,7 +168,7 @@ classdef Household_matlab
             obj.T_S1_0  = 273 + 50;
             obj.T_S2_0  = 273 + 50;
             obj.T_S3_0  = 273 + 50;
-            obj.T_b_0   = 273 + 15;
+            obj.T_b_0   = 273 + 17;
             obj.T_R_0   = 273 + 30;
             obj.T_BYP_0 = 273 + 50;
                  
