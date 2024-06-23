@@ -6,6 +6,7 @@ function cost = CostFunction_matlab(x, u, ~, ~, params)
     Q_S1    = params(60);
     Q_S3    = params(61);
     Q_R     = params(62);
+    R_BYP   = params(63);
 
     h_F     = params(4);
     A_F     = params(5); 
@@ -85,6 +86,8 @@ function cost = CostFunction_matlab(x, u, ~, ~, params)
     elseif is_bypass_house
 
         % Measured Disturbances
+        m_U       = u(1:end-1, 4);
+
         m_O_pred_pred   = u(1:end-1, 8);
         m_R_I_pred      = u(1:end-1, 9);
         T_F_pred_pred   = u(1:end-1, 10);
@@ -103,6 +106,7 @@ function cost = CostFunction_matlab(x, u, ~, ~, params)
              + Q_S1 * h_S1 * A_S1 * norm(T_S1 - T_amb).^2 ...
              + Q_S3 * h_S3 * A_S3 * norm(T_S3 - T_amb).^2 ...
              + Q_R  * h_R  * A_R  * norm(T_R  - T_amb).^2 ...
+             + R_BYP * norm(m_R_succ_I).^2 ... 
              + lambda_m_O_pred' * (m_F - m_O_pred_pred)...
              + 0.5 * delta_m_O_pred * (norm(m_F - m_O_pred_pred)).^2 ...
              + lambda_m_R_pred' * (m_R - m_R_I_pred)...

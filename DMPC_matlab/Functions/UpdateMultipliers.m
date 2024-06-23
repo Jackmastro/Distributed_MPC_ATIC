@@ -5,8 +5,8 @@ function [lambda_AB, lambda_BC, difference_m, difference_T, is_converged] = Upda
     alpha_m = 0.001;
 
     difference_T = 0;
-    temperature_tolerance = 1;
-    alpha_T = 0.0001;
+    temperature_tolerance = 5;
+    alpha_T = 0.0005;
 
     %% A-B 
 

@@ -69,18 +69,19 @@ classdef Household_matlab
         Q_S1
         Q_S3
         Q_R 
+        R_BYP
 
         names
         
         % Damping Weights - Lagrange Multipliers Cost Function
-        delta_m_O_pred = 0.5;
-        delta_m_O_succ = 0.5;
-        delta_m_R_pred = 0.5;
-        delta_m_R_succ = 0.5;
-        delta_T_F_pred = 0.5;
-        delta_T_F_succ = 0.5;
-        delta_T_R_pred = 0.5;
-        delta_T_R_succ = 0.5;
+        delta_m_O_pred
+        delta_m_O_succ
+        delta_m_R_pred
+        delta_m_R_succ
+        delta_T_F_pred
+        delta_T_F_succ
+        delta_T_R_pred
+        delta_T_R_succ
 
         % NMPC object
         params
@@ -128,21 +129,21 @@ classdef Household_matlab
               
             obj.L_S1 = 5;
             obj.D_S1 = 0.1;
-            obj.L_S2 = 50;
-            obj.D_S2 = 0.05;
+            obj.L_S2 = 30;
+            obj.D_S2 = 0.07;
             obj.L_S3 = 5;
             obj.D_S3 = 0.1;
       
             obj.h_S1  = 1.5;
-            obj.h_S2  = 1.5;
+            obj.h_S2  = 150;
             obj.h_S3  = 1.5;
-            obj.h_b = 1.5;
+            obj.h_b = 2;
             obj.h_F = 1.5;
             obj.h_R = 1.5;
-            obj.h_BYP = 1.5;
+            obj.h_BYP = 1;
       
-            obj.A_b = 200;
-            obj.C_b = 30*1e6;
+            obj.A_b = 100;
+            obj.C_b = 3*1e6;
 	      
             obj.V_S1  = pi/4*obj.D_S1^2*obj.L_S1;
             obj.A_S1  = pi*obj.D_S1*obj.L_S1;
@@ -177,11 +178,23 @@ classdef Household_matlab
             % Set controller hyperparameters
             obj.K = K;
             obj.Ts = Ts;
-            obj.Q_disc = 5; 
-            obj.Q_F    = 1;
-            obj.Q_S1   = 1;
-            obj.Q_S3   = 1;
-            obj.Q_R    = 1;
+            obj.Q_disc = 10000; 
+            obj.Q_F    = 0.01;
+            obj.Q_S1   = 0.01;
+            obj.Q_S3   = 0.01;
+            obj.Q_R    = 0.01;
+            obj.R_BYP  = 100;
+
+            delta_m = 1;
+            delta_T = 1000;
+            obj.delta_m_O_pred = delta_m;
+            obj.delta_m_O_succ = delta_m;
+            obj.delta_m_R_pred = delta_m;
+            obj.delta_m_R_succ = delta_m;
+            obj.delta_T_F_pred = delta_T;
+            obj.delta_T_F_succ = delta_T;
+            obj.delta_T_R_pred = delta_T;
+            obj.delta_T_R_succ = delta_T;
 
             % Set names of variables for plots
             obj = obj.setVarNames();
@@ -248,7 +261,8 @@ classdef Household_matlab
                           obj.Q_F;   
                           obj.Q_S1;  
                           obj.Q_S3;  
-                          obj.Q_R  % 62 
+                          obj.Q_R;  % 62 
+                          obj.R_BYP
                 ];
 
             obj.paramsCell = {obj.params};

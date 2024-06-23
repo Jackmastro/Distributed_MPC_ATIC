@@ -55,10 +55,10 @@ options_C.Parameters = C.paramsCell;
 
 %% Initialization
 
-hours_sim = 12 * 3600;
+hours_sim = 4 * 3600;
 T = hours_sim / Ts;
 % T = 2;
-max_iter = 30;
+max_iter = 20;
 
 % Initial conditions
 x_A = [A.T_F_0, A.T_S1_0, A.T_S2_0, A.T_b_0, A.T_S3_0, A.T_R_0];
@@ -112,7 +112,7 @@ for t = 1:T
 
     % Plotting 
     figToPlot = figure;
-    set(figToPlot, 'Name', ['Hour: ', num2str(t)]);
+    set(figToPlot, 'Name', ['Step: ', num2str(t)]);
 
     h_m = plot(NaN, NaN, 'b', 'DisplayName', 'Mass flow');
     hold on;
@@ -201,7 +201,7 @@ for t = 1:T
     x_C = X_C(2, :);
 
     % Update T_set
-    current_time = t * Ts;
+    current_time = t * Ts + 3*3600; %%%%%%%%%%%%%%%%%%%%%%%%%%TODO VIA 3*3600
     md_A(:, 10) = Tset_obj.getTsetTrajectory(current_time);
     md_B(:, 18) = Tset_obj.getTsetTrajectory(current_time);
     md_C(:, 10) = Tset_obj.getTsetTrajectory(current_time);
@@ -225,7 +225,7 @@ for t = 1:T
 end
 toc
 %% Buildings Plot
-time = linspace(0, T*K, T*K+1) * Ts / 60; %min
+time = linspace(0, T, T+1) * Ts / 60; %min
 xlimits = [0, time(end)];
 
 temperaturePlot = figure;
@@ -243,7 +243,9 @@ xlim(xlimits);
 legend show;
 grid on;
 box on;
-hold on;
+hold off;
+
+clickableLegend
 
 %% All temperatures and mass flow rates Plot
 % Create a figure
@@ -269,7 +271,6 @@ for i = 1:3
     for j = 1:2
         plot(time, uData(:, j) - 273, 'DisplayName', A.names.u(j));
     end
-    hold off;
     xlim(xlimits);
     ylim([-Inf; Inf]);
     title(['$T_', houseName, '$'], 'Interpreter', 'latex');
@@ -278,6 +279,8 @@ for i = 1:3
     legend;
     grid on;
     box on;
+    hold off;
+    clickableLegend
 end
 
 for i = 1:3
@@ -288,7 +291,7 @@ for i = 1:3
     for j = 3:length(A.names.u)
         plot(time, uData(:, j), 'DisplayName', A.names.u(j));
     end
-    hold off;
+    plot(time, uData(:, j), 'DisplayName', A.names.u(j));
     xlim(xlimits);
     ylim([0; Inf]);
     title(['$\dot{m}_', houseName, '$'], 'Interpreter', 'latex');
@@ -297,6 +300,8 @@ for i = 1:3
     legend;
     grid on;
     box on;
+    hold off;
+    clickableLegend
 end
 
 %% Save plots
