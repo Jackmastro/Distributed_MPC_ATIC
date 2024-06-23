@@ -226,21 +226,24 @@ for t = 1:T
 end
 toc
 %% Buildings Plot
-time = linspace(1, T*K+1, T*K+1) * Ts / 60; %min
+time = linspace(0, T*K, T*K+1) * Ts / 60; %min
+xlimits = [0, time(end)];
 
 temperaturePlot = figure;
 
-plot(time, Tamb_obj.sinusoidal_Tamb(time*60), "c--", 'DisplayName', 'Tamb')
+plot(time, Tamb_obj.sinusoidal_Tamb(time*60) - 273, "m--", 'DisplayName', 'Tamb')
 hold on
-plot(time, Tset_obj.interpolator_Tset(time*60), "k--", 'DisplayName', 'Tset')
-plot(time, x.A(:, 4), ".b-", 'DisplayName', A.names.x(4))
-plot(time, x.B(:, 4), ".g-", 'DisplayName', B.names.x(4))
-plot(time, x.C(:, 4), ".r-", 'DisplayName', C.names.x(4))
+plot(time, Tset_obj.interpolator_Tset(time*60) - 273, "k--", 'DisplayName', 'Tset')
+plot(time, x.A(:, 4) - 273, ".b-", 'DisplayName', strcat(A.names.x(4), '^A'))
+plot(time, x.B(:, 4) - 273, ".g-", 'DisplayName', strcat(B.names.x(4), '^B'))
+plot(time, x.C(:, 4) - 273, ".r-", 'DisplayName', strcat(C.names.x(4), '^C'))
 
 xlabel('Time / min', 'Interpreter', 'latex');
-ylabel('$T$', 'Interpreter', 'latex');
+ylabel('Temperature / $^\circ$C', 'Interpreter', 'latex');
+xlim(xlimits);
 legend show;
 grid on;
+box on;
 hold on;
 
 %% All temperatures and mass flow rates Plot
@@ -268,10 +271,14 @@ for i = 1:3
         plot(time, uData(:, j) - 273, 'DisplayName', A.names.u(j));
     end
     hold off;
+    xlim(xlimits);
+    ylim([-Inf; Inf]);
     title(['$T_', houseName, '$'], 'Interpreter', 'latex');
+    xlabel('Time / min', 'Interpreter', 'latex');
+    ylabel('Temperature / $^\circ$C', 'Interpreter', 'latex');
     legend;
     grid on;
-    ylim([-Inf; Inf]);
+    box on;
 end
 
 for i = 1:3
@@ -283,10 +290,14 @@ for i = 1:3
         plot(time, uData(:, j), 'DisplayName', A.names.u(j));
     end
     hold off;
+    xlim(xlimits);
+    ylim([0; Inf]);
     title(['$\dot{m}_', houseName, '$'], 'Interpreter', 'latex');
+    xlabel('Time / min', 'Interpreter', 'latex');
+    ylabel('Mass flow rate / kg/s', 'Interpreter', 'latex');
     legend;
     grid on;
-    ylim([0; Inf]);
+    box on;
 end
 
 %% Save plots
