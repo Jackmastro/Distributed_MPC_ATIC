@@ -253,12 +253,12 @@ classdef Household_matlab
 
         function obj = setVarNames(obj)
             if obj.is_bypass_house
-                obj.names.x = ["T_F", "T_S1", "T_S2", "T_b", "T_S3", "T_R", "T_B"];
+                obj.names.x = ["T_F", "T_{S1}", "T_{S2}", "T_b", "T_{S3}", "T_R", "T_B"];
             else
-                obj.names.x = ["T_F", "T_S1", "T_S2", "T_b", "T_S3", "T_R"];
+                obj.names.x = ["T_F", "T_{S1}", "T_{S2}", "T_b", "T_{S3}", "T_R"];
             end
 
-            obj.names.u = ["T_F^pred,I", "T_R^succ,I", "m_F=m_out^pred,I", "m_U", "m_out^I,I", "m_R^succ,I", "m_R^I,I"];
+            obj.names.u = ["T_F^{pred,I}", "T_R^{succ,I}", "m_F=m_{out}^{pred,I}", "m_U", "m_{out}^{I,I}", "m_R^{succ,I}", "m_R^{I,I}"];
         end
 
 

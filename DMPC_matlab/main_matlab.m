@@ -225,7 +225,7 @@ for t = 1:T
     close;
 end
 toc
-%% Plot
+%% Buildings Plot
 time = linspace(1, T*K+1, T*K+1) * Ts / 60; %min
 
 temperaturePlot = figure;
@@ -243,43 +243,51 @@ legend show;
 grid on;
 hold on;
 
+%% All temperatures and mass flow rates Plot
+% Create a figure
 subPlot = figure;
 
-% Create a subplot with 2 rows and 3 columns
-subplot(2, 3, 1);
-plot(time, x.A(:, 1), 'DisplayName', A.names.x(1))
-plot(time, x.A(:, 2), 'DisplayName', A.names.x(2))
-plot(time, x.A(:, 3), 'DisplayName', A.names.x(3))
-plot(time, x.A(:, 5), 'DisplayName', A.names.x(5))
-plot(time, x.A(:, 6), 'DisplayName', A.names.x(6))
-title('T house A');
+% Define the number of subplots
+numSubplots = 6;
 
-subplot(2, 3, 2);
+% Define houses and data names
+houses = {'A', 'B', 'C'};
+xDataNames = {'x'};
+uDataNames = {'u'};
 
-title('T house B');
+for i = 1:3
+    subplot(2, 3, i);
+    hold on;
+    houseName = houses{i};
+    xData = x.(houseName);
+    for j = 1:length(A.names.x)
+        plot(time, xData(:, j) - 273, 'DisplayName', A.names.x(j));
+    end
+    uData = u.(houseName);
+    for j = 1:2
+        plot(time, uData(:, j) - 273, 'DisplayName', A.names.u(j));
+    end
+    hold off;
+    title(['$T_', houseName, '$'], 'Interpreter', 'latex');
+    legend;
+    grid on;
+    ylim([-Inf; Inf]);
+end
 
-subplot(2, 3, 3);
-
-title('T house C');
-
-subplot(2, 3, 4);
-
-title('m house A');
-plot(time, u.A(:, 1), 'DisplayName', A.names.u(1))
-plot(time, u.A(:, 2), 'DisplayName', A.names.u(2))
-plot(time, u.A(:, 3), 'DisplayName', A.names.u(3))
-plot(time, u.A(:, 4), 'DisplayName', A.names.u(4))
-plot(time, u.A(:, 5), 'DisplayName', A.names.u(5))
-plot(time, u.A(:, 6), 'DisplayName', A.names.u(6))
-plot(time, u.A(:, 7), 'DisplayName', A.names.u(7))
-subplot(2, 3, 5);
-
-title('m house B');
-
-subplot(2, 3, 6);
-
-title('m house C');
-
+for i = 1:3
+    subplot(2, 3, i+3);
+    hold on;
+    houseName = houses{i};
+    uData = u.(houseName);
+    for j = 3:length(A.names.u)
+        plot(time, uData(:, j), 'DisplayName', A.names.u(j));
+    end
+    hold off;
+    title(['$\dot{m}_', houseName, '$'], 'Interpreter', 'latex');
+    legend;
+    grid on;
+    ylim([0; Inf]);
+end
 
 %% Save plots
 
