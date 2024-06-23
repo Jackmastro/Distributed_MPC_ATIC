@@ -1,23 +1,12 @@
-function [lambda_AB, lambda_BC, difference_m, difference_T, is_converged, alfa_m, alfa_T] = UpdateMultipliers(X_A, MV_A, X_B, MV_B, X_C, MV_C, md_A, md_C, iteration, alfa_m_past, alfa_T_past)
+function [lambda_AB, lambda_BC, difference_m, difference_T, is_converged] = UpdateMultipliers(X_A, MV_A, X_B, MV_B, X_C, MV_C, md_A, md_C)
     
     difference_m = 0;
     mass_tolerance = 1;
-    % alpha_m = 0.001;
+    alpha_m = 0.001;
 
     difference_T = 0;
     temperature_tolerance = 1;
-    % alpha_T = 0.0001;
-
-    % Nesterov acceleration
-    if iteration == 1
-        alfa_m = 1;
-        alfa_T = 1;
-    else
-        alfa_m = (1 + sqrt(1 + 4*alfa_m_past^2)) / 2;
-        alfa_T = (1 + sqrt(1 + 4*alfa_T_past^2)) / 2;
-    end
-    alpha_m = (alfa_m_past - 1) / (alfa_m);
-    alpha_T = (alfa_T_past - 1) / (alfa_T);
+    alpha_T = 0.0001;
 
     %% A-B 
 

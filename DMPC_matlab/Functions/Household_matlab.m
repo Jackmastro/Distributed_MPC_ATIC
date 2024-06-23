@@ -65,6 +65,8 @@ classdef Household_matlab
         K
         Ts
         Q % 34
+
+        names
         
         % Damping Weights - Lagrange Multipliers Cost Function
         delta_m_O_pred = 0.5;
@@ -173,7 +175,10 @@ classdef Household_matlab
             obj.Ts = Ts;
             obj.Q = Q;
 
-            % Add here all the parameters (public and private) used by mpc
+            % Set names of variables for plots
+            obj = obj.setVarNames();
+
+            % Parameters for MPC
             obj.params = [obj.rho_w; %1
                           obj.cp_w;
                           obj.V_F ;
@@ -246,6 +251,17 @@ classdef Household_matlab
 
 %%%%%%%%% Helper functions
 
+        function obj = setVarNames(obj)
+            if obj.is_bypass_house
+                obj.names.x = ['T_F', 'T_S1', 'T_S2', 'T_b', 'T_S3', 'T_R', 'T_B'];
+            else
+                obj.names.x = ['T_F', 'T_S1', 'T_S2', 'T_b', 'T_S3', 'T_R'];
+            end
+
+            obj.names.u = ['T_F^pred,I', 'T_R^succ,I', 'm_F=m_out^pred,I', 'm_U', 'm_out^I,I', 'm_R^succ,I', 'm_R^I,I'];
+        end
+
+
         function nlobj = createNMPC(obj)
 
             % Create NMPC object (https://ch.mathworks.com/help/mpc/ref/nlmpc.html#mw_e9ec0499-492f-4b58-a718-c05de56a7666)
@@ -256,7 +272,7 @@ classdef Household_matlab
             nlobj.ControlHorizon = obj.K;
             nlobj.Ts = obj.Ts;
 
-            % Prediction model and jacobians (https://ch.mathworks.com/help/mpc/ug/specify-prediction-model-for-nonlinear-mpc.html)
+            % Prediction model (https://ch.mathworks.com/help/mpc/ug/specify-prediction-model-for-nonlinear-mpc.html)
             nlobj.Model.IsContinuousTime = true;
             nlobj.Model.NumberOfParameters = numel(obj.paramsCell);
 

@@ -106,6 +106,7 @@ u.B(1,:) = lastmv_B;
 u.C(1,:) = lastmv_C;
 
 %% Simulation
+tic
 for t = 1:T
 
     % Plotting 
@@ -129,8 +130,6 @@ for t = 1:T
     error_T = zeros(1, max_iter);
     is_converged = false;
     iteration = 0;
-    alfa_m = 1;
-    alfa_T = 1;
 
     while ~is_converged && ~max_iter_reached
 
@@ -180,7 +179,7 @@ for t = 1:T
         md_B(:,5:8) = [MV_C(:,3), MV_C(:,7), MV_C(:,1), X_C(:,6)];
         
         % Update and Check
-        [lambda_AB, lambda_BC, difference_m, difference_T, is_converged, alfa_m, alfa_T] = UpdateMultipliers(X_A, MV_A, X_B, MV_B, X_C, MV_C, md_A, md_C, iteration, alfa_m, alfa_T);
+        [lambda_AB, lambda_BC, difference_m, difference_T, is_converged] = UpdateMultipliers(X_A, MV_A, X_B, MV_B, X_C, MV_C, md_A, md_C);
         
         md_A(:,5:8) = lambda_AB;
         md_B(:,9:16) = [lambda_AB, lambda_BC];
@@ -226,7 +225,7 @@ for t = 1:T
     u.C(idx:idx+(K-1), :) = MV_C(1:end-1, :);
 
 end
-
+toc
 %% Plot
 time = linspace(1, T*K+1, T*K+1) * Ts / 60; %min
 
