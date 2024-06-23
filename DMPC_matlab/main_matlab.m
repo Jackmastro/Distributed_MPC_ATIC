@@ -87,7 +87,7 @@ md_C(:, 9)  = Tamb_obj.getTambTrajectory(0);
 % For Plots
 save_plot = false;
 
-x = struct(); % TODO ADD NAMES OF THE COLUMNS (DIRECTLY IN HOUSEHOLD)
+x = struct();
 x.A = zeros(T*K+1, A.nx);
 x.B = zeros(T*K+1, B.nx);
 x.C = zeros(T*K+1, C.nx);
@@ -231,17 +231,17 @@ time = linspace(1, T*K+1, T*K+1) * Ts / 60; %min
 
 temperaturePlot = figure;
 
-% TODO LEGEND FROM NAMES
 % CLICKABLE LEGEND FROM BA
 plot(time, Tamb_obj.sinusoidal_Tamb(time*60), "c--")
 hold on
 plot(time, Tset_obj.interpolator_Tset(time*60), "k--")
-plot(time, x.A(:, 4), ".b-")
-plot(time, x.B(:, 4), ".g-")
-plot(time, x.C(:, 4), ".r-")
+plot(time, x.A(:, 4), ".b-", 'DisplayName', A.names.x(4))
+plot(time, x.B(:, 4), ".g-", 'DisplayName', B.names.x(4))
+plot(time, x.C(:, 4), ".r-", 'DisplayName', C.names.x(4))
 
 xlabel('Time / min', 'Interpreter', 'latex');
 ylabel('$T$', 'Interpreter', 'latex');
+legend show;
 grid on;
 hold on;
 
