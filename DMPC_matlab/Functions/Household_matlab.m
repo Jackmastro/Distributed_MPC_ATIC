@@ -64,7 +64,11 @@ classdef Household_matlab
         % Controller Hyperparameters
         K
         Ts
-        Q % 34
+        Q_disc % 34
+        Q_F 
+        Q_S1
+        Q_S3
+        Q_R 
 
         names
         
@@ -173,7 +177,11 @@ classdef Household_matlab
             % Set controller hyperparameters
             obj.K = K;
             obj.Ts = Ts;
-            obj.Q = Q;
+            obj.Q_disc = 1; 
+            obj.Q_F    = 1;
+            obj.Q_S1   = 1;
+            obj.Q_S3   = 1;
+            obj.Q_R    = 1;
 
             % Set names of variables for plots
             obj = obj.setVarNames();
@@ -222,7 +230,7 @@ classdef Household_matlab
                           obj.T_amb; % SPACE HOLDER
                           obj.K;
                           obj.Ts;
-                          obj.Q;
+                          obj.Q_disc;
                           obj.nx; %45
                           obj.ny;
                           obj.nu_mv;
@@ -236,7 +244,11 @@ classdef Household_matlab
                           obj.delta_T_F_pred; %55
                           obj.delta_T_F_succ;
                           obj.delta_T_R_pred;
-                          obj.delta_T_R_succ %58
+                          obj.delta_T_R_succ; %58
+                          obj.Q_F;   
+                          obj.Q_S1;  
+                          obj.Q_S3;  
+                          obj.Q_R  % 62 
                 ];
 
             obj.paramsCell = {obj.params};

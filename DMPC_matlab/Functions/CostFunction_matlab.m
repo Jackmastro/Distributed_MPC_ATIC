@@ -1,7 +1,25 @@
 function cost = CostFunction_matlab(x, u, ~, ~, params) 
 
     % NMPC Parameters
-    Q = params(44);
+    Q_disc  = params(44);
+    Q_F     = params(59);
+    Q_S1    = params(60);
+    Q_S3    = params(61);
+    Q_R     = params(62);
+
+    h_F     = params(4);
+    A_F     = params(5); 
+    h_S1    = params(9);
+    A_S1    = params(10); 
+    % h_b     = params(18);
+    % A_b     = params(19); 
+    h_S3    = params(22);
+    A_S3    = params(23); 
+    h_R     = params(27);
+    A_R     = params(28); 
+    % h_BYP   = params(32);
+    % A_BYP   = params(33); 
+
 
     % T_set = params(40);
 
@@ -19,10 +37,10 @@ function cost = CostFunction_matlab(x, u, ~, ~, params)
 
     % States
     T_F     = x(2:end, 1); % shared
-    % T_S1  = x(2:end, 2);
-    % T_S2  = x(2:end, 3);
+    T_S1    = x(2:end, 2);
+    % T_S2    = x(2:end, 3);
     T_b     = x(2:end, 4); % private
-    % T_S3  = x(2:end, 5);
+    T_S3    = x(2:end, 5);
     T_R     = x(2:end, 6); % shared
     
     % Inputs
@@ -48,10 +66,14 @@ function cost = CostFunction_matlab(x, u, ~, ~, params)
         lambda_T_F_succ = u(1:end-1, 14);
         lambda_T_R_succ = u(1:end-1, 15);
 
-        % T_amb         = u(1:end-1, 16);
-        T_set           = u(1:end-1, 17);
+        T_amb     = u(1:end-1, 16);
+        T_set     = u(1:end-1, 17);
 
-        cost =     Q .* norm(T_b - T_set).^2 ...
+        cost =     Q_disc .* norm(T_b - T_set).^2 ...
+             + Q_F * h_F * A_F * norm(T_F - T_amb).^2 ...
+             + Q_S1 * h_S1 * A_S1 * norm(T_S1 - T_amb).^2 ...
+             + Q_S3 * h_S3 * A_S3 * norm(T_S3 - T_amb).^2 ...
+             + Q_R * h_R * A_R * norm(T_R - T_amb).^2 ...
              + lambda_m_O_succ' * (m_O - m_O_I_succ)...
              + 0.5 * delta_m_O_succ * (norm(m_O - m_O_I_succ)).^2 ...
              + lambda_m_R_succ' * (m_R_succ_I - m_R_succ_succ)...
@@ -74,10 +96,14 @@ function cost = CostFunction_matlab(x, u, ~, ~, params)
         lambda_T_F_pred = u(1:end-1, 14);
         lambda_T_R_pred = u(1:end-1, 15);
 
-        % T_amb         = u(1:end-1, 16);
+        T_amb           = u(1:end-1, 16);
         T_set           = u(1:end-1, 17);
 
-        cost =     Q .* norm(T_b - T_set).^2 ...
+        cost =     Q_disc .* norm(T_b - T_set).^2 ...
+             + Q_F * h_F * A_F * norm(T_F - T_amb).^2 ...
+             + Q_S1 * h_S1 * A_S1 * norm(T_S1 - T_amb).^2 ...
+             + Q_S3 * h_S3 * A_S3 * norm(T_S3 - T_amb).^2 ...
+             + Q_R * h_R * A_R * norm(T_R - T_amb).^2 ...
              + lambda_m_O_pred' * (m_F - m_O_pred_pred)...
              + 0.5 * delta_m_O_pred * (norm(m_F - m_O_pred_pred)).^2 ...
              + lambda_m_R_pred' * (m_R - m_R_I_pred)...
@@ -108,10 +134,14 @@ function cost = CostFunction_matlab(x, u, ~, ~, params)
         lambda_T_F_succ = u(1:end-1, 22);
         lambda_T_R_succ = u(1:end-1, 23);
 
-        % T_amb         = u(1:end-1, 24);
+        T_amb           = u(1:end-1, 24);
         T_set           = u(1:end-1, 25);
 
-        cost =     Q .* norm(T_b - T_set).^2 ...
+        cost =     Q_disc .* norm(T_b - T_set).^2 ...
+             + Q_F * h_F * A_F * norm(T_F - T_amb).^2 ...
+             + Q_S1 * h_S1 * A_S1 * norm(T_S1 - T_amb).^2 ...
+             + Q_S3 * h_S3 * A_S3 * norm(T_S3 - T_amb).^2 ...
+             + Q_R * h_R * A_R * norm(T_R - T_amb).^2 ...
              + lambda_m_O_pred' * (m_F - m_O_pred_pred)...
              + 0.5 * delta_m_O_pred * (norm(m_F - m_O_pred_pred)).^2 ...
              + lambda_m_O_succ' * (m_O - m_O_I_succ)...
