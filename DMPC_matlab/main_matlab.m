@@ -201,7 +201,7 @@ for t = 1:T
     x_C = X_C(2, :);
 
     % Update T_set
-    current_time = t * Ts + 3*3600; %%%%%%%%%%%%%%%%%%%%%%%%%%TODO VIA 3*3600
+    current_time = t * Ts;
     md_A(:, 10) = Tset_obj.getTsetTrajectory(current_time);
     md_B(:, 18) = Tset_obj.getTsetTrajectory(current_time);
     md_C(:, 10) = Tset_obj.getTsetTrajectory(current_time);
@@ -226,13 +226,15 @@ end
 toc
 %% Buildings Plot
 time = linspace(0, T, T+1) * Ts / 60; %min
+time_temp = [time(1), time(1:end-1)]; %min
+
 xlimits = [0, time(end)];
 
 temperaturePlot = figure;
 
-plot(time, Tamb_obj.sinusoidal_Tamb(time*60) - 273, "m--", 'DisplayName', 'Tamb')
+plot(time, Tamb_obj.sinusoidal_Tamb(time_temp*60) - 273, "m--", 'DisplayName', 'Tamb')
 hold on
-plot(time, Tset_obj.interpolator_Tset(time*60) - 273, "k--", 'DisplayName', 'Tset')
+plot(time, Tset_obj.interpolator_Tset(time_temp*60) - 273, "k--", 'DisplayName', 'Tset')
 plot(time, x.A(:, 4) - 273, ".b-", 'DisplayName', strcat(A.names.x(4), '^A'))
 plot(time, x.B(:, 4) - 273, ".g-", 'DisplayName', strcat(B.names.x(4), '^B'))
 plot(time, x.C(:, 4) - 273, ".r-", 'DisplayName', strcat(C.names.x(4), '^C'))

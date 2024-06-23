@@ -185,8 +185,8 @@ classdef Household_matlab
             obj.Q_R    = 0.01;
             obj.R_BYP  = 100;
 
-            delta_m = 1;
-            delta_T = 1000;
+            delta_m = 100;
+            delta_T = 100;
             obj.delta_m_O_pred = delta_m;
             obj.delta_m_O_succ = delta_m;
             obj.delta_m_R_pred = delta_m;
