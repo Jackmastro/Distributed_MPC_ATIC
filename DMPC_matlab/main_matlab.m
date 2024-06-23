@@ -58,7 +58,7 @@ options_C.Parameters = C.paramsCell;
 hours_sim = 12 * 3600;
 T = hours_sim / (K * Ts);
 % T = 2;
-max_iter = 20;
+max_iter = 30;
 
 % Initial conditions
 x_A = [A.T_F_0, A.T_S1_0, A.T_S2_0, A.T_b_0, A.T_S3_0, A.T_R_0];
