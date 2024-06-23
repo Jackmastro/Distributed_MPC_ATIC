@@ -70,6 +70,7 @@ classdef Household_matlab
         Q_S3
         Q_R 
         R_BYP
+        R_U
 
         names
         
@@ -143,7 +144,7 @@ classdef Household_matlab
             obj.h_BYP = 1;
       
             obj.A_b = 100;
-            obj.C_b = 3*1e6;
+            obj.C_b = 300*1e6;
 	      
             obj.V_S1  = pi/4*obj.D_S1^2*obj.L_S1;
             obj.A_S1  = pi*obj.D_S1*obj.L_S1;
@@ -163,13 +164,13 @@ classdef Household_matlab
             obj.DeltaP_S2_max = 10*100000;
             obj.DeltaP_S3_max = 10*100000;
 
-            obj.T_F_0   = 273 + 70;
-            obj.T_S1_0  = 273 + 70;
-            obj.T_S2_0  = 273 + 70;
-            obj.T_S3_0  = 273 + 70;
-            obj.T_b_0   = 273 + 18;
+            obj.T_F_0   = 273 + 50;
+            obj.T_S1_0  = 273 + 50;
+            obj.T_S2_0  = 273 + 50;
+            obj.T_S3_0  = 273 + 50;
+            obj.T_b_0   = 273 + 15;
             obj.T_R_0   = 273 + 30;
-            obj.T_BYP_0 = 273 + 30;
+            obj.T_BYP_0 = 273 + 50;
                  
             % Set temperature values
             obj.T_amb = T_amb; % PLACE HOLDER
@@ -184,6 +185,7 @@ classdef Household_matlab
             obj.Q_S3   = 0.01;
             obj.Q_R    = 0.01;
             obj.R_BYP  = 100;
+            obj.R_U    = 100;
 
             delta_m = 100;
             delta_T = 100;
@@ -262,7 +264,8 @@ classdef Household_matlab
                           obj.Q_S1;  
                           obj.Q_S3;  
                           obj.Q_R;  % 62 
-                          obj.R_BYP
+                          obj.R_BYP;
+                          obj.R_U %64
                 ];
 
             obj.paramsCell = {obj.params};
@@ -329,7 +332,10 @@ classdef Household_matlab
             for i = 1:obj.nu_mv
                 nlobj.ManipulatedVariables(i).Min = 0;
             end
-
+            if obj.is_first_house
+                nlobj.ManipulatedVariables(1).RateMax = 0.1; % Max rate of variation of the feed temperature from heat producer (T_feed(k) - T_feed(k-1) < RateMax)
+                nlobj.ManipulatedVariables(1).RateMin = -0.1; % Min rate 
+            end
             nlobj.ManipulatedVariables(4).Max = HouseholdPressureDrop_matlab(obj.params);
         end
 
