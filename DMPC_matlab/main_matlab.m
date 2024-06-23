@@ -33,7 +33,7 @@ T_amb = 273; % PLACE HOLDER
 
 Tset_obj = Tset_matlab(Ts, K);
 
-T_mean = 273 + 15;
+T_mean = 273 + 5;
 T_var_pp = 10;
 Tamb_obj = Tamb_matlab(Ts, K, T_mean, T_var_pp);
 
@@ -55,7 +55,7 @@ options_C.Parameters = C.paramsCell;
 
 %% Initialization
 
-hours_sim = 8 * 3600;
+hours_sim = 12 * 3600;
 T = hours_sim / (K * Ts);
 % T = 2;
 max_iter = 20;
@@ -113,6 +113,7 @@ for t = 1:T
     fprintf('Simulation time step: %.2f\n', t);
 
     figToPlot = figure;
+    set(figToPlot, 'Name', ['Hour: ', num2str(t)]);
 
     h_m = plot(NaN, NaN, 'b', 'DisplayName', 'Mass flow');
     hold on;
@@ -186,9 +187,6 @@ for t = 1:T
         md_C(:,5:8) = lambda_BC;
         
         % Plotting
-        fprintf('m error: %.2f\n', difference_m);
-        fprintf('T error: %.2f\n', difference_T);
-        
         error_m(iteration) = difference_m;
         error_T(iteration) = difference_T;
         
@@ -224,6 +222,7 @@ for t = 1:T
     u.B(idx:idx+(K-1), :) = MV_B(1:end-1, :);
     u.C(idx:idx+(K-1), :) = MV_C(1:end-1, :);
 
+    close;
 end
 toc
 %% Plot
@@ -231,10 +230,9 @@ time = linspace(1, T*K+1, T*K+1) * Ts / 60; %min
 
 temperaturePlot = figure;
 
-% CLICKABLE LEGEND FROM BA
-plot(time, Tamb_obj.sinusoidal_Tamb(time*60), "c--")
+plot(time, Tamb_obj.sinusoidal_Tamb(time*60), "c--", 'DisplayName', 'Tamb')
 hold on
-plot(time, Tset_obj.interpolator_Tset(time*60), "k--")
+plot(time, Tset_obj.interpolator_Tset(time*60), "k--", 'DisplayName', 'Tset')
 plot(time, x.A(:, 4), ".b-", 'DisplayName', A.names.x(4))
 plot(time, x.B(:, 4), ".g-", 'DisplayName', B.names.x(4))
 plot(time, x.C(:, 4), ".r-", 'DisplayName', C.names.x(4))
@@ -244,6 +242,44 @@ ylabel('$T$', 'Interpreter', 'latex');
 legend show;
 grid on;
 hold on;
+
+subPlot = figure;
+
+% Create a subplot with 2 rows and 3 columns
+subplot(2, 3, 1);
+plot(time, x.A(:, 1), 'DisplayName', A.names.x(1))
+plot(time, x.A(:, 2), 'DisplayName', A.names.x(2))
+plot(time, x.A(:, 3), 'DisplayName', A.names.x(3))
+plot(time, x.A(:, 5), 'DisplayName', A.names.x(5))
+plot(time, x.A(:, 6), 'DisplayName', A.names.x(6))
+title('T house A');
+
+subplot(2, 3, 2);
+
+title('T house B');
+
+subplot(2, 3, 3);
+
+title('T house C');
+
+subplot(2, 3, 4);
+
+title('m house A');
+plot(time, u.A(:, 1), 'DisplayName', A.names.u(1))
+plot(time, u.A(:, 2), 'DisplayName', A.names.u(2))
+plot(time, u.A(:, 3), 'DisplayName', A.names.u(3))
+plot(time, u.A(:, 4), 'DisplayName', A.names.u(4))
+plot(time, u.A(:, 5), 'DisplayName', A.names.u(5))
+plot(time, u.A(:, 6), 'DisplayName', A.names.u(6))
+plot(time, u.A(:, 7), 'DisplayName', A.names.u(7))
+subplot(2, 3, 5);
+
+title('m house B');
+
+subplot(2, 3, 6);
+
+title('m house C');
+
 
 %% Save plots
 
