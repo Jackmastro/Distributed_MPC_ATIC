@@ -15,7 +15,8 @@ function cineq = IneqConFunction_matlab(~, u, ~, ~, params)
         m_F_past = u(1, 18);
         T_F_past = u(1, 19);
         
-        cineq = [m_F - m_F_past - m_dot_F_HP_MaxRate; - m_F + m_F_past + m_dot_F_HP_MinRate; T_F_pred_I - T_F_past - T_F_HP_MaxRate; - T_F_pred_I + T_F_past + T_F_HP_MinRate];
+        % cineq = [m_F - m_F_past - m_dot_F_HP_MaxRate; - m_F + m_F_past + m_dot_F_HP_MinRate; T_F_pred_I - T_F_past - T_F_HP_MaxRate; - T_F_pred_I + T_F_past + T_F_HP_MinRate];
+        cineq = [T_F_pred_I - T_F_past - T_F_HP_MaxRate; - T_F_pred_I + T_F_past + T_F_HP_MinRate];
     else
         cineq = [0];
     end
