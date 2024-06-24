@@ -71,6 +71,7 @@ function cost = CostFunction_matlab(x, u, ~, ~, params)
         T_set     = u(1:end-1, 17);
 
         % m_F_past = u(1:end-1, 18);
+        % T_F_past = u(1:end-1, 19);
 
         cost =     Q_disc .* norm(T_b - T_set).^2 ...
              + Q_F  * h_F  * A_F  * norm(T_F  - T_amb).^2 ...

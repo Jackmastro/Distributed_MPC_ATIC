@@ -183,11 +183,11 @@ classdef Household_matlab
 
             obj.T_F_HP_min = 273 + 50;
             obj.T_F_HP_max = 273 + 110;
-            obj.T_F_HP_MaxRate =  0.1;
+            obj.T_F_HP_MaxRate =   0.1;
             obj.T_F_HP_MinRate = - 0.1;
             
             obj.m_dot_F_HP_max = 30;
-            obj.m_dot_F_HP_MaxRate = 0.25;
+            obj.m_dot_F_HP_MaxRate =  0.25;
             obj.m_dot_F_HP_MinRate = -0.25;
 
                  
@@ -363,8 +363,8 @@ classdef Household_matlab
                 nlobj.ManipulatedVariables(1).Max = obj.T_F_HP_max; % Max temperature from Heat Producer
                 nlobj.ManipulatedVariables(1).Min = obj.T_F_HP_min; % Min temp from Heat Producer
                 nlobj.ManipulatedVariables(3).Max = obj.m_dot_F_HP_max; %Max m_dot from Heat Producer
-                nlobj.ManipulatedVariables(3).RateMax = obj.m_dot_F_HP_MaxRate; % Max rate of variation of the mass_flow from heat producer 
-                nlobj.ManipulatedVariables(3).RateMin = obj.m_dot_F_HP_MinRate;
+                % nlobj.ManipulatedVariables(3).RateMax = obj.m_dot_F_HP_MaxRate; % Max rate of variation of the mass_flow from heat producer 
+                % nlobj.ManipulatedVariables(3).RateMin = obj.m_dot_F_HP_MinRate;
 
             end
             nlobj.ManipulatedVariables(4).Max = HouseholdPressureDrop_matlab(obj.params);

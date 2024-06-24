@@ -201,7 +201,7 @@ for t = 1:T
     % Heating plant max rate constraints
     md_A(:,11) = [MV_A(:,3)];
     md_A(:,12) = [MV_A(:,1)];
-    
+
     % Update states
     x_A = X_A(2, :);
     x_B = X_B(2, :);
@@ -301,7 +301,6 @@ for i = 1:3
     for j = 3:length(A.names.u)
         plot(time, uData(:, j), 'DisplayName', A.names.u(j));
     end
-    plot(time, uData(:, j), 'DisplayName', A.names.u(j));
     xlim(xlimits);
     ylim([0; Inf]);
     title(['$\dot{m}_', houseName, '$'], 'Interpreter', 'latex');
