@@ -11,8 +11,6 @@ restoredefaultpath;
 
 disp("All paths restored correctly.")
 
-run('C:\Users\giaco\Git_Repositories\stpMatlab\matlab\setup.m')
-
 % Get the full path of this setup file and main folder
 pathThisSetupFile = mfilename('fullpath');
 pathMainFolder = fileparts(pathThisSetupFile);
