@@ -1,11 +1,11 @@
 function [lambda_AB, lambda_BC, difference_m, difference_T, is_converged] = UpdateMultipliers(X_A, MV_A, X_B, MV_B, X_C, MV_C, md_A, md_C)
     
     difference_m = 0;
-    mass_tolerance = 0.5;
-    alpha_m = 0.001;
+    mass_tolerance = 0.7;
+    alpha_m = 0.0001;
 
     difference_T = 0;
-    temperature_tolerance = 1;
+    temperature_tolerance = 2;
     alpha_T = 0.00005;
 
     %% A-B 

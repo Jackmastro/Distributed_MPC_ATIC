@@ -48,7 +48,12 @@ classdef Household_matlab
         T_b_0
         T_R_0
         T_BYP_0
-    
+
+        % Heat producer constraint
+        T_F_HP_min
+        T_F_HP_max
+        m_dot_F_HP_max
+
         % Building set and ambient temperature
         T_set % 24
         T_amb
@@ -130,13 +135,13 @@ classdef Household_matlab
               
             obj.L_S1 = 5;
             obj.D_S1 = 0.1;
-            obj.L_S2 = 30;
+            obj.L_S2 = 50;
             obj.D_S2 = 0.07;
             obj.L_S3 = 5;
             obj.D_S3 = 0.1;
       
             obj.h_S1  = 1.5;
-            obj.h_S2  = 150;
+            obj.h_S2  = 100;
             obj.h_S3  = 1.5;
             obj.h_b = 10;
             obj.h_F = 1.5;
@@ -171,6 +176,10 @@ classdef Household_matlab
             obj.T_b_0   = 273 + 17;
             obj.T_R_0   = 273 + 30;
             obj.T_BYP_0 = 273 + 50;
+
+            obj.T_F_HP_min = 273 + 50;
+            obj.T_F_HP_max = 273 + 110;
+            obj.m_dot_F_HP_max = 10;
                  
             % Set temperature values
             obj.T_amb = T_amb; % PLACE HOLDER
@@ -179,13 +188,13 @@ classdef Household_matlab
             % Set controller hyperparameters
             obj.K = K;
             obj.Ts = Ts;
-            obj.Q_disc = 10000; 
+            obj.Q_disc = 1000000; 
             obj.Q_F    = 0.01;
             obj.Q_S1   = 0.01;
-            obj.Q_S3   = 0.01;
-            obj.Q_R    = 0.01;
+            obj.Q_S3   = 0.1;
+            obj.Q_R    = 0.1;
             obj.R_BYP  = 100;
-            obj.R_U    = 100;
+            obj.R_U    = 10;
 
             delta_m = 100000;
             delta_T = 100000;
@@ -261,12 +270,14 @@ classdef Household_matlab
                           obj.delta_T_R_pred;
                           obj.delta_T_R_succ; %58
                           obj.Q_F;   
-                          obj.Q_S1;  
+                          obj.Q_S1; % 60 
                           obj.Q_S3;  
                           obj.Q_R;  % 62 
                           obj.R_BYP;
-                          obj.R_U %64
-                ];
+                          obj.R_U
+                          obj.T_F_HP_min; % 65
+                          obj.T_F_HP_max;
+                          obj.m_dot_F_HP_max];
 
             obj.paramsCell = {obj.params};
 
@@ -334,7 +345,13 @@ classdef Household_matlab
             end
             if obj.is_first_house
                 nlobj.ManipulatedVariables(1).RateMax = 0.1; % Max rate of variation of the feed temperature from heat producer (T_feed(k) - T_feed(k-1) < RateMax)
-                nlobj.ManipulatedVariables(1).RateMin = -0.1; % Min rate 
+                nlobj.ManipulatedVariables(1).RateMin = -0.1; % Min rate of variation of the feed temperature from heat producer (T_feed(k) - T_feed(k-1) > RateMin)
+                nlobj.ManipulatedVariables(1).Max = obj.T_F_HP_max; % Max temperature from Heat Producer
+                nlobj.ManipulatedVariables(1).Min = obj.T_F_HP_min; % Min temp from Heat Producer
+                nlobj.ManipulatedVariables(3).Max = obj.m_dot_F_HP_max; %Max m_dot from Heat Producer
+                nlobj.ManipulatedVariables(3).RateMax = 1; % Max rate of variation of the mass_flow from heat producer 
+                nlobj.ManipulatedVariables(3).RateMin = -1;
+
             end
             nlobj.ManipulatedVariables(4).Max = HouseholdPressureDrop_matlab(obj.params);
         end

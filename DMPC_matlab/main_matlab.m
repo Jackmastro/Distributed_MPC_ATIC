@@ -2,6 +2,8 @@ clc;
 clear;
 close all;
 
+
+
 %% Change directory
 % Get the full path of the currently running script
 if isdeployed
@@ -55,7 +57,7 @@ options_C.Parameters = C.paramsCell;
 
 %% Initialization
 
-hours_sim = 4 * 3600;
+hours_sim = 7 * 3600;
 T = hours_sim / Ts;
 % T = 2;
 max_iter = 20;
@@ -66,7 +68,7 @@ x_B = [B.T_F_0, B.T_S1_0, B.T_S2_0, B.T_b_0, B.T_S3_0, B.T_R_0];
 x_C = [C.T_F_0, C.T_S1_0, C.T_S2_0, C.T_b_0, C.T_S3_0, C.T_R_0, C.T_BYP_0]; 
 
 % Manipulated Variables
-mv_0 = [A.T_F_0, A.T_R_0, 5, 2, 3, 3, 5]; % T_feed_I, T_succ_I, m_F, m_U, m_O, m_succ_I, m_R
+mv_0 = [A.T_F_0, A.T_R_0, 9, 3, 6, 6, 9]; % T_feed_I, T_succ_I, m_F, m_U, m_O, m_succ_Ia, m_R
 lastmv_A = mv_0;
 lastmv_B = mv_0;
 lastmv_C = mv_0;
@@ -121,6 +123,7 @@ for t = 1:T
 
     xlabel('Iterations', 'Interpreter', 'latex');
     ylabel('$||\Delta T||, ||\Delta m||$', 'Interpreter', 'latex');
+    title('Cumulative error of shared variable along all steps and all the controllers ')
     grid on;
     hold on;
 
