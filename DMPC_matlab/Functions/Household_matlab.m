@@ -53,6 +53,10 @@ classdef Household_matlab
         T_F_HP_min
         T_F_HP_max
         m_dot_F_HP_max
+        m_dot_F_HP_MaxRate
+        m_dot_F_HP_MinRate
+        T_F_HP_MaxRate
+        T_F_HP_MinRate
 
         % Building set and ambient temperature
         T_set % 24
@@ -117,7 +121,7 @@ classdef Household_matlab
             if is_bypass_house
                 obj.nu_md = 10;
             elseif is_first_house
-                obj.nu_md = 10;
+                obj.nu_md = 12;
             else
                 obj.nu_md = 18;
             end
@@ -179,7 +183,13 @@ classdef Household_matlab
 
             obj.T_F_HP_min = 273 + 50;
             obj.T_F_HP_max = 273 + 110;
-            obj.m_dot_F_HP_max = 10;
+            obj.T_F_HP_MaxRate =  0.1;
+            obj.T_F_HP_MinRate = - 0.1;
+            
+            obj.m_dot_F_HP_max = 30;
+            obj.m_dot_F_HP_MaxRate = 0.25;
+            obj.m_dot_F_HP_MinRate = -0.25;
+
                  
             % Set temperature values
             obj.T_amb = T_amb; % PLACE HOLDER
@@ -277,7 +287,11 @@ classdef Household_matlab
                           obj.R_U
                           obj.T_F_HP_min; % 65
                           obj.T_F_HP_max;
-                          obj.m_dot_F_HP_max];
+                          obj.m_dot_F_HP_max;
+                          obj.m_dot_F_HP_MaxRate; %68
+                          obj.m_dot_F_HP_MinRate;
+                          obj.T_F_HP_MaxRate; %70
+                          obj.T_F_HP_MinRate];
 
             obj.paramsCell = {obj.params};
 
@@ -332,7 +346,7 @@ classdef Household_matlab
             % nlobj.Jacobian.CustomEqConFcn = @(x,u,data,params)
             % JacobianEqCon_matlab(x,u,data,params); TODO STILL NEED DEBUG
 
-            % nlobj.Optimization.CustomIneqConFcn = @(x,u,e,data,params) IneqConFunction_matlab(x,u,e,data,params);
+            nlobj.Optimization.CustomIneqConFcn = @(x,u,e,data,params) IneqConFunction_matlab(x,u,e,data,params);
             % nlobj.Jacobian.CustomIneqConFcn = @(x,u,e,data,params) (x,u,e,data,params);
 
             % State & Manipulated Variable constraints
@@ -344,13 +358,13 @@ classdef Household_matlab
                 nlobj.ManipulatedVariables(i).Min = 0;
             end
             if obj.is_first_house
-                nlobj.ManipulatedVariables(1).RateMax = 0.1; % Max rate of variation of the feed temperature from heat producer (T_feed(k) - T_feed(k-1) < RateMax)
-                nlobj.ManipulatedVariables(1).RateMin = -0.1; % Min rate of variation of the feed temperature from heat producer (T_feed(k) - T_feed(k-1) > RateMin)
+                nlobj.ManipulatedVariables(1).RateMax = obj.T_F_HP_MaxRate; % Max rate of variation of the feed temperature from heat producer (T_feed(k) - T_feed(k-1) < RateMax)
+                nlobj.ManipulatedVariables(1).RateMin = obj.T_F_HP_MinRate; % Min rate of variation of the feed temperature from heat producer (T_feed(k) - T_feed(k-1) > RateMin)
                 nlobj.ManipulatedVariables(1).Max = obj.T_F_HP_max; % Max temperature from Heat Producer
                 nlobj.ManipulatedVariables(1).Min = obj.T_F_HP_min; % Min temp from Heat Producer
                 nlobj.ManipulatedVariables(3).Max = obj.m_dot_F_HP_max; %Max m_dot from Heat Producer
-                nlobj.ManipulatedVariables(3).RateMax = 1; % Max rate of variation of the mass_flow from heat producer 
-                nlobj.ManipulatedVariables(3).RateMin = -1;
+                nlobj.ManipulatedVariables(3).RateMax = obj.m_dot_F_HP_MaxRate; % Max rate of variation of the mass_flow from heat producer 
+                nlobj.ManipulatedVariables(3).RateMin = obj.m_dot_F_HP_MinRate;
 
             end
             nlobj.ManipulatedVariables(4).Max = HouseholdPressureDrop_matlab(obj.params);

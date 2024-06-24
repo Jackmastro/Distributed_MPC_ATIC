@@ -57,7 +57,7 @@ options_C.Parameters = C.paramsCell;
 
 %% Initialization
 
-hours_sim = 7 * 3600;
+hours_sim = 1 * 3600;
 T = hours_sim / Ts;
 % T = 2;
 max_iter = 20;
@@ -198,6 +198,10 @@ for t = 1:T
 
     end
 
+    % Heating plant max rate constraints
+    md_A(:,11) = [MV_A(:,3)];
+    md_A(:,12) = [MV_A(:,1)];
+    
     % Update states
     x_A = X_A(2, :);
     x_B = X_B(2, :);
@@ -227,6 +231,7 @@ for t = 1:T
     close;
 end
 toc
+
 %% Buildings Plot
 time = linspace(0, T, T+1) * Ts / 60; %min
 time_temp = [time(1), time(1:end-1)]; %min
