@@ -87,7 +87,6 @@ md_B(:, 17) = Tamb_obj.getTambTrajectory(0);
 md_C(:, 9)  = Tamb_obj.getTambTrajectory(0);
 
 % For Plots
-save_plot = false;
 rows_plots = T+1;
 
 x = struct();
@@ -123,7 +122,7 @@ for t = 1:T
 
     xlabel('Iterations', 'Interpreter', 'latex');
     ylabel('$||\Delta T||, ||\Delta m||$', 'Interpreter', 'latex');
-    title('Cumulative error of shared variable along all steps and all the controllers ')
+    title('Cumulative error of shared variable along all steps and all controllers ')
     grid on;
     hold on;
 
@@ -239,6 +238,7 @@ time_temp = [time(1), time(1:end-1)]; %min
 xlimits = [0, time(end)];
 
 temperaturePlot = figure;
+set(temperaturePlot, 'Name', 'Tracking');
 
 plot(time, Tamb_obj.sinusoidal_Tamb(time_temp*60) - 273, "m--", 'DisplayName', 'Tamb')
 hold on
@@ -250,63 +250,212 @@ plot(time, x.C(:, 4) - 273, ".r-", 'DisplayName', strcat(C.names.x(4), '^C'))
 xlabel('Time / min', 'Interpreter', 'latex');
 ylabel('Temperature / $^\circ$C', 'Interpreter', 'latex');
 xlim(xlimits);
-legend show;
+legend('Location', 'best');
+clickableLegend
 grid on;
 box on;
 hold off;
 
-clickableLegend
-
 %% All temperatures and mass flow rates Plot
 % Create a figure
 subPlot = figure;
-
-% Define the number of subplots
-numSubplots = 6;
+set(subPlot, 'Name', 'All values');
 
 % Define houses and data names
 houses = {'A', 'B', 'C'};
-xDataNames = {'x'};
-uDataNames = {'u'};
+housesObj = {A, B, C};
 
-for i = 1:3
+for i = 1:length(houses)
     subplot(2, 3, i);
     hold on;
     houseName = houses{i};
     xData = x.(houseName);
-    for j = 1:length(A.names.x)
-        plot(time, xData(:, j) - 273, 'DisplayName', A.names.x(j));
+    for j = 1:housesObj{i}.nx
+        plot(time, xData(:, j) - 273, 'DisplayName', housesObj{i}.names.x(j));
     end
     uData = u.(houseName);
     for j = 1:2
-        plot(time, uData(:, j) - 273, 'DisplayName', A.names.u(j));
+        plot(time, uData(:, j) - 273, 'DisplayName', housesObj{i}.names.u(j));
     end
+
     xlim(xlimits);
     ylim([-Inf; Inf]);
     title(['$T_', houseName, '$'], 'Interpreter', 'latex');
     xlabel('Time / min', 'Interpreter', 'latex');
     ylabel('Temperature / $^\circ$C', 'Interpreter', 'latex');
-    legend;
+    legend('Location', 'best');
     grid on;
     box on;
     hold off;
     clickableLegend
 end
 
-for i = 1:3
+for i = 1:length(houses)
     subplot(2, 3, i+3);
     hold on;
     houseName = houses{i};
     uData = u.(houseName);
-    for j = 3:length(A.names.u)
-        plot(time, uData(:, j), 'DisplayName', A.names.u(j));
+    for j = 3:housesObj{i}.nu_mv
+        plot(time, uData(:, j), 'DisplayName', housesObj{i}.names.u(j));
     end
+
     xlim(xlimits);
     ylim([0; Inf]);
     title(['$\dot{m}_', houseName, '$'], 'Interpreter', 'latex');
     xlabel('Time / min', 'Interpreter', 'latex');
     ylabel('Mass flow rate / kg/s', 'Interpreter', 'latex');
-    legend;
+    legend('Location', 'best');
+    grid on;
+    box on;
+    hold off;
+    clickableLegend
+end
+
+%% Convergence plot
+convergencePlot = figure;
+set(convergencePlot, 'Name', 'Convergence');
+
+agents = {'{HP}', 'A', 'B', 'C', '{byp}'};
+
+% Feed temperature
+subplot(2, 2, 1);
+for i = 1:length(houses)
+    hold on;
+    houseName = houses{i};
+    predName = agents{i};
+    % Feed
+    xData = x.(houseName);
+    plot(time, xData(:, 1) - 273, 'DisplayName', strcat(housesObj{i}.names.x(1), "^", houseName));
+    % Feed pred,I
+    uData = u.(houseName);
+    modName = strrep(housesObj{i}.names.u(1), 'pred,I', strcat(predName, ",", houseName));
+    plot(time, uData(:, 1) - 273, 'DisplayName', modName);
+
+    xlim(xlimits);
+    ylim([-Inf; Inf]);
+    title('$T_F$ convergence', 'Interpreter', 'latex');
+    xlabel('Time / min', 'Interpreter', 'latex');
+    ylabel('Temperature / $^\circ$C', 'Interpreter', 'latex');
+    legend('Location', 'best');
+    grid on;
+    box on;
+    hold off;
+    clickableLegend
+end
+
+% Feed mass flow
+subplot(2, 2, 2);
+for i = 1:length(houses)
+    hold on;
+    houseName = houses{i};
+    predName = agents{i};
+    uData = u.(houseName);
+    % Feed = Out pred,I
+    modName = strrep(housesObj{i}.names.u(3), 'pred,I', strcat(predName, ",", houseName));
+    modName = strrep(modName, '=', strcat("^", houseName, "="));
+    plot(time, uData(:, 3), 'DisplayName', modName);
+    % Out I,I
+    modName = strrep(housesObj{i}.names.u(5), 'I,I', strcat(houseName, ",", houseName));
+    plot(time, uData(:, 5), 'DisplayName', modName);
+
+    xlim(xlimits);
+    ylim([-Inf; Inf]);
+    title('$m_F$ convergence', 'Interpreter', 'latex');
+    xlabel('Time / min', 'Interpreter', 'latex');
+    ylabel('Mass flow rate / kg/s', 'Interpreter', 'latex');
+    legend('Location', 'best');
+    grid on;
+    box on;
+    hold off;
+    clickableLegend
+end
+
+% Return temperature
+subplot(2, 2, 3);
+for i = 1:length(houses)
+    hold on;
+    houseName = houses{i};
+    succName = agents{i+2};
+    % Return I,I
+    xData = x.(houseName);
+    plot(time, xData(:, 6) - 273, 'DisplayName', strcat(housesObj{i}.names.x(6), "^", houseName));
+    % Return succ,I
+    uData = u.(houseName);
+    modName = strrep(housesObj{i}.names.u(2), 'succ,I', strcat(succName, ",", houseName));
+    plot(time, uData(:, 2) - 273, 'DisplayName', modName);
+
+    xlim(xlimits);
+    ylim([-Inf; Inf]);
+    title('$T_R$ convergence', 'Interpreter', 'latex');
+    xlabel('Time / min', 'Interpreter', 'latex');
+    ylabel('Temperature / $^\circ$C', 'Interpreter', 'latex');
+    legend('Location', 'best');
+    grid on;
+    box on;
+    hold off;
+    clickableLegend
+end
+
+% Return mass flow
+subplot(2, 2, 4);
+for i = 1:length(houses)
+    hold on;
+    houseName = houses{i};
+    succName = agents{i+2};
+    uData = u.(houseName);
+    % Return succ,I
+    modName = strrep(housesObj{i}.names.u(6), 'succ,I', strcat(succName, ",", houseName));
+    plot(time, uData(:, 6), 'DisplayName', modName);
+    % Return I,I
+    modName = strrep(housesObj{i}.names.u(7), 'I,I', strcat(houseName, ",", houseName));
+    plot(time, uData(:, 7), 'DisplayName', modName);
+
+    xlim(xlimits);
+    ylim([-Inf; Inf]);
+    title('$m_R$ convergence', 'Interpreter', 'latex');
+    xlabel('Time / min', 'Interpreter', 'latex');
+    ylabel('Mass flow rate / kg/s', 'Interpreter', 'latex');
+    legend('Location', 'best');
+    grid on;
+    box on;
+    hold off;
+    clickableLegend
+end
+
+%% Balance plot
+balancePlot = figure;
+set(balancePlot, 'Name', 'Balance');
+
+for i = 1:length(houses)
+    subplot(1, 3, i);
+    hold on;
+    predName = agents{i};
+    houseName = houses{i};
+    succName = agents{i+2};
+    uData = u.(houseName);
+    % Feed = Out pred,I
+    modName = strrep(housesObj{i}.names.u(3), 'pred,I', strcat(predName, ",", houseName));
+    modName = strrep(modName, '=', strcat("^", houseName, "="));
+    plot(time, uData(:, 3), 'DisplayName', modName);
+    % Sum: Out I,I + U
+    modName = strrep(housesObj{i}.names.u(5), 'I,I', strcat(houseName, ",", houseName));
+    modName = strcat(modName, '+', housesObj{i}.names.u(4), '^', houseName);
+    plot(time, uData(:, 5)+uData(:, 4), 'DisplayName', modName);
+
+    % Return I,I
+    modName = strrep(housesObj{i}.names.u(7), 'I,I', strcat(houseName, ",", houseName));
+    plot(time, uData(:, 7), 'DisplayName', modName);
+    % Sum: Return succ,I + U
+    modName = strrep(housesObj{i}.names.u(6), 'succ,I', strcat(succName, ",", houseName));
+    modName = strcat(modName, '+', housesObj{i}.names.u(4), '^', houseName);
+    plot(time, uData(:, 6)+uData(:, 4), 'DisplayName', modName);
+    
+    xlim(xlimits);
+    ylim([0; Inf]);
+    title(['$\dot{m}_', houseName, '$ balance'], 'Interpreter', 'latex');
+    xlabel('Time / min', 'Interpreter', 'latex');
+    ylabel('Mass flow rate / kg/s', 'Interpreter', 'latex');
+    legend('Location', 'best');
     grid on;
     box on;
     hold off;
@@ -314,6 +463,7 @@ for i = 1:3
 end
 
 %% Save plots
+save_plot = false;
 
 if save_plot
     saveTikzPlot('convergence_plot.tex', temperaturePlot, 'height', '\figureheight', 'width', '\figurewidth');
