@@ -138,7 +138,7 @@ classdef Household_matlab
             obj.h_S1  = 1.5;
             obj.h_S2  = 150;
             obj.h_S3  = 1.5;
-            obj.h_b = 20;
+            obj.h_b = 10;
             obj.h_F = 1.5;
             obj.h_R = 1.5;
             obj.h_BYP = 1;
@@ -187,8 +187,8 @@ classdef Household_matlab
             obj.R_BYP  = 100;
             obj.R_U    = 100;
 
-            delta_m = 100;
-            delta_T = 100;
+            delta_m = 100000;
+            delta_T = 100000;
             obj.delta_m_O_pred = delta_m;
             obj.delta_m_O_succ = delta_m;
             obj.delta_m_R_pred = delta_m;
