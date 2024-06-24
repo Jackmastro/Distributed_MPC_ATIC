@@ -153,7 +153,7 @@ classdef Household_matlab
             obj.h_BYP = 1;
       
             obj.A_b = 200;
-            obj.C_b = 10*1e6;
+            obj.C_b = 10*1e5;
 	      
             obj.V_S1  = pi/4*obj.D_S1^2*obj.L_S1;
             obj.A_S1  = pi*obj.D_S1*obj.L_S1;
@@ -198,16 +198,17 @@ classdef Household_matlab
             % Set controller hyperparameters
             obj.K = K;
             obj.Ts = Ts;
-            obj.Q_disc = 100000; 
+            obj.Q_disc = 1*1e6; 
             obj.Q_F    = 0.01;
             obj.Q_S1   = 0.01;
             obj.Q_S3   = 0.1;
             obj.Q_R    = 0.1;
-            obj.R_BYP  = 100;
-            obj.R_U    = 10;
+            obj.R_BYP  = 0.1;
+            obj.R_U    = 0.1;
 
-            delta_m = 1000000;
-            delta_T = 1000000;
+            delta_m = 1.5*1e4;
+            delta_T = 2*1e4;
+
             obj.delta_m_O_pred = delta_m;
             obj.delta_m_O_succ = delta_m;
             obj.delta_m_R_pred = delta_m;
@@ -346,7 +347,7 @@ classdef Household_matlab
             % nlobj.Jacobian.CustomEqConFcn = @(x,u,data,params)
             % JacobianEqCon_matlab(x,u,data,params); TODO STILL NEED DEBUG
 
-            nlobj.Optimization.CustomIneqConFcn = @(x,u,e,data,params) IneqConFunction_matlab(x,u,e,data,params);
+            % nlobj.Optimization.CustomIneqConFcn = @(x,u,e,data,params) IneqConFunction_matlab(x,u,e,data,params);
             % nlobj.Jacobian.CustomIneqConFcn = @(x,u,e,data,params) (x,u,e,data,params);
 
             % State & Manipulated Variable constraints

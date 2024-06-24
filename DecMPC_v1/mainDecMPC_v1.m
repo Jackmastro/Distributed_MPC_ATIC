@@ -25,7 +25,7 @@ NAME_BUS_NMPC_C = 'BusParamsC';
 % Controller hyperparameters 
 Ts = 15*60;
 K = 10;
-Q = 1000;
+Q = 1e4;
 SimHorizon = 86400;
 t = [0:Ts:(SimHorizon+K*Ts+1)];
 
