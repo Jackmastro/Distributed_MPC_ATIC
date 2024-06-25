@@ -63,6 +63,10 @@ classdef Household_DecMPC
         nu_mv
         nu_md
 
+        Q_S1
+        Q_S3
+        R_U
+
         % Parameters struct and NMPC object for block in Simulink
         nlobj
         adressBusParams
@@ -95,21 +99,21 @@ classdef Household_DecMPC
             obj.L_S1 = 5;
             obj.D_S1 = 0.1;
             obj.L_S2 = 50;
-            obj.D_S2 = 0.05;
+            obj.D_S2 = 0.07;
             obj.L_S3 = 5;
             obj.D_S3 = 0.1;
       
             obj.h_S1  = 1.5;
-            obj.h_S2  = 30;
+            obj.h_S2  = 10;
             obj.h_S3  = 1.5;
             obj.h_b = 1.5;
               
             obj.h_F = 1.5;
             obj.h_R = 1.5;
-            obj.h_BYP = 1.5;
+            obj.h_BYP = 1;
       
-            obj.A_b = 300;
-            obj.C_b = 5*1e6;
+            obj.A_b = 200;
+            obj.C_b = 10*1e5;
 	      
             obj.V_S1  = pi/4*obj.D_S1^2*obj.L_S1;
             obj.A_S1  = pi*obj.D_S1*obj.L_S1;
@@ -134,7 +138,7 @@ classdef Household_DecMPC
             obj.T_S3_0  = 273 + 60;
             obj.T_b_0   = 273 + 15;
             obj.T_R_0   = 273 + 30;
-            obj.T_BYP_0 = 273 + 30;
+            obj.T_BYP_0 = 273 + 60;
             obj.m_dot_U_0 = 5;
                  
             % Set temperature values
@@ -145,6 +149,10 @@ classdef Household_DecMPC
             obj.K = K;
             obj.Ts = Ts;
             obj.Q = Q;
+
+            obj.Q_S1 = 0;
+            obj.Q_S3 = 0;
+            obj.R_U  = 0;
             
             % Add here all the parameters (public and private) used by mpc
             obj.params = [obj.rho_w; %1
@@ -179,7 +187,10 @@ classdef Household_DecMPC
                           obj.nx; %30
                           obj.ny;
                           obj.nu_mv;
-                          obj.nu_md];
+                          obj.nu_md;
+                          obj.Q_S1;
+                          obj.Q_S3; %35
+                          obj.R_U];
 
 
             % Create NMPC object
