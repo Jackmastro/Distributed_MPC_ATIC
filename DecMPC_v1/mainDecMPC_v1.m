@@ -43,10 +43,12 @@ T_NOMINAL_FEED      = 273 + 70;
 T_NOMINAL_FEED_0    = 273 + 70;
 T_FEED_MAX          = 273 + 110; 
 T_FEED_MIN          = 273 + 50;
+T_SP_RETURN = 273 + 30;
 
 m_dot_NOMINAL_FEED  = 30;
 m_dot_FEED_MAX      = 40;
 m_dot_NOMINAL_BYP   = 0.1 * m_dot_NOMINAL_FEED;
+m_dot_NOMINAL_BYP_0 = m_dot_NOMINAL_BYP
 
 K_temp = 0; % TODO: TUNING PER K>0
 K_m_dot = 0; 
