@@ -5,7 +5,6 @@ function cineq = IneqConFunction_matlab(~, u, ~, ~, params)
     % m_dot_F_HP_MinRate = params(69);
     T_F_HP_MaxRate = params(70);
     T_F_HP_MinRate = params(71);
-    
 
     if is_first_house
         % Manipulated Variables
@@ -18,7 +17,7 @@ function cineq = IneqConFunction_matlab(~, u, ~, ~, params)
         % cineq = [m_F - m_F_past - m_dot_F_HP_MaxRate; - m_F + m_F_past + m_dot_F_HP_MinRate; T_F_pred_I - T_F_pred_I_past - T_F_HP_MaxRate; - T_F_pred_I + T_F_pred_I_past + T_F_HP_MinRate];
         cineq = [T_F_pred_I - T_F_pred_I_past - T_F_HP_MaxRate; - T_F_pred_I + T_F_pred_I_past + T_F_HP_MinRate];
     else
-        cineq = [0];
+        cineq = zeros(0, 1);
     end
     
 end

@@ -153,7 +153,7 @@ classdef Household_matlab
             obj.h_BYP = 1;
       
             obj.A_b = 200;
-            obj.C_b = 10*1e5;
+            obj.C_b = 50*1e6;
 	      
             obj.V_S1  = pi/4*obj.D_S1^2*obj.L_S1;
             obj.A_S1  = pi*obj.D_S1*obj.L_S1;
@@ -198,7 +198,7 @@ classdef Household_matlab
             % Set controller hyperparameters
             obj.K = K;
             obj.Ts = Ts;
-            obj.Q_disc = 5*1e4; 
+            obj.Q_disc = 5*1e5; 
             obj.Q_F    = 0.01;
             obj.Q_S1   = 0.01;
             obj.Q_S3   = 0.1;
@@ -362,13 +362,15 @@ classdef Household_matlab
             if obj.is_first_house
                 nlobj.ManipulatedVariables(1).RateMax = obj.T_F_HP_MaxRate; % Max rate of variation of the feed temperature from heat producer (T_feed(k) - T_feed(k-1) < RateMax)
                 nlobj.ManipulatedVariables(1).RateMin = obj.T_F_HP_MinRate; % Min rate of variation of the feed temperature from heat producer (T_feed(k) - T_feed(k-1) > RateMin)
-                nlobj.ManipulatedVariables(1).Max = obj.T_F_HP_max; % Max temperature from Heat Producer
-                nlobj.ManipulatedVariables(1).Min = obj.T_F_HP_min; % Min temp from Heat Producer
-                nlobj.ManipulatedVariables(3).Max = obj.m_dot_F_HP_max; %Max m_dot from Heat Producer
-                % nlobj.ManipulatedVariables(3).RateMax = obj.m_dot_F_HP_MaxRate; % Max rate of variation of the mass_flow from heat producer 
-                % nlobj.ManipulatedVariables(3).RateMin = obj.m_dot_F_HP_MinRate;
+                nlobj.ManipulatedVariables(1).Max     = obj.T_F_HP_max; % Max temperature from Heat Producer
+                nlobj.ManipulatedVariables(1).Min     = obj.T_F_HP_min; % Min temp from Heat Producer
+
+                nlobj.ManipulatedVariables(3).Max     = obj.m_dot_F_HP_max; %Max m_dot from Heat Producer
+                nlobj.ManipulatedVariables(3).RateMax = obj.m_dot_F_HP_MaxRate; % Max rate of variation of the mass_flow from heat producer 
+                nlobj.ManipulatedVariables(3).RateMin = obj.m_dot_F_HP_MinRate; % Min rate of variation of the mass_flow from heat producer 
 
             end
+            % Constraint on mass flow user
             nlobj.ManipulatedVariables(4).Max = HouseholdPressureDrop_matlab(obj.params);
         end
 
