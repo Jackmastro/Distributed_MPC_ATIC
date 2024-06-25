@@ -104,16 +104,16 @@ classdef Household_DecMPC
             obj.D_S3 = 0.1;
       
             obj.h_S1  = 1.5;
-            obj.h_S2  = 10;
+            obj.h_S2  = 100;
             obj.h_S3  = 1.5;
-            obj.h_b = 1.5;
+            obj.h_b = 10;
               
             obj.h_F = 1.5;
             obj.h_R = 1.5;
             obj.h_BYP = 1;
       
             obj.A_b = 200;
-            obj.C_b = 10*1e5;
+            obj.C_b = 5*1e7;
 	      
             obj.V_S1  = pi/4*obj.D_S1^2*obj.L_S1;
             obj.A_S1  = pi*obj.D_S1*obj.L_S1;
@@ -234,11 +234,8 @@ classdef Household_DecMPC
                 nlobj.States(i).Min = 0;
             end
 
-            for i = 1:obj.nu_mv
-                nlobj.ManipulatedVariables(i).Min = 0;
-            end
-
             nlobj.MV(1).Max = HouseholdPressureDrop_DecMPC(obj.params);
+            nlobj.MV(1).Min = 0;
         end
     end
 end
