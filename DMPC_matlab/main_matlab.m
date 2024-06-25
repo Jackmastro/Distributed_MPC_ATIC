@@ -2,8 +2,6 @@ clc;
 clear;
 close all;
 
-
-
 %% Change directory
 % Get the full path of the currently running script
 if isdeployed
@@ -59,10 +57,10 @@ options_C.Parameters = C.paramsCell;
 
 %% Initialization
 
-hours_sim = 24 * 3600;
+hours_sim = 10 * 3600;
 T = hours_sim / Ts;
 % T = 2;
-max_iter = 30;
+max_iter = 60;
 
 % Initial conditions
 x_A = [A.T_F_0, A.T_S1_0, A.T_S2_0, A.T_b_0, A.T_S3_0, A.T_R_0];
@@ -89,25 +87,23 @@ md_B(:, 17) = Tamb_obj.getTambTrajectory(0);
 md_C(:, 9)  = Tamb_obj.getTambTrajectory(0);
 
 % For Plots
-rows_plots = T+1;
+rows_plots_x = T + 1;
 
 x = struct();
-x.A = zeros(rows_plots, A.nx);
-x.B = zeros(rows_plots, B.nx);
-x.C = zeros(rows_plots, C.nx);
+x.A = zeros(rows_plots_x, A.nx);
+x.B = zeros(rows_plots_x, B.nx);
+x.C = zeros(rows_plots_x, C.nx);
 
 x.A(1,:) = x_A;
 x.B(1,:) = x_B;
 x.C(1,:) = x_C;
 
-u = struct();
-u.A = zeros(rows_plots, A.nu_mv);
-u.B = zeros(rows_plots, B.nu_mv);
-u.C = zeros(rows_plots, C.nu_mv);
+rows_plots_u = rows_plots_x;
 
-u.A(1,:) = lastmv_A; %TODO: check first row
-u.B(1,:) = lastmv_B;
-u.C(1,:) = lastmv_C;
+u = struct();
+u.A = zeros(rows_plots_u, A.nu_mv);
+u.B = zeros(rows_plots_u, B.nu_mv);
+u.C = zeros(rows_plots_u, C.nu_mv);
 
 %% Simulation
 tic
@@ -117,9 +113,9 @@ for t = 1:T
     figToPlot = figure;
     set(figToPlot, 'Name', ['Step: ', num2str(t)]);
 
-    h_m = plot(NaN, NaN, 'b', 'DisplayName', 'Mass flow');
+    h_m = plot(NaN, NaN, '.b-', 'DisplayName', 'Mass flow');
     hold on;
-    h_T = plot(NaN, NaN, 'r', 'DisplayName', 'Temperature');
+    h_T = plot(NaN, NaN, '.r-', 'DisplayName', 'Temperature');
     legend show;
 
     xlabel('Iterations', 'Interpreter', 'latex');
@@ -150,11 +146,12 @@ for t = 1:T
         lastmv_A = mv_A;
         X_A = info.Xopt;
         MV_A = info.MVopt;
-        T_b_A = info.Yopt;
+
+        X_A_shifted = shiftAndRepeatLastRow(X_A);
         
         % A sends to B
-        %              m_O_A_A,    m_R_B_A,  T_F_A_A,  T_R_B_A
-        md_B(:,1:4) = [MV_A(:,5), MV_A(:,6), X_A(:,1), MV_A(:,2)];
+        %              m_O_A_A,    m_R_B_A,     T_F_A_A,       T_R_B_A
+        md_B(:,1:4) = [MV_A(:,5), MV_A(:,6), X_A_shifted(:,1), MV_A(:,2)];
         
         % B solves
         [mv_B,~,info] = nlmpcmove(B.nlobj, x_B, lastmv_B, [], md_B, options_B);
@@ -162,13 +159,14 @@ for t = 1:T
         lastmv_B = mv_B;
         X_B = info.Xopt;
         MV_B = info.MVopt;
-        T_b_B = info.Yopt;
+
+        X_B_shifted = shiftAndRepeatLastRow(X_B);
         
         % B sends to A and C
-        %              m_O_A_B,    m_R_B_B,  T_F_A_B,  T_R_B_B
-        md_A(:,1:4) = [MV_B(:,3), MV_B(:,7), MV_B(:,1), X_B(:,6)];
-        %              m_O_B_B,    m_R_C_B,  T_F_B_B,  T_R_C_B
-        md_C(:,1:4) = [MV_B(:,5), MV_B(:,6), X_B(:,1), MV_B(:,2)];
+        %              m_O_A_B,   m_R_B_B,   T_F_A_B,   T_R_B_B
+        md_A(:,1:4) = [MV_B(:,3), MV_B(:,7), MV_B(:,1), X_B_shifted(:,6)];
+        %              m_O_B_B,   m_R_C_B,   T_F_B_B,          T_R_C_B
+        md_C(:,1:4) = [MV_B(:,5), MV_B(:,6), X_B_shifted(:,1), MV_B(:,2)];
         
         % C solves
         [mv_C,~,info] = nlmpcmove(C.nlobj, x_C, lastmv_C, [], md_C, options_C); 
@@ -176,18 +174,19 @@ for t = 1:T
         lastmv_C = mv_C;
         X_C = info.Xopt;
         MV_C = info.MVopt;
-        T_b_C = info.Yopt;
+
+        X_C_shifted = shiftAndRepeatLastRow(X_C);
         
         % C sends to B
-        %              m_O_B_C,    m_R_C_C,  T_F_B_C,  T_R_C_C
-        md_B(:,5:8) = [MV_C(:,3), MV_C(:,7), MV_C(:,1), X_C(:,6)];
+        %              m_O_B_C,   m_R_C_C,   T_F_B_C,   T_R_C_C
+        md_B(:,5:8) = [MV_C(:,3), MV_C(:,7), MV_C(:,1), X_C_shifted(:,6)];
         
         % Update and Check
-        [lambda_AB, lambda_BC, difference_m, difference_T, is_converged] = UpdateMultipliers(X_A, MV_A, X_B, MV_B, X_C, MV_C, md_A, md_C);
+        [lambda_AB, lambda_BC, difference_m, difference_T, is_converged] = UpdateMultipliers(X_A_shifted, MV_A, X_B_shifted, MV_B, X_C_shifted, MV_C, md_A, md_C);
         
-        md_A(:,5:8) = lambda_AB;
-        md_B(:,9:16) = [lambda_AB, lambda_BC];
-        md_C(:,5:8) = lambda_BC;
+        md_A(:, 5:8)  = lambda_AB;
+        md_B(:, 9:16) = [lambda_AB, lambda_BC];
+        md_C(:, 5:8)  = lambda_BC;
         
         % Plotting
         error_m(iteration) = difference_m;
@@ -200,8 +199,8 @@ for t = 1:T
     end
 
     % Heating plant max rate constraints
-    md_A(:,11) = [MV_A(:,3)];
-    md_A(:,12) = [MV_A(:,1)];
+    md_A(:, 11) = [MV_A(:, 3)];
+    md_A(:, 12) = [MV_A(:, 1)];
 
     % Update states
     x_A = X_A(2, :);
@@ -220,20 +219,26 @@ for t = 1:T
     md_C(:, 9)  = Tamb_obj.getTambTrajectory(current_time);
 
     % Save trajectories
-    idx = t+1;
-    x.A(idx, :) = X_A(2, :);
-    x.B(idx, :) = X_B(2, :);
-    x.C(idx, :) = X_C(2, :);
+    idx_x = t + 1;
+    x.A(idx_x, :) = X_A(2, :);
+    x.B(idx_x, :) = X_B(2, :);
+    x.C(idx_x, :) = X_C(2, :);
 
-    u.A(idx, :) = MV_A(1, :);
-    u.B(idx, :) = MV_B(1, :);
-    u.C(idx, :) = MV_C(1, :);
+    idx_u = t;
+    u.A(idx_u, :) = MV_A(1, :);
+    u.B(idx_u, :) = MV_B(1, :);
+    u.C(idx_u, :) = MV_C(1, :);
 
     close;
 end
 toc
 
-%% Buildings Plot
+%% Copy last input
+u.A(end, :) = u.A(end-1, :);
+u.B(end, :) = u.B(end-1, :);
+u.C(end, :) = u.C(end-1, :);
+
+%% Tracking Plot
 time = linspace(0, T, T+1) * Ts / 60; %min
 time_temp = [time(1), time(1:end-1)]; %min
 
@@ -242,7 +247,7 @@ xlimits = [0, time(end)];
 temperaturePlot = figure;
 set(temperaturePlot, 'Name', 'Tracking');
 
-plot(time, Tamb_obj.sinusoidal_Tamb(time_temp*60) - 273, "m--", 'DisplayName', 'Tamb')
+plot(time, Tamb_obj.sinusoidal_Tamb(time_temp*60) - 273, ".k-", 'DisplayName', 'Tamb')
 hold on
 plot(time, Tset_obj.interpolator_Tset(time_temp*60) - 273, "k--", 'DisplayName', 'Tset')
 plot(time, x.A(:, 4) - 273, ".b-", 'DisplayName', strcat(A.names.x(4), '^A'))
@@ -273,11 +278,11 @@ for i = 1:length(houses)
     houseName = houses{i};
     xData = x.(houseName);
     for j = 1:housesObj{i}.nx
-        plot(time, xData(:, j) - 273, 'DisplayName', housesObj{i}.names.x(j));
+        plot(time, xData(:, j) - 273, 'Marker', '.', 'DisplayName', housesObj{i}.names.x(j));
     end
     uData = u.(houseName);
     for j = 1:2
-        plot(time, uData(:, j) - 273, 'DisplayName', housesObj{i}.names.u(j));
+        plot(time, uData(:, j) - 273, 'Marker', '.', 'DisplayName', housesObj{i}.names.u(j));
     end
 
     xlim(xlimits);
@@ -298,7 +303,7 @@ for i = 1:length(houses)
     houseName = houses{i};
     uData = u.(houseName);
     for j = 3:housesObj{i}.nu_mv
-        plot(time, uData(:, j), 'DisplayName', housesObj{i}.names.u(j));
+        stairs(time, uData(:, j), 'DisplayName', housesObj{i}.names.u(j));
     end
 
     xlim(xlimits);
@@ -327,11 +332,11 @@ for i = 1:length(houses)
     predName = agents{i};
     % Feed
     xData = x.(houseName);
-    plot(time, xData(:, 1) - 273, 'DisplayName', strcat(housesObj{i}.names.x(1), "^", houseName));
+    plot(time, xData(:, 1) - 273, 'Marker', '.', 'DisplayName', strcat(housesObj{i}.names.x(1), "^", houseName));
     % Feed pred,I
     uData = u.(houseName);
     modName = strrep(housesObj{i}.names.u(1), 'pred,I', strcat(predName, ",", houseName));
-    plot(time, uData(:, 1) - 273, 'DisplayName', modName);
+    plot(time, uData(:, 1) - 273, 'Marker', '.', 'DisplayName', modName);
 
     xlim(xlimits);
     ylim([-Inf; Inf]);
@@ -355,10 +360,10 @@ for i = 1:length(houses)
     % Feed = Out pred,I
     modName = strrep(housesObj{i}.names.u(3), 'pred,I', strcat(predName, ",", houseName));
     modName = strrep(modName, '=', strcat("^", houseName, "="));
-    plot(time, uData(:, 3), 'DisplayName', modName);
+    stairs(time, uData(:, 3), 'DisplayName', modName);
     % Out I,I
     modName = strrep(housesObj{i}.names.u(5), 'I,I', strcat(houseName, ",", houseName));
-    plot(time, uData(:, 5), 'DisplayName', modName);
+    stairs(time, uData(:, 5), 'DisplayName', modName);
 
     xlim(xlimits);
     ylim([-Inf; Inf]);
@@ -380,11 +385,11 @@ for i = 1:length(houses)
     succName = agents{i+2};
     % Return I,I
     xData = x.(houseName);
-    plot(time, xData(:, 6) - 273, 'DisplayName', strcat(housesObj{i}.names.x(6), "^", houseName));
+    plot(time, xData(:, 6) - 273, 'Marker', '.', 'DisplayName', strcat(housesObj{i}.names.x(6), "^", houseName));
     % Return succ,I
     uData = u.(houseName);
     modName = strrep(housesObj{i}.names.u(2), 'succ,I', strcat(succName, ",", houseName));
-    plot(time, uData(:, 2) - 273, 'DisplayName', modName);
+    plot(time, uData(:, 2) - 273, 'Marker', '.', 'DisplayName', modName);
 
     xlim(xlimits);
     ylim([-Inf; Inf]);
@@ -407,10 +412,10 @@ for i = 1:length(houses)
     uData = u.(houseName);
     % Return succ,I
     modName = strrep(housesObj{i}.names.u(6), 'succ,I', strcat(succName, ",", houseName));
-    plot(time, uData(:, 6), 'DisplayName', modName);
+    stairs(time, uData(:, 6), 'DisplayName', modName);
     % Return I,I
     modName = strrep(housesObj{i}.names.u(7), 'I,I', strcat(houseName, ",", houseName));
-    plot(time, uData(:, 7), 'DisplayName', modName);
+    stairs(time, uData(:, 7), 'DisplayName', modName);
 
     xlim(xlimits);
     ylim([-Inf; Inf]);
@@ -438,19 +443,19 @@ for i = 1:length(houses)
     % Feed = Out pred,I
     modName = strrep(housesObj{i}.names.u(3), 'pred,I', strcat(predName, ",", houseName));
     modName = strrep(modName, '=', strcat("^", houseName, "="));
-    plot(time, uData(:, 3), 'DisplayName', modName);
+    stairs(time, uData(:, 3), 'DisplayName', modName);
     % Sum: Out I,I + U
     modName = strrep(housesObj{i}.names.u(5), 'I,I', strcat(houseName, ",", houseName));
     modName = strcat(modName, '+', housesObj{i}.names.u(4), '^', houseName);
-    plot(time, uData(:, 5)+uData(:, 4), 'DisplayName', modName);
+    stairs(time, uData(:, 5)+uData(:, 4), 'DisplayName', modName);
 
     % Return I,I
     modName = strrep(housesObj{i}.names.u(7), 'I,I', strcat(houseName, ",", houseName));
-    plot(time, uData(:, 7), 'DisplayName', modName);
+    stairs(time, uData(:, 7), 'DisplayName', modName);
     % Sum: Return succ,I + U
     modName = strrep(housesObj{i}.names.u(6), 'succ,I', strcat(succName, ",", houseName));
     modName = strcat(modName, '+', housesObj{i}.names.u(4), '^', houseName);
-    plot(time, uData(:, 6)+uData(:, 4), 'DisplayName', modName);
+    stairs(time, uData(:, 6)+uData(:, 4), 'DisplayName', modName);
     
     xlim(xlimits);
     ylim([0; Inf]);
@@ -469,4 +474,16 @@ save_plot = false;
 
 if save_plot
     saveTikzPlot('convergence_plot.tex', temperaturePlot, 'height', '\figureheight', 'width', '\figurewidth');
+end
+
+%% Functions
+function X_shifted = shiftAndRepeatLastRow(X)
+    % This function shifts the rows of X_A down by one position
+    % and repeats the last row at the bottom.
+
+    % Shift rows down by 1
+    X_shifted = circshift(X, -1, 1);
+
+    % Repeat the last row
+    X_shifted(end, :) = X(end, :);
 end
