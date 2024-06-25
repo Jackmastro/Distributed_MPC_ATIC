@@ -30,7 +30,7 @@ SimHorizon = 86400;
 t = [0:Ts:(SimHorizon+K*Ts+1)];
 
 % Set temperatures
-T_set                  = 273 + 22;
+T_set                  = 273 + 17;
 T_amb                  = 273;
 T_amb_average          = 273;
 T_amb_day_excursion_pp = 10; % peak to peak temperature excursion

@@ -198,7 +198,7 @@ classdef Household_matlab
             % Set controller hyperparameters
             obj.K = K;
             obj.Ts = Ts;
-            obj.Q_disc = 3*1e5; 
+            obj.Q_disc = 5*1e4; 
             obj.Q_F    = 0.01;
             obj.Q_S1   = 0.01;
             obj.Q_S3   = 0.1;

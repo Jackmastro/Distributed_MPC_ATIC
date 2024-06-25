@@ -44,7 +44,7 @@ validation = true;
 
 % Construct houses
 A = Household_matlab(true, false, T_set, T_amb, Ts, K, Q, validation);
-A = CustomizedParamsA(A);
+%A = CustomizedParamsA(A);
 options_A = nlmpcmoveopt;
 options_A.Parameters = A.paramsCell;
 
@@ -53,13 +53,13 @@ options_B = nlmpcmoveopt;
 options_B.Parameters = B.paramsCell;
 
 C = Household_matlab(false, true, T_set, T_amb, Ts, K, Q, validation);
-C = CustomizedParamsC(C);
+%C = CustomizedParamsC(C);
 options_C = nlmpcmoveopt;
 options_C.Parameters = C.paramsCell;
 
 %% Initialization
 
-hours_sim = 1 * 3600;
+hours_sim = 24 * 3600;
 T = hours_sim / Ts;
 % T = 2;
 max_iter = 30;
