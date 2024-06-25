@@ -1,6 +1,6 @@
 clc;
 clear; 
-%close all;
+close all;
 
 
 load("TemperatureSP_Dec.mat")
