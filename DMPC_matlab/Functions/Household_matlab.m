@@ -198,7 +198,7 @@ classdef Household_matlab
             % Set controller hyperparameters
             obj.K = K;
             obj.Ts = Ts;
-            obj.Q_disc = 1*1e6; 
+            obj.Q_disc = 3*1e5; 
             obj.Q_F    = 0.01;
             obj.Q_S1   = 0.01;
             obj.Q_S3   = 0.1;
@@ -206,8 +206,9 @@ classdef Household_matlab
             obj.R_BYP  = 0.1;
             obj.R_U    = 0.1;
 
-            delta_m = 1.5*1e4;
-            delta_T = 2*1e4;
+            % ADMM
+            delta_m = 5*1e4;
+            delta_T = 3.5*1e4;
 
             obj.delta_m_O_pred = delta_m;
             obj.delta_m_O_succ = delta_m;
