@@ -25,7 +25,6 @@ NAME_BUS_NMPC_C = 'BusParamsC';
 % Controller hyperparameters 
 Ts = 15*60;
 K = 4;
-Q = 1;
 SimHorizon = 8640;
 t = [0:Ts:(SimHorizon+K*Ts+1)];
 
@@ -58,15 +57,15 @@ K_m_dot = 0;
 
 %% Instiantating household objects
 
-A = Household_DecMPC(T_set, T_amb, Ts, K, Q, [NAME_SIMULATION '/' ADRESS_NMPC_A ], true);
+A = Household_DecMPC(T_set, T_amb, Ts, K,[NAME_SIMULATION '/' ADRESS_NMPC_A ], true);
 createParameterBus(A.nlobj, A.adressBusParams, NAME_BUS_NMPC_A, {A.params});
 InitializeParamInSimulator_DecMPC(ADRESS_HOUSE_A, A); %N.B. set the parameters after having modified the params of A but before launching simulink
 
-B = Household_DecMPC(T_set, T_amb, Ts, K, Q, [NAME_SIMULATION '/' ADRESS_NMPC_B ], true);
+B = Household_DecMPC(T_set, T_amb, Ts, K, [NAME_SIMULATION '/' ADRESS_NMPC_B ], true);
 createParameterBus(B.nlobj, B.adressBusParams, NAME_BUS_NMPC_B, {B.params});
 InitializeParamInSimulator_DecMPC(ADRESS_HOUSE_B, B)
 
-C = Household_DecMPC(T_set, T_amb, Ts, K, Q, [NAME_SIMULATION '/' ADRESS_NMPC_C ], true);
+C = Household_DecMPC(T_set, T_amb, Ts, K, [NAME_SIMULATION '/' ADRESS_NMPC_C ], true);
 createParameterBus(C.nlobj, C.adressBusParams, NAME_BUS_NMPC_C, {C.params});
 InitializeParamInSimulator_DecMPC(ADRESS_HOUSE_C, C);      
 

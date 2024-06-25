@@ -55,7 +55,7 @@ classdef Household_DecMPC
         % Controller Hyperparameters
         K
         Ts
-        Q 
+     
 
         % Modeling 
         nx
@@ -63,6 +63,7 @@ classdef Household_DecMPC
         nu_mv
         nu_md
 
+        Q_disc 
         Q_S1
         Q_S3
         R_U
@@ -77,7 +78,7 @@ classdef Household_DecMPC
 
     
     methods
-        function obj = Household_DecMPC(T_set, T_amb, Ts, K, Q, adressBusParams, validation)
+        function obj = Household_DecMPC(T_set, T_amb, Ts, K, adressBusParams, validation)
  
             % Set modeling dimensions properties 
             obj.nx = 4;
@@ -132,13 +133,13 @@ classdef Household_DecMPC
             obj.DeltaP_S2_max = 10*1e5;
             obj.DeltaP_S3_max = 10*1e5;
 
-            obj.T_F_0   = 273 + 60;
-            obj.T_S1_0  = 273 + 60;
-            obj.T_S2_0  = 273 + 60;
-            obj.T_S3_0  = 273 + 60;
-            obj.T_b_0   = 273 + 15;
+            obj.T_F_0   = 273 + 50;
+            obj.T_S1_0  = 273 + 50;
+            obj.T_S2_0  = 273 + 50;
+            obj.T_S3_0  = 273 + 50;
+            obj.T_b_0   = 273 + 17;
             obj.T_R_0   = 273 + 30;
-            obj.T_BYP_0 = 273 + 60;
+            obj.T_BYP_0 = 273 + 50;
             obj.m_dot_U_0 = 5;
                  
             % Set temperature values
@@ -148,8 +149,8 @@ classdef Household_DecMPC
             % Set controller hyperparameters
             obj.K = K;
             obj.Ts = Ts;
-            obj.Q = Q;
 
+            obj.Q_disc = 1;
             obj.Q_S1 = 0;
             obj.Q_S3 = 0;
             obj.R_U  = 0;
@@ -183,7 +184,7 @@ classdef Household_DecMPC
                           obj.T_amb;
                           obj.K;
                           obj.Ts;
-                          obj.Q;
+                          obj.Q_disc;
                           obj.nx; %30
                           obj.ny;
                           obj.nu_mv;
