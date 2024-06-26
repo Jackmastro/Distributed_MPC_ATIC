@@ -153,7 +153,7 @@ classdef Household_matlab
             obj.h_BYP = 1;
       
             obj.A_b = 200;
-            obj.C_b = 50*1e6;
+            obj.C_b = 5*1e7;
 	      
             obj.V_S1  = pi/4*obj.D_S1^2*obj.L_S1;
             obj.A_S1  = pi*obj.D_S1*obj.L_S1;
@@ -169,9 +169,9 @@ classdef Household_matlab
             obj.A_BYP  = pi*obj.D_BYP*obj.L_BYP;
       
             obj.f_Darcy = 0.025;
-            obj.DeltaP_S1_max = 10*100000;
-            obj.DeltaP_S2_max = 10*100000;
-            obj.DeltaP_S3_max = 10*100000;
+            obj.DeltaP_S1_max = 4*100000;
+            obj.DeltaP_S2_max = 4*100000;
+            obj.DeltaP_S3_max = 4*100000;
 
             obj.T_F_0   = 273 + 50;
             obj.T_S1_0  = 273 + 50;
@@ -179,14 +179,14 @@ classdef Household_matlab
             obj.T_S3_0  = 273 + 50;
             obj.T_b_0   = 273 + 17;
             obj.T_R_0   = 273 + 30;
-            obj.T_BYP_0 = 273 + 50;
+            obj.T_BYP_0 = 273 + 30;
 
-            obj.T_F_HP_min = 273 + 50;
-            obj.T_F_HP_max = 273 + 110;
+            obj.T_F_HP_min = 273 + 30;
+            obj.T_F_HP_max = 273 + 80;
             obj.T_F_HP_MaxRate =   0.1;
             obj.T_F_HP_MinRate = - 0.1;
             
-            obj.m_dot_F_HP_max = 30;
+            obj.m_dot_F_HP_max = 15;
             obj.m_dot_F_HP_MaxRate =  0.25;
             obj.m_dot_F_HP_MinRate = -0.25;
 

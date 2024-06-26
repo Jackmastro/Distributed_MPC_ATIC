@@ -51,16 +51,16 @@ options_B = nlmpcmoveopt;
 options_B.Parameters = B.paramsCell;
 
 C = Household_matlab(false, true, T_set, T_amb, Ts, K, Q, validation);
-%C = CustomizedParamsC(C);
+C = CustomizedParamsC(C);
 options_C = nlmpcmoveopt;
 options_C.Parameters = C.paramsCell;
 
 %% Initialization
 
-hours_sim = 7 * 3600;
+hours_sim = 24 * 3600;
 T = hours_sim / Ts;
 % T = 2;
-max_iter = 30;
+max_iter = 80;
 
 % Initial conditions
 x_A = [A.T_F_0, A.T_S1_0, A.T_S2_0, A.T_b_0, A.T_S3_0, A.T_R_0];
@@ -68,9 +68,13 @@ x_B = [B.T_F_0, B.T_S1_0, B.T_S2_0, B.T_b_0, B.T_S3_0, B.T_R_0];
 x_C = [C.T_F_0, C.T_S1_0, C.T_S2_0, C.T_b_0, C.T_S3_0, C.T_R_0, C.T_BYP_0]; 
 
 % Manipulated Variables
-mv_A_0 = [A.T_F_0, A.T_R_0, 9, 3, 6, 6, 9]; % T_feed_I, T_succ_I, m_F, m_U, m_O, m_succ_Ia, m_R
-mv_B_0 = [B.T_F_0, B.T_R_0, 9, 3, 6, 6, 9];
-mv_C_0 = [C.T_F_0, C.T_R_0, 9, 3, 6, 6, 9];
+mv_A_0 = [A.T_F_0, A.T_R_0, 3, 1, 2, 2, 3]; % T_feed_I, T_succ_I, m_F, m_U, m_O, m_succ_I, m_R
+mv_B_0 = [B.T_F_0, B.T_R_0, 2, 1, 1, 1, 2];
+mv_C_0 = [C.T_F_0, C.T_R_0, 1, 1, 0, 0, 1];
+
+% 5, 1, 4, 4, 5 non belli
+% 4, 1, 3, 3, 4
+% 3, 1, 2, 2, 3
 
 lastmv_A = mv_A_0;
 lastmv_B = mv_B_0;

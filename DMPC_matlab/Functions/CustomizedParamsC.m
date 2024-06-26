@@ -1,8 +1,7 @@
 function [outputObj] = CustomizedParamsC(C)
-C.Q_disc = 3*1e3;
 
-delta_m = 5*1e4;
-delta_T = 3.5*1e4;
+delta_m = 7*1e4;
+delta_T = 4.5*1e4;
 
 C.delta_m_O_pred = delta_m;
 C.delta_m_O_succ = delta_m;
