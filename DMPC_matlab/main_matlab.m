@@ -57,10 +57,10 @@ options_C.Parameters = C.paramsCell;
 
 %% Initialization
 
-hours_sim = 10 * 3600;
+hours_sim = 7 * 3600;
 T = hours_sim / Ts;
 % T = 2;
-max_iter = 60;
+max_iter = 30;
 
 % Initial conditions
 x_A = [A.T_F_0, A.T_S1_0, A.T_S2_0, A.T_b_0, A.T_S3_0, A.T_R_0];
@@ -68,10 +68,13 @@ x_B = [B.T_F_0, B.T_S1_0, B.T_S2_0, B.T_b_0, B.T_S3_0, B.T_R_0];
 x_C = [C.T_F_0, C.T_S1_0, C.T_S2_0, C.T_b_0, C.T_S3_0, C.T_R_0, C.T_BYP_0]; 
 
 % Manipulated Variables
-mv_0 = [A.T_F_0, A.T_R_0, 9, 3, 6, 6, 9]; % T_feed_I, T_succ_I, m_F, m_U, m_O, m_succ_Ia, m_R
-lastmv_A = mv_0;
-lastmv_B = mv_0;
-lastmv_C = mv_0;
+mv_A_0 = [A.T_F_0, A.T_R_0, 9, 3, 6, 6, 9]; % T_feed_I, T_succ_I, m_F, m_U, m_O, m_succ_Ia, m_R
+mv_B_0 = [B.T_F_0, B.T_R_0, 9, 3, 6, 6, 9];
+mv_C_0 = [C.T_F_0, C.T_R_0, 9, 3, 6, 6, 9];
+
+lastmv_A = mv_A_0;
+lastmv_B = mv_B_0;
+lastmv_C = mv_C_0;
 
 % Measured Disturbances
 md_A = zeros(A.K+1, A.nu_md);

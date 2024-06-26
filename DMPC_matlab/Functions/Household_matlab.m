@@ -203,8 +203,8 @@ classdef Household_matlab
             obj.Q_S1   = 0.01;
             obj.Q_S3   = 0.1;
             obj.Q_R    = 0.1;
-            obj.R_BYP  = 0.1;
-            obj.R_U    = 0.1;
+            obj.R_BYP  = 1*1e3;
+            obj.R_U    = 10;
 
             % ADMM
             delta_m = 5*1e4;
