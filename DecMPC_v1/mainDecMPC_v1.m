@@ -25,11 +25,11 @@ NAME_BUS_NMPC_C = 'BusParamsC';
 % Controller hyperparameters 
 Ts = 15*60;
 K = 4;
-SimHorizon = 8640;
+SimHorizon = 86400;
 t = [0:Ts:(SimHorizon+K*Ts+1)];
 
 % Set temperatures
-T_set                  = 273 + 22;
+T_set                  = 273 + 18;
 T_amb                  = 273;
 % T_amb_average          = 273;
 % T_amb_day_excursion_pp = 10; % peak to peak temperature excursion
@@ -38,19 +38,19 @@ T_amb                  = 273;
 % T_ref_signal = [(273+19)*ones(1,round(1*3600/Ts)) , (273+23)*ones(1, round(17*3600/Ts )), (273+19)*ones(1, round(6*3600/Ts)), (273+19)*ones(1, K+1) ] % we use as SetPoint a square wave from 19°c during eco phase (midnight -> 6am and 6pm->midnight) and 23 during comfort phase (6am ->6pm)
 
 %Tuning values of HEAT_PRODUCED
-T_NOMINAL_FEED      = 273 + 70;
-T_NOMINAL_FEED_0    = 273 + 70;
-T_FEED_MAX          = 273 + 110; 
-T_FEED_MIN          = 273 + 50;
-T_SP_RETURN = 273 + 30;
+T_NOMINAL_FEED      = 273 + 60;
+T_NOMINAL_FEED_0    = 273 + 60;
+T_FEED_MAX          = 273 + 80; 
+T_FEED_MIN          = 273 + 30;
+T_SP_RETURN = 273 + 40;
 
-m_dot_NOMINAL_FEED  = 30;
-m_dot_FEED_MAX      = 40;
+m_dot_NOMINAL_FEED  = 15;
+m_dot_FEED_MAX      = 20;
 m_dot_NOMINAL_BYP   = 0.1 * m_dot_NOMINAL_FEED;
-m_dot_NOMINAL_BYP_0 = m_dot_NOMINAL_BYP
+m_dot_NOMINAL_BYP_0 = m_dot_NOMINAL_BYP;
 
-K_temp = 0; % TODO: TUNING PER K>0
-K_m_dot = 0; 
+K_temp = 1; % TODO: TUNING PER K>0
+K_m_dot = 10; 
 
 
 %pause

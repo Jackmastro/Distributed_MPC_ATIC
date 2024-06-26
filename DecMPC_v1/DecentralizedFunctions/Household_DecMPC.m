@@ -129,9 +129,9 @@ classdef Household_DecMPC
             obj.A_F  = pi*obj.D_F*obj.L_F;
       
             obj.f_Darcy = 0.025;
-            obj.DeltaP_S1_max = 10*1e5; % 10 bar
-            obj.DeltaP_S2_max = 10*1e5;
-            obj.DeltaP_S3_max = 10*1e5;
+            obj.DeltaP_S1_max = 4*1e5; % 4 bar
+            obj.DeltaP_S2_max = 4*1e5;
+            obj.DeltaP_S3_max = 4*1e5;
 
             obj.T_F_0   = 273 + 50;
             obj.T_S1_0  = 273 + 50;
@@ -139,7 +139,7 @@ classdef Household_DecMPC
             obj.T_S3_0  = 273 + 50;
             obj.T_b_0   = 273 + 17;
             obj.T_R_0   = 273 + 30;
-            obj.T_BYP_0 = 273 + 50;
+            obj.T_BYP_0 = 273 + 30;
             obj.m_dot_U_0 = 5;
                  
             % Set temperature values
