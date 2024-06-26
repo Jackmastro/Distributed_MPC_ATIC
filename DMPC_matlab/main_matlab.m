@@ -51,7 +51,7 @@ options_B = nlmpcmoveopt;
 options_B.Parameters = B.paramsCell;
 
 C = Household_matlab(false, true, T_set, T_amb, Ts, K, Q, validation);
-C = CustomizedParamsC(C);
+%C = CustomizedParamsC(C);
 options_C = nlmpcmoveopt;
 options_C.Parameters = C.paramsCell;
 
@@ -72,9 +72,6 @@ mv_A_0 = [A.T_F_0, A.T_R_0, 3, 1, 2, 2, 3]; % T_feed_I, T_succ_I, m_F, m_U, m_O,
 mv_B_0 = [B.T_F_0, B.T_R_0, 2, 1, 1, 1, 2];
 mv_C_0 = [C.T_F_0, C.T_R_0, 1, 1, 0, 0, 1];
 
-% 5, 1, 4, 4, 5 non belli
-% 4, 1, 3, 3, 4
-% 3, 1, 2, 2, 3
 
 lastmv_A = mv_A_0;
 lastmv_B = mv_B_0;
