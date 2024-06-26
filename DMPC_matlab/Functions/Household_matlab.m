@@ -177,7 +177,7 @@ classdef Household_matlab
             obj.T_S1_0  = 273 + 50;
             obj.T_S2_0  = 273 + 50;
             obj.T_S3_0  = 273 + 50;
-            obj.T_b_0   = 273 + 17;
+            obj.T_b_0   = 273 + 16;
             obj.T_R_0   = 273 + 30;
             obj.T_BYP_0 = 273 + 30;
 

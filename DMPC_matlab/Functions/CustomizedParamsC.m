@@ -1,16 +1,18 @@
 function [outputObj] = CustomizedParamsC(C)
 
-delta_m = 7*1e4;
-delta_T = 4.5*1e4;
+C.T_b_0 = 17
 
-C.delta_m_O_pred = delta_m;
-C.delta_m_O_succ = delta_m;
-C.delta_m_R_pred = delta_m;
-C.delta_m_R_succ = delta_m;
-C.delta_T_F_pred = delta_T;
-C.delta_T_F_succ = delta_T;
-C.delta_T_R_pred = delta_T;
-C.delta_T_R_succ = delta_T;
+% delta_m = 7*1e4;
+% delta_T = 4.5*1e4;
+% 
+% C.delta_m_O_pred = delta_m;
+% C.delta_m_O_succ = delta_m;
+% C.delta_m_R_pred = delta_m;
+% C.delta_m_R_succ = delta_m;
+% C.delta_T_F_pred = delta_T;
+% C.delta_T_F_succ = delta_T;
+% C.delta_T_R_pred = delta_T;
+% C.delta_T_R_succ = delta_T;
 
 C.params = [  C.rho_w; %1
               C.cp_w;

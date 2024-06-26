@@ -1,17 +1,6 @@
 function [outputObj] = CustomizedParamsA(A)
-A.Q_disc = 3*1e3;
 
-delta_m = 5*1e4;
-delta_T = 3.5*1e4;
-
-A.delta_m_O_pred = delta_m;
-A.delta_m_O_succ = delta_m;
-A.delta_m_R_pred = delta_m;
-A.delta_m_R_succ = delta_m;
-A.delta_T_F_pred = delta_T;
-A.delta_T_F_succ = delta_T;
-A.delta_T_R_pred = delta_T;
-A.delta_T_R_succ = delta_T;
+A.T_b_0 = 15;
 
 A.params = [  A.rho_w; %1
               A.cp_w;
