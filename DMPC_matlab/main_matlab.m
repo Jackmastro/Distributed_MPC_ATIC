@@ -57,10 +57,10 @@ options_C.Parameters = C.paramsCell;
 
 %% Initialization
 
-hours_sim = 2 * 3600;
+hours_sim = 24 * 3600;
 T = hours_sim / Ts;
 % T = 2;
-max_iter = 60;
+max_iter = 40;
 
 % Initial conditions
 x_A = [A.T_F_0, A.T_S1_0, A.T_S2_0, A.T_b_0, A.T_S3_0, A.T_R_0];
