@@ -52,7 +52,7 @@ m_dot_FEED_MAX      = 15;
 m_dot_NOMINAL_BYP   = 0.1 * m_dot_NOMINAL_FEED;
 m_dot_NOMINAL_BYP_0 = m_dot_NOMINAL_BYP;
 
-K_temp = 0.01; % TODO: TUNING PER K>0
+K_temp = 0.5; % TODO: TUNING PER K>0
 K_m_dot = 5; 
 
 
