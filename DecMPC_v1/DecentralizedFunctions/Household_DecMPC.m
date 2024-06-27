@@ -151,9 +151,9 @@ classdef Household_DecMPC
             obj.Ts = Ts;
 
             obj.Q_disc = 10;
-            obj.Q_S1 = 0.01;
-            obj.Q_S3 = 0.01;
-            obj.R_U  = 0.001;
+            obj.Q_S1 = 0.001;
+            obj.Q_S3 = 0.001;
+            obj.R_U  = 0.01;
             
             % Add here all the parameters (public and private) used by mpc
             obj.params = [obj.rho_w; %1

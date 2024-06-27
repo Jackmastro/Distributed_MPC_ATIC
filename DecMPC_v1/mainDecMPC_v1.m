@@ -41,19 +41,19 @@ T_amb                  = 273 - 5;
 % T_ref_signal = [(273+19)*ones(1,round(1*3600/Ts)) , (273+23)*ones(1, round(17*3600/Ts )), (273+19)*ones(1, round(6*3600/Ts)), (273+19)*ones(1, K+1) ] % we use as SetPoint a square wave from 19°c during eco phase (midnight -> 6am and 6pm->midnight) and 23 during comfort phase (6am ->6pm)
 
 %Tuning values of HEAT_PRODUCED
-T_NOMINAL_FEED      = 273 + 60;
-T_NOMINAL_FEED_0    = 273 + 60;
+T_NOMINAL_FEED      = 273 + 75;
+T_NOMINAL_FEED_0    = 273 + 75;
 T_FEED_MAX          = 273 + 80; 
 T_FEED_MIN          = 273 + 30;
 T_SP_RETURN = 273 + 60;
 
 m_dot_NOMINAL_FEED  = 15;
-m_dot_FEED_MAX      = 20;
+m_dot_FEED_MAX      = 15;
 m_dot_NOMINAL_BYP   = 0.1 * m_dot_NOMINAL_FEED;
 m_dot_NOMINAL_BYP_0 = m_dot_NOMINAL_BYP;
 
-K_temp = 0.01; % TODO: TUNING PER K>0
-K_m_dot = 0.1; 
+K_temp = 0.007; % TODO: TUNING PER K>0
+K_m_dot = 0.01; 
 
 
 %pause
