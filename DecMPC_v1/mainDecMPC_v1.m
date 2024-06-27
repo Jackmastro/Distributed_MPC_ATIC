@@ -4,6 +4,7 @@ close all;
 
 
 load("TemperatureSP_Dec.mat")
+
 % disp("Press enter when Simulink is open");
 %% Set Network Objects
 
@@ -22,15 +23,17 @@ ADRESS_HOUSE_C = strcat(NAME_SIMULATION, '/HouseC');
 ADRESS_NMPC_C = 'NMPC_C';
 NAME_BUS_NMPC_C = 'BusParamsC';
 
+% open_system(NAME_SIMULATION);
+
 % Controller hyperparameters 
 Ts = 15*60;
 K = 4;
-SimHorizon = 86400;
+SimHorizon = 36000;
 t = [0:Ts:(SimHorizon+K*Ts+1)];
 
 % Set temperatures
 T_set                  = 273 + 18;
-T_amb                  = 273;
+T_amb                  = 273 - 5;
 % T_amb_average          = 273;
 % T_amb_day_excursion_pp = 10; % peak to peak temperature excursion
 % 
@@ -42,15 +45,15 @@ T_NOMINAL_FEED      = 273 + 60;
 T_NOMINAL_FEED_0    = 273 + 60;
 T_FEED_MAX          = 273 + 80; 
 T_FEED_MIN          = 273 + 30;
-T_SP_RETURN = 273 + 40;
+T_SP_RETURN = 273 + 60;
 
 m_dot_NOMINAL_FEED  = 15;
 m_dot_FEED_MAX      = 20;
 m_dot_NOMINAL_BYP   = 0.1 * m_dot_NOMINAL_FEED;
 m_dot_NOMINAL_BYP_0 = m_dot_NOMINAL_BYP;
 
-K_temp = 1; % TODO: TUNING PER K>0
-K_m_dot = 10; 
+K_temp = 0.01; % TODO: TUNING PER K>0
+K_m_dot = 0.1; 
 
 
 %pause
@@ -58,18 +61,23 @@ K_m_dot = 10;
 %% Instiantating household objects
 
 A = Household_DecMPC(T_set, T_amb, Ts, K,[NAME_SIMULATION '/' ADRESS_NMPC_A ], true);
+A.T_b_0 = 273 + 15;
 createParameterBus(A.nlobj, A.adressBusParams, NAME_BUS_NMPC_A, {A.params});
 InitializeParamInSimulator_DecMPC(ADRESS_HOUSE_A, A); %N.B. set the parameters after having modified the params of A but before launching simulink
 
+
 B = Household_DecMPC(T_set, T_amb, Ts, K, [NAME_SIMULATION '/' ADRESS_NMPC_B ], true);
+B.T_b_0 = 273 + 16;
 createParameterBus(B.nlobj, B.adressBusParams, NAME_BUS_NMPC_B, {B.params});
 InitializeParamInSimulator_DecMPC(ADRESS_HOUSE_B, B)
 
+
 C = Household_DecMPC(T_set, T_amb, Ts, K, [NAME_SIMULATION '/' ADRESS_NMPC_C ], true);
+C.T_b_0 = 273 + 17;
 createParameterBus(C.nlobj, C.adressBusParams, NAME_BUS_NMPC_C, {C.params});
 InitializeParamInSimulator_DecMPC(ADRESS_HOUSE_C, C);      
 
 %% Simulink Simulation
-
+set_param(NAME_SIMULATION, 'StartTime', '0', 'StopTime', num2str(SimHorizon), 'Solver', 'ode45');
 % % Run the simulation
 simOut = sim(NAME_SIMULATION);

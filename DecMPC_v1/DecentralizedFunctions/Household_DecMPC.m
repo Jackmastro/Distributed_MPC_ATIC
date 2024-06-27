@@ -138,8 +138,8 @@ classdef Household_DecMPC
             obj.T_S2_0  = 273 + 50;
             obj.T_S3_0  = 273 + 50;
             obj.T_b_0   = 273 + 17;
-            obj.T_R_0   = 273 + 30;
-            obj.T_BYP_0 = 273 + 30;
+            obj.T_R_0   = 273 + 50;
+            obj.T_BYP_0 = 273 + 50;
             obj.m_dot_U_0 = 5;
                  
             % Set temperature values
@@ -150,10 +150,10 @@ classdef Household_DecMPC
             obj.K = K;
             obj.Ts = Ts;
 
-            obj.Q_disc = 1;
-            obj.Q_S1 = 0;
-            obj.Q_S3 = 0;
-            obj.R_U  = 0;
+            obj.Q_disc = 10;
+            obj.Q_S1 = 0.01;
+            obj.Q_S3 = 0.01;
+            obj.R_U  = 0.001;
             
             % Add here all the parameters (public and private) used by mpc
             obj.params = [obj.rho_w; %1
