@@ -34,7 +34,7 @@ T_amb = 273; % PLACE HOLDER
 Tset_obj = Tset_matlab(Ts, K);
 
 T_mean = 273 - 5;
-T_var_pp = 10;
+T_var_pp = 0;
 Tamb_obj = Tamb_matlab(Ts, K, T_mean, T_var_pp);
 
 % Validate NMPC
@@ -42,7 +42,7 @@ validation = true;
 
 % Construct houses
 A = Household_matlab(true, false, T_set, T_amb, Ts, K, Q, validation);
-%A = CustomizedParamsA(A);
+A = CustomizedParamsA(A);
 options_A = nlmpcmoveopt;
 options_A.Parameters = A.paramsCell;
 
@@ -51,16 +51,16 @@ options_B = nlmpcmoveopt;
 options_B.Parameters = B.paramsCell;
 
 C = Household_matlab(false, true, T_set, T_amb, Ts, K, Q, validation);
-%C = CustomizedParamsC(C);
+C = CustomizedParamsC(C);
 options_C = nlmpcmoveopt;
 options_C.Parameters = C.paramsCell;
 
 %% Initialization
 
-hours_sim = 24 * 3600;
+hours_sim = 10 * 3600;
 T = hours_sim / Ts;
 % T = 2;
-max_iter = 40;
+max_iter = 100;
 
 % Initial conditions
 x_A = [A.T_F_0, A.T_S1_0, A.T_S2_0, A.T_b_0, A.T_S3_0, A.T_R_0];
@@ -246,12 +246,14 @@ u.C(end, :) = u.C(end-1, :);
 time = linspace(0, T, T+1) * Ts / 60; %min
 time_temp = [time(1), time(1:end-1)]; %min
 
+Tamb_vec = Tamb_obj.sinusoidal_Tamb(time_temp*60);
+
 xlimits = [0, time(end)];
 
 temperaturePlot = figure;
 set(temperaturePlot, 'Name', 'Tracking');
 
-plot(time, Tamb_obj.sinusoidal_Tamb(time_temp*60) - 273, ".k-", 'DisplayName', 'Tamb')
+plot(time, Tamb_vec - 273, ".k-", 'DisplayName', 'Tamb')
 hold on
 plot(time, Tset_obj.interpolator_Tset(time_temp*60) - 273, "k--", 'DisplayName', 'Tset')
 plot(time, x.A(:, 4) - 273, ".b-", 'DisplayName', strcat(A.names.x(4), '^A'))
@@ -473,11 +475,66 @@ for i = 1:length(houses)
     clickableLegend
 end
 
+%% Power loss plot
+QlossFeed = u.A(:,3) .* A.cp_w .* u.A(:,1) ...
+          - u.A(:,7) .* A.cp_w .* x.A(:,6);
+Qloss = QlossFeed ...
+      - A.h_S2 .* A.A_S2 .* (x.A(:,3) - x.A(:,4)) ...
+      - B.h_S2 .* B.A_S2 .* (x.B(:,3) - x.B(:,4)) ...
+      - C.h_S2 .* C.A_S2 .* (x.C(:,3) - x.C(:,4));
+
+ElossFeed = trapz(time*60, QlossFeed);
+Eloss     = trapz(time*60, Qloss);
+Eloss / ElossFeed * 100
+
+QlossPlot = figure;
+set(QlossPlot, 'Name', 'Power loss');
+
+hold on;
+plot(time, Qloss, 'Marker', '.', 'DisplayName', 'DMPC');
+
+xlim(xlimits);
+%ylim([0; Inf]);
+title('Power Loss', 'Interpreter', 'latex');
+xlabel('Time / min', 'Interpreter', 'latex');
+ylabel('Power / W', 'Interpreter', 'latex');
+legend('Location', 'best');
+grid on;
+box on;
+hold off;
+clickableLegend
+
+%% User mass flow rate plot
+mUserPlot = figure;
+set(mUserPlot, 'Name', 'User mass flow');
+
+hold on;
+for i = 1:length(houses)
+    houseName = houses{i};
+    uData = u.(houseName);
+    modName = strcat(housesObj{i}.names.u(4), '^', houseName);
+    stairs(time, uData(:, 4), 'DisplayName', modName);
+end
+
+xlim(xlimits);
+ylim([0; Inf]);
+title(['$\dot{m}_', houseName, '$ balance'], 'Interpreter', 'latex');
+xlabel('Time / min', 'Interpreter', 'latex');
+ylabel('Mass flow rate / kg/s', 'Interpreter', 'latex');
+legend('Location', 'best');
+grid on;
+box on;
+hold off;
+clickableLegend
+
+%% Save data
+save('DMPC_results.mat');
+
 %% Save plots
 save_plot = false;
 
 if save_plot
-    saveTikzPlot('convergence_plot.tex', temperaturePlot, 'height', '\figureheight', 'width', '\figurewidth');
+    saveTikzPlot('sbagliato_plot.tex', temperaturePlot);
 end
 
 %% Functions

@@ -1,6 +1,6 @@
 function [outputObj] = CustomizedParamsA(A)
 
-A.T_b_0 = 15;
+A.T_b_0 = 273 + 15;
 
 A.params = [  A.rho_w; %1
               A.cp_w;

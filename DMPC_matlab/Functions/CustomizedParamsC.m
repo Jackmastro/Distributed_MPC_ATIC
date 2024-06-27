@@ -1,6 +1,6 @@
 function [outputObj] = CustomizedParamsC(C)
 
-C.T_b_0 = 17
+C.T_b_0 = 273 + 17;
 
 % delta_m = 7*1e4;
 % delta_T = 4.5*1e4;

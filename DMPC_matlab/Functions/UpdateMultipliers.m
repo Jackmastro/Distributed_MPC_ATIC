@@ -1,13 +1,12 @@
 function [lambda_AB, lambda_BC, difference_m, difference_T, is_converged] = UpdateMultipliers(X_A_shifted, MV_A, X_B_shifted, MV_B, X_C_shifted, MV_C, md_A, md_C)
     
     difference_m = 0;
-
-    mass_tolerance = 0.11;
-    alpha_m = 0.01;
+    mass_tolerance = 0.03;
+    alpha_m = 0.2;
 
     difference_T = 0;
-    temperature_tolerance = 0.61;
-    alpha_T = 0.005;
+    temperature_tolerance = 0.17;
+    alpha_T = 0.05;
 
     %% Cut last row of all inputs
     X_A_shifted_cut = removeLastRow(X_A_shifted);
