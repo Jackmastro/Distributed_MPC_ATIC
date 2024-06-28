@@ -1,0 +1,39 @@
+Advanced Topics in Control FS 2024 - Final Project 
+=============
+
+Description
+-----------
+ The scope of this project is the implementation on MATLAB of a distributed and decentralized nonlinear model predictive control that utilize a graph-based description of district heating networks.
+
+Folders structure
+------------
+1. DecMPC
+	main_DecMPC		: The nmpc MATLAB is initialized and the Simulink simulation set up. 
+	Simulator_DecMPC	: The DecMPC is implemented and simulated in Simulink. 
+	DecentralizedFunctions	: All functions, namely cost, state, constraints,... are defined in this folder.
+
+2. DecMPC_v1
+	Not to consider.
+
+3. DMPC
+	The DMPC is partially implemented also in Simulink, but for time reasons the implementation is not completed.
+
+4. DMPC_matlab
+	main_DMPC		: The nmpc MATLAB is initialized, the ADMM implemented and the open loop simulation set up. 
+	DistributedFunctions	: All functions, namely cost, state, constraints,... are defined in this folder.
+	
+
+5. Plant 
+	Plant refernece model defined in Simulink.
+
+6. Plots
+
+7. Results
+
+8. .gitignore
+
+9. setup 
+	This code should be run as first in order to 
+
+
+
