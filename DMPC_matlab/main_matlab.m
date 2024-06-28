@@ -109,6 +109,9 @@ u.A = zeros(rows_plots_u, A.nu_mv);
 u.B = zeros(rows_plots_u, B.nu_mv);
 u.C = zeros(rows_plots_u, C.nu_mv);
 
+%TODO shift by one in convergence plot
+%initialization of temperature MV needed (in paper shifted by hand)
+
 %% Simulation
 tic
 for t = 1:T
@@ -250,11 +253,11 @@ Tamb_vec = Tamb_obj.sinusoidal_Tamb(time_temp*60);
 
 xlimits = [0, time(end)];
 
-temperaturePlot = figure;
-set(temperaturePlot, 'Name', 'Tracking');
+trackingPlot = figure;
+set(trackingPlot, 'Name', 'Tracking');
 
-plot(time, Tamb_vec - 273, ".k-", 'DisplayName', 'Tamb')
 hold on
+plot(time, Tamb_vec - 273, ".k-", 'DisplayName', 'Tamb')
 plot(time, Tset_obj.interpolator_Tset(time_temp*60) - 273, "k--", 'DisplayName', 'Tset')
 plot(time, x.A(:, 4) - 273, ".b-", 'DisplayName', strcat(A.names.x(4), '^A'))
 plot(time, x.B(:, 4) - 273, ".g-", 'DisplayName', strcat(B.names.x(4), '^B'))
@@ -270,7 +273,7 @@ box on;
 hold off;
 
 %% All temperatures and mass flow rates Plot
-% Create a figure
+
 subPlot = figure;
 set(subPlot, 'Name', 'All values');
 
@@ -494,7 +497,6 @@ hold on;
 plot(time, Qloss, 'Marker', '.', 'DisplayName', 'DMPC');
 
 xlim(xlimits);
-%ylim([0; Inf]);
 title('Power Loss', 'Interpreter', 'latex');
 xlabel('Time / min', 'Interpreter', 'latex');
 ylabel('Power / W', 'Interpreter', 'latex');
@@ -527,14 +529,55 @@ box on;
 hold off;
 clickableLegend
 
+%% Temperature convergence Plot for paper
+convergenceTemperaturePlot = figure;
+set(convergenceTemperaturePlot, 'Name', 'Temperature Convergence');
+
+hold on;
+% TODO shift by one due to initialization
+plot(time, x.A(:,1)                     - 273, 'Marker', '.', 'DisplayName', 'T_F^{A,A}');
+plot(time, [x.A(1,1); u.B(1:end-1,1)]   - 273, 'Marker', '.', 'DisplayName', 'T_F^{A,B}');
+plot(time, x.C(:,6)                     - 273, 'Marker', '.', 'DisplayName', 'T_R^{C,C}');
+plot(time, [x.C(1,6); u.B(1:end-1,2)]   - 273, 'Marker', '.', 'DisplayName', 'T_R^{C,B}');
+
+xlabel('Time / min', 'Interpreter', 'latex');
+ylabel('Temperature / $^\circ$C', 'Interpreter', 'latex');
+legend('Location', 'best');
+grid on;
+box on;
+hold off;
+clickableLegend
+
+%% Mass flow convergence Plot for paper
+convergenceMassFlowPlot = figure;
+set(convergenceMassFlowPlot, 'Name', 'Mass Flow Convergence');
+
+hold on;
+stairs(time, u.A(:,5), 'DisplayName', 'm_O^{A,A}');
+stairs(time, u.B(:,3), 'DisplayName', 'm_O^{A,B}');
+stairs(time, u.C(:,7), 'DisplayName', 'm_R^{C,C}');
+stairs(time, u.B(:,6), 'DisplayName', 'm_R^{C,B}');
+
+xlabel('Time / min', 'Interpreter', 'latex');
+ylabel('Mass flow rate / kg/s', 'Interpreter', 'latex');
+legend('Location', 'best');
+grid on;
+box on;
+hold off;
+clickableLegend
+
 %% Save data
-save('DMPC_results.mat');
+save_data = false;
+
+if save_data
+    save('DMPC_results.mat');
+end
 
 %% Save plots
-save_plot = false;
+save_plot = true;
 
 if save_plot
-    saveTikzPlot('sbagliato_plot.tex', temperaturePlot);
+    saveTikzPlot('DMPC_m_conv_Tset_back_plot.tex', convergenceMassFlowPlot);
 end
 
 %% Functions
