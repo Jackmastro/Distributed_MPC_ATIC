@@ -1,10 +1,13 @@
 cff-version: 1.2.0
-references:
-  - id: ATIC_FinalProject
-    type: simulation
-    authors:
-      - name: Alessandro Bettoni
-      - name: Giacomo Mastroddi
-      - name: Marco Muttoni
-    title: Distributed Nonlinear Model Predictive Control for District Heating Network
-    repository-code: https://github.com/Jackmastro/Distributed_MPC_ATIC.git
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Bettoni"
+  given-names: "Alessandro"
+- family-names: "Mastroddi"
+  given-names: "Giacomo"
+- family-names: "Muttoni"
+  given-names: "Marco"
+title: "Distributed Nonlinear Model Predictive Control for District Heating Network"
+version: 1.0.0
+date-released: 2024-07-20
+url: "https://github.com/Jackmastro/Distributed_MPC_ATIC.git"
