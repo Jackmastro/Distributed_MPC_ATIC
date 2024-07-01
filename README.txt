@@ -3,7 +3,9 @@ Advanced Topics in Control FS 2024 - Final Project
 
 Description
 -----------
- The scope of this project is the implementation on MATLAB of a distributed and decentralized nonlinear model predictive control that utilize a graph-based description of district heating networks.
+This project presents a distributed nonlinear model predictive control for district heating networks. Exploiting a graph-based modeling of the thermal dynamics, our controller optimizes the mass flow absorption of buildings in a distributed cooperative scheme that mediates between the superior performance of the centralized control and the privacy preservation of the decentralized schemes.
+A benchmark three-building network simulation is used to compare the performance of the proposed solution with a decentralized model predictive control scheme.
+
 
 Folders structure
 ------------
