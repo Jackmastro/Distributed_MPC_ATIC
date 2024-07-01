@@ -12,27 +12,24 @@ Folders structure
 	Simulator_DecMPC	: The DecMPC is implemented and simulated in Simulink. 
 	DecentralizedFunctions	: All functions, namely cost, state, constraints,... are defined in this folder.
 
-2. DecMPC_v1
-	Not to consider.
-
-3. DMPC_matlab
+2. DMPC_matlab
 	main_DMPC		: The nmpc MATLAB is initialized, the ADMM implemented and the simulation set up. 
 	DistributedFunctions	: All functions, namely cost, state, constraints,... are defined in this folder.
 
-4. DMPC
+3. DMPC
 	The DMPC is partially implemented also in Simulink, but for time reasons the implementation is not completed.
 
 
-5. Plant 
+4. Plant 
 	Plant refernece model defined in Simulink.
 
-6. Plots
+5. Plots
 
-7. Results
+6. Results
 
-8. .gitignore
+7. .gitignore
 
-9. setup 
+8. setup 
 	This code must be run once before the others to set all the necessary parameters and folders
 
 
